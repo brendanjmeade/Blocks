@@ -11,7 +11,7 @@ function s = SegCentroid(s)
 
 % calculate midpoint coordinates, if necessary
 if isfield(s, 'midLon') == 0;
-	[s.midLon, s.midLat] = deal((s.lon1+s.lon2)/2, (s.lat1+s.lat2)/2);
+	[s.midLon, s.midLat] = segmentmidpoint(s.lon1, s.lat1, s.lon2, s.lat2);
 end
 
 if isfield(s, 'midX') == 0;

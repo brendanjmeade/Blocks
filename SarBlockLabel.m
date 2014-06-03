@@ -3,6 +3,6 @@ function sar = SarBlockLabel(sar, b)
 
 sar.blockLabel = zeros(size(sar.lon));
 for i = setdiff(1:numel(b.interiorLon), b.exteriorBlockLabel)
-   ip = inpolygon(sar.lon, sar.lat, b.orderLon{i}, b.orderLat{i});
+   ip = inpolygonsphere(sar.lon, sar.lat, b.orderLon{i}, b.orderLat{i});
    sar.blockLabel(ip) = i;
 end

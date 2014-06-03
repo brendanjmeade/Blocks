@@ -1,4 +1,4 @@
-function [s, b, st] = BlockLabelNew2(s, b, st)
+function [s, b, st] = BlockLabel(s, b, st)
 %
 
 nseg = numel(s.lon1);
