@@ -112,8 +112,10 @@ switch(option)
    % Clear segment file
    case 'Seg.clearPush'
       fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                              = findobj(gcf, 'Tag', 'Seg.loadEdit');
+      set(ha, 'string', '');
       setappdata(gcf, 'Segment', []);
-      SegmentManagerFunctions('DrawClean');
+      delete(findobj(gcf, '-regexp', 'tag', 'Segment.\d'));
       
       
       
@@ -559,6 +561,8 @@ switch(option)
    % Clear block file
    case 'Seg.clearPushBlock'
       fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                              = findobj(gcf, 'Tag', 'Seg.loadEditBlock');
+      set(ha, 'string', '');
       setappdata(gcf, 'Block', []);
       delete(findobj(gcf, '-regexp', 'tag', '^Block.'));
       
