@@ -1,5 +1,5 @@
 function Blocks_dev_2013(commandFile)
-
+% Main Blocks function
 fprintf('Parsing input data...')
 runName                                          = GetRunName; % Create new directory for output
 Command                                          = ReadCommand(commandFile); % Read command file
