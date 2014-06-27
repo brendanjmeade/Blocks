@@ -43,7 +43,7 @@ switch(option)
       % Process .segment file
       ha                           = findobj(gcf, 'Tag', 'Seg.loadEdit');
       set(ha, 'string', Command.segFileName);
-      Segment                      = ReadSegmentStruct(Command.segFileName);
+      Segment                      = ReadSegmentTri(Command.segFileName);
       setappdata(gcf, 'Segment', Segment);
       SegmentManagerFunctions('DrawSegments');
       set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'string', cellstr(strvcat('< none >', 'Multiple', Segment.name)));
@@ -97,7 +97,7 @@ switch(option)
       end
       
       % Read in the segment file
-      Segment                      = ReadSegmentStruct(filenameFull);
+      Segment                      = ReadSegmentTri(filenameFull);
 
       setappdata(gcf, 'Segment', Segment);
       
@@ -178,18 +178,18 @@ switch(option)
          if propIdx == 21; Segment.res(segIdx) = value; end;
          if propIdx == 22; Segment.resOver(segIdx) = value; end;
          if propIdx == 23; Segment.resOther(segIdx) = value; end;
-         if propIdx == 27; Segment.other1(segIdx) = value; end;
-         if propIdx == 28; Segment.other2(segIdx) = value; end;
-         if propIdx == 29; Segment.other3(segIdx) = value; end;
-         if propIdx == 30; Segment.other4(segIdx) = value; end;
-         if propIdx == 31; Segment.other5(segIdx) = value; end;
-         if propIdx == 32; Segment.other6(segIdx) = value; end;
-         if propIdx == 33; Segment.other7(segIdx) = value; end;
-         if propIdx == 34; Segment.other8(segIdx) = value; end;
-         if propIdx == 35; Segment.other9(segIdx) = value; end;
-         if propIdx == 36; Segment.other10(segIdx) = value; end;
-         if propIdx == 37; Segment.other11(segIdx) = value; end;
-         if propIdx == 38; Segment.other12(segIdx) = value; end;
+         if propIdx == 24; Segment.patchFile(segIdx) = value; end;
+         if propIdx == 25; Segment.patchTog(segIdx) = value; end;
+         if propIdx == 26; Segment.other3(segIdx) = value; end;
+         if propIdx == 27; Segment.patchSlipFile(segIdx) = value; end;
+         if propIdx == 28; Segment.patchSlipTog(segIdx) = value; end;
+         if propIdx == 29; Segment.other6(segIdx) = value; end;
+         if propIdx == 30; Segment.other7(segIdx) = value; end;
+         if propIdx == 31; Segment.other8(segIdx) = value; end;
+         if propIdx == 32; Segment.other9(segIdx) = value; end;
+         if propIdx == 33; Segment.other10(segIdx) = value; end;
+         if propIdx == 34; Segment.other11(segIdx) = value; end;
+         if propIdx == 35; Segment.other12(segIdx) = value; end;
          setappdata(gcf, 'Segment', Segment);
          SegmentManagerFunctions('RedrawSegments');
       end
@@ -241,21 +241,18 @@ switch(option)
 			if propIdx == 21; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.res(segIdx))]); end;
 			if propIdx == 22; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.resOver(segIdx))]); end;
 			if propIdx == 23; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.resOther(segIdx))]); end;
-			if propIdx == 24; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchName(segIdx))]); end;
-			if propIdx == 25; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchFlag01(segIdx))]); end;
-			if propIdx == 26; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchFlag02(segIdx))]); end;
-			if propIdx == 27; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other1(segIdx))]); end;
-			if propIdx == 28; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other2(segIdx))]); end;
-			if propIdx == 29; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other3(segIdx))]); end;
-			if propIdx == 30; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other4(segIdx))]); end;
-			if propIdx == 31; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other5(segIdx))]); end;
-			if propIdx == 32; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other6(segIdx))]); end;
-			if propIdx == 33; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other7(segIdx))]); end;
-			if propIdx == 34; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other8(segIdx))]); end;
-			if propIdx == 35; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other9(segIdx))]); end;
-			if propIdx == 36; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other10(segIdx))]); end;
-			if propIdx == 37; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other11(segIdx))]); end;
-			if propIdx == 38; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other12(segIdx))]); end;
+			if propIdx == 24; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchFile(segIdx))]); end;
+			if propIdx == 25; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchTog(segIdx))]); end;
+			if propIdx == 26; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other3(segIdx))]); end;
+			if propIdx == 27; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchSlipFile(segIdx))]); end;
+			if propIdx == 28; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.patchSlipTog(segIdx))]); end;
+			if propIdx == 29; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other6(segIdx))]); end;
+			if propIdx == 30; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other7(segIdx))]); end;
+			if propIdx == 31; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other8(segIdx))]); end;
+			if propIdx == 32; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other9(segIdx))]); end;
+			if propIdx == 33; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other10(segIdx))]); end;
+			if propIdx == 34; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other11(segIdx))]); end;
+			if propIdx == 35; set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ['   ' num2str(Segment.other12(segIdx))]); end;
       else
 			set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'string', ' ');
 	  end	
@@ -436,12 +433,13 @@ switch(option)
       end
       
       
+   %%%   Show segment properties   %%%
    % Show segment properties
    case 'Seg.modShowList'
       fprintf(GLOBAL.filestream, '%s\n', option);
       Segment                      = getappdata(gcf, 'Segment');
       if ~isempty(Segment)
-         switch get(findobj('Tag', 'Seg.modShowList'), 'Value');
+         switch get(findobj(gcf, 'Tag', 'Seg.modShowList'), 'Value')
             case 1
                DeletePropertyLabels;
             case 2
@@ -467,8 +465,8 @@ switch(option)
             case 12
                ShowPropertyLabels(num2str(Segment.lDepTog)) ; BigTitle('Locking depth flag');
             case 13
-               labels = [num2str(Segment.ssRate) repmat('+/-', numel(Segment.ssRate), 1) num2str(Segment.ssRateSig)];
-               ShowPropertyLabels(labels) ; BigTitle('Strike slip rate +/- sigma');
+               labels = [num2str(Segment.ssRate) repmat('+/-', numel(Segment.ssRate), 1) strjust(num2str(Segment.ssRateSig), 'left')];
+               ShowPropertyLabels(labels) ; BigTitle('Strike slip rate \pm sigma');
             case 14
                ShowPropertyLabels(num2str(Segment.ssRate)) ; BigTitle('Strike slip rate');
             case 15
@@ -476,8 +474,8 @@ switch(option)
             case 16
                ShowPropertyLabels(num2str(Segment.ssRateTog)) ; BigTitle('Strike slip flag');
             case 17
-               labels = [num2str(Segment.dsRate) repmat('+/-', numel(Segment.dsRate), 1) num2str(Segment.dsRateSig)];
-               ShowPropertyLabels(labels) ; BigTitle('Dip slip rate +/- sigma');
+               labels = [num2str(Segment.dsRate) repmat('+/-', numel(Segment.dsRate), 1) strjust(num2str(Segment.dsRateSig), 'left')];
+               ShowPropertyLabels(labels) ; BigTitle('Dip slip rate \pm sigma');
             case 18
                ShowPropertyLabels(num2str(Segment.dsRate)) ; BigTitle('Dip slip rate');
             case 19
@@ -485,8 +483,8 @@ switch(option)
             case 20
                ShowPropertyLabels(num2str(Segment.dsRateTog)) ; BigTitle('Dip slip flag');
             case 21
-               labels = [num2str(Segment.tsRate) repmat('+/-', numel(Segment.tsRate), 1) num2str(Segment.tsRateSig)];
-               ShowPropertyLabels(labels) ; BigTitle('Tensile slip rate +/- sigma');
+               labels = [num2str(Segment.tsRate) repmat('+/-', numel(Segment.tsRate), 1) strjust(num2str(Segment.tsRateSig), 'left')];
+               ShowPropertyLabels(labels) ; BigTitle('Tensile slip rate \pm sigma');
             case 22
                ShowPropertyLabels(num2str(Segment.tsRate)) ; BigTitle('Tensile slip rate');
             case 23
@@ -500,35 +498,29 @@ switch(option)
             case 27
                ShowPropertyLabels(num2str(Segment.resOther)) ; BigTitle('Resolution other');
             case 28
-               ShowPropertyLabels(strjust(Segment.patchName, 'center')) ; BigTitle('Patch name');
+               ShowPropertyLabels(num2str(Segment.patchFile)) ; BigTitle('Patch name');
             case 29
-               ShowPropertyLabels(num2str(Segment.patchOther1)) ; BigTitle('Patch Flag 1');
+               ShowPropertyLabels(num2str(Segment.patchTog)) ; BigTitle('Patch toggle');
             case 30
-               ShowPropertyLabels(num2str(Segment.patchOther2)) ; BigTitle('Patch Flag 2');
+               ShowPropertyLabels(num2str(Segment.other3)) ; BigTitle('Patch Flag 2');
             case 31
-               ShowPropertyLabels(num2str(Segment.other1)) ; BigTitle('Other 1');
+               ShowPropertyLabels(num2str(Segment.patchSlipFile)) ; BigTitle('Other 1');
             case 32
-               ShowPropertyLabels(num2str(Segment.other2)) ; BigTitle('Other 2');
+               ShowPropertyLabels(num2str(Segment.patchSlipTog)) ; BigTitle('Other 2');
             case 33
-               ShowPropertyLabels(num2str(Segment.other3)) ; BigTitle('Other 3');
+               ShowPropertyLabels(num2str(Segment.other6)) ; BigTitle('Other 3');
             case 34
-               ShowPropertyLabels(num2str(Segment.other4)) ; BigTitle('Other 4');
+               ShowPropertyLabels(num2str(Segment.other7)) ; BigTitle('Other 4');
             case 35
-               ShowPropertyLabels(num2str(Segment.other5)) ; BigTitle('Other 5');
+               ShowPropertyLabels(num2str(Segment.other8)) ; BigTitle('Other 5');
             case 36
-               ShowPropertyLabels(num2str(Segment.other6)) ; BigTitle('Other 6');
+               ShowPropertyLabels(num2str(Segment.other9)) ; BigTitle('Other 6');
             case 37
-               ShowPropertyLabels(num2str(Segment.other7)) ; BigTitle('Other 7');
+               ShowPropertyLabels(num2str(Segment.other10)) ; BigTitle('Other 7');
             case 38
-               ShowPropertyLabels(num2str(Segment.other8)) ; BigTitle('Other 8');
+               ShowPropertyLabels(num2str(Segment.other11)) ; BigTitle('Other 8');
             case 39
-               ShowPropertyLabels(num2str(Segment.other9)) ; BigTitle('Other 9');
-            case 40
-               ShowPropertyLabels(num2str(Segment.other10)) ; BigTitle('Other 10');
-            case 41
-               ShowPropertyLabels(num2str(Segment.other11)) ; BigTitle('Other 11');
-            case 42
-               ShowPropertyLabels(num2str(Segment.other12)) ; BigTitle('Other 12');
+               ShowPropertyLabels(num2str(Segment.other12)) ; BigTitle('Other 9');
                
          end
          
