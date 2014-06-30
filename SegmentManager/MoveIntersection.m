@@ -80,7 +80,7 @@ for iMatch = 1 : nMatch
       Segment.lon2(matchIdx(iMatch)) = x;
       Segment.lat2(matchIdx(iMatch)) = y;
    end
-   set(findobj('Tag', strcat('Segment.', num2str(matchIdx(iMatch)))), 'xData', [Segment.lon1(matchIdx(iMatch)) Segment.lon2(matchIdx(iMatch))], 'yData', [Segment.lat1(matchIdx(iMatch)) Segment.lat2(matchIdx(iMatch))], 'erasemode', 'xor', 'linestyle', '-', 'visible', 'on', 'linewidth', 1.0, 'color', 'b');
+   set(findobj('Tag', strcat('Segment.', num2str(matchIdx(iMatch)))), 'xData', [Segment.lon1(matchIdx(iMatch)) Segment.lon2(matchIdx(iMatch))], 'yData', [Segment.lat1(matchIdx(iMatch)) Segment.lat2(matchIdx(iMatch))], 'erasemode', 'xor', 'linestyle', '-', 'visible', 'on', 'linewidth', 1.0, 'color', 'k');
 end
 
 %%  Delete dynamic lines

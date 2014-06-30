@@ -20,10 +20,21 @@ Patches.v                        = [];
 Patches.nEl                      = [];
 Patches.nc                       = [];
 
-if numel(filenames) > 0;
-   spaces                        = [0 findstr(filenames, ' ') length(filenames)+1];
-   for i = 1:length(spaces) - 1;
-      filename                   = filenames(spaces(i)+1:spaces(i+1)-1);
+if numel(filenames) > 0
+   if size(filenames, 1) == 1
+      spaces                     = [0 findstr(filenames, ' ') length(filenames)+1];
+      nfiles                     = length(spaces) - 1;
+   else
+      nfiles                     = size(filenames, 1);
+   end
+   
+   for i = 1:nfiles
+      if exist('spaces', 'var')
+         filename                = filenames(spaces(i)+1:spaces(i+1)-1);
+      else
+         filename                = strtrim(filenames(i, :));
+      end
+      
       if filename(end-3:end) == '.msh'
          [c, v]                  = msh2coords(filename);
       elseif filename(end-3:end) == '.mat'

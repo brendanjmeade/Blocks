@@ -47,7 +47,8 @@ switch(option)
       setappdata(gcf, 'Segment', Segment);
       SegmentManagerFunctions('DrawSegments');
       set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'string', cellstr(strvcat('< none >', 'Multiple', Segment.name)));
- 
+      set(findobj(gcf, 'tag', 'Seg.dispCheck'), 'enable', 'on', 'value', 1);
+
       % Process .block file
       ha                           = findobj(gcf, 'Tag', 'Seg.loadEditBlock');
       set(ha, 'string', 'Command.blockFileName');
@@ -59,6 +60,7 @@ switch(option)
       blnames                      = cellstr([repmat('Block.', nBlocks, 1) strjust(num2str([1:nBlocks]'), 'left')]);
       plotbls                      = line([Block.interiorLon'; Block.interiorLon'], [Block.interiorLat'; Block.interiorLat'], 'MarkerFaceColor', 'm', 'MarkerSize', 5, 'marker', 'o', 'linestyle', 'none', 'MarkerEdgeColor', 'k');
       set(plotbls, {'tag'}, blnames);
+      set(findobj(gcf, 'tag', 'Seg.dispCheckBlock'), 'enable', 'on', 'value', 1);
 
       % Process the .sta.data file
       ha                           = findobj(gcf, 'Tag', 'Seg.dispEditSta');
@@ -72,6 +74,9 @@ switch(option)
       % Process the .msh files...only works for one right now
       P = ReadPatches(Command.patchFileNames);
       h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black');
+      if ~isempty(Command.patchFileNames)
+         set(findobj(gcf, 'tag', 'Seg.dispCheckMesh'), 'enable', 'on', 'value', 1);
+      end
 
 
    
@@ -106,8 +111,20 @@ switch(option)
       
       % Add the segment names to the segment pulldown list
       set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'string', cellstr(strvcat('< none >', 'Multiple', Segment.name)));
-   
       
+      % Enable the display check box
+      set(findobj(gcf, 'Tag', 'Seg.dispCheck'), 'enable', 'on', 'value', 1);
+   
+   	% Segment display toggle
+   case 'Seg.dispCheck'
+      fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                           = findobj(gcf, '-regexp', 'Tag', '^Segment.');
+      hb                           = findobj(gcf, 'Tag', 'Seg.dispCheck');
+      if get(hb, 'Value') == 0;
+      	set(ha, 'Visible', 'off');
+      else
+         set(ha, 'Visible', 'on');
+      end   
       
    % Clear segment file
    case 'Seg.clearPush'
@@ -116,6 +133,8 @@ switch(option)
       set(ha, 'string', '');
       setappdata(gcf, 'Segment', []);
       delete(findobj(gcf, '-regexp', 'tag', 'Segment.\d'));
+      % Disable the display check box
+      set(findobj(gcf, 'Tag', 'Seg.dispCheck'), 'enable', 'off', 'value', 0);
       
       
       
@@ -200,13 +219,13 @@ switch(option)
    case 'Seg.modSegList'
       ha                           = findobj(gcf, 'Tag', 'Seg.modSegList');
       value                        = get(ha, 'Value');
-      idxSeg                       = value - 3;
+      idxSeg                       = value - 2;
       Segment                      = getappdata(gcf, 'Segment');
       nSegments                    = length(Segment.lon1);
       if idxSeg < 1
-         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
       else
-			set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+			set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
          set(findobj(gcf, 'Tag', strcat('Segment.', num2str(idxSeg))), 'Color', 'r');
          setappdata(gcf, 'segIdx', idxSeg);
       end
@@ -263,7 +282,7 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       Segment                      = getappdata(gcf, 'Segment');
       if ~isempty(Segment)
-         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
          
          % Select a segment graphically
          [minIdx]                  = GetSegmentSingle(Segment);
@@ -282,7 +301,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
-      set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+      set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
       
       % Find the segments that are inside a clickable box
       fprintf(GLOBAL.filestream, 'Starting Box Select\n');
@@ -303,7 +322,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
-	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
       segIdx							  = myselectdata('sel', 'lasso', 'ignore', mp);
@@ -320,7 +339,7 @@ switch(option)
       Segment                      = getappdata(gcf, 'Segment');
       if ~isempty(Segment)
          nSegments                    = length(Segment.lon1);
-         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+         set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
          set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'Value', 1);
          setappdata(gcf, 'segIdx', []);
          set(findobj(gcf, 'Tag', 'Seg.modPropList'), 'Value', 1);
@@ -355,7 +374,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
-		set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+		set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 		
       if ~isempty(Segment)         
          fprintf(GLOBAL.filestream, 'Starting Box Select\n');
@@ -380,7 +399,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
-	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'b');
+	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
       segIdx							  = myselectdata('sel', 'lasso', 'ignore', mp);
@@ -556,6 +575,18 @@ switch(option)
       
       % Plot blocks file
 	  SegmentManagerFunctions('RedrawBlocks')
+	  set(findobj(gcf, 'Tag', 'Seg.dispCheckBlock'), 'enable', 'on', 'value', 1);
+	
+	% Block display toggle
+   case 'Seg.dispCheckBlock'
+      fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                           = findobj(gcf, '-regexp', 'Tag', '^Block.');
+      hb                           = findobj(gcf, 'Tag', 'Seg.dispCheckBlock');
+      if get(hb, 'Value') == 0;
+      	set(ha, 'Visible', 'off');
+      else
+         set(ha, 'Visible', 'on');
+      end
 
       
    % Clear block file
@@ -565,7 +596,7 @@ switch(option)
       set(ha, 'string', '');
       setappdata(gcf, 'Block', []);
       delete(findobj(gcf, '-regexp', 'tag', '^Block.'));
-      
+      set(findobj(gcf, 'Tag', 'Seg.dispCheckBlock'), 'enable', 'off', 'value', 0);
       
    % Save block file
    case 'Seg.savePushBlock'
@@ -807,7 +838,7 @@ switch(option)
       % Delete all the childrean of the current axes
       fprintf(GLOBAL.filestream, '%s\n', option);
       
-      % Get the name of the segment file
+      % Get the name of the mesh file
       ha                           = findobj(gcf, 'Tag', 'Seg.loadEditMesh');
       filename                     = get(ha, 'string');
       if exist(filename, 'file')
@@ -825,7 +856,29 @@ switch(option)
       
       % Read in the mesh file and plot
       P = ReadPatches(filenameFull);
-      h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black');
+      h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black', 'tag', 'Patch');
+      % Enable the display check box
+      set(findobj(gcf, 'Tag', 'Seg.dispCheckMesh'), 'enable', 'on', 'value', 1);
+	
+	% Mesh display toggle
+   case 'Seg.dispCheckMesh'
+      fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                           = findobj(gcf, 'Tag', 'Patch');
+      hb                           = findobj(gcf, 'Tag', 'Seg.dispCheckMesh');
+      if get(hb, 'Value') == 0;
+      	set(ha, 'Visible', 'off');
+      else
+         set(ha, 'Visible', 'on');
+      end
+
+      
+   % Clear mesh file
+   case 'Seg.clearPushMesh'
+      fprintf(GLOBAL.filestream, '%s\n', option);
+      ha                              = findobj(gcf, 'Tag', 'Seg.loadEditMesh');
+      set(ha, 'string', '');
+      delete(findobj(gcf, 'tag', 'Patch'));
+      set(findobj(gcf, 'Tag', 'Seg.dispCheckMesh'), 'enable', 'off', 'value', 0);
       
       
 % File integrity functions 
@@ -1386,7 +1439,7 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       
       % Delete all old segments
-      delete(findobj(gcf, '-regexp', 'tag', 'Segment.\d'));
+      delete(findobj(gcf, '-regexp', 'tag', '^Segment.\d'));
       
       % Sort new Segment structure and update fault name pulldown
       Segment                          = getappdata(gcf, 'Segment');

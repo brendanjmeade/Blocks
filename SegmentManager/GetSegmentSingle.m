@@ -23,7 +23,7 @@ while ~done
    if minDIdxOld == 0
       set(findobj('Tag', strcat('Segment.', num2str(minDIdx))), 'Color', 'r');
    elseif (minDIdxOld ~= minDIdx) & (minDIdxOld ~= 0)
-      set(findobj('Tag', strcat('Segment.', num2str(minDIdxOld))), 'Color', 'b');
+      set(findobj('Tag', strcat('Segment.', num2str(minDIdxOld))), 'Color', 'k');
       set(findobj('Tag', strcat('Segment.', num2str(minDIdx))), 'Color', 'r');
    end
    set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'Value', minDIdx + 2);
