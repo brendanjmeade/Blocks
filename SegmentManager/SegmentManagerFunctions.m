@@ -888,10 +888,10 @@ switch(option)
    case 'Seg.dispTopo'
       fprintf(GLOBAL.filestream, '%s\n', option);
       value                        = get(findobj(gcf, 'Tag', 'Seg.dispTopo'), 'Value');
-      if value == 1
+      if value == 0
          set(findobj(gcf, 'Tag', 'topo'), 'visible', 'off');
          delete(findobj(gcf, 'Tag', 'topo'));
-      elseif value == 2
+      elseif value == 1
           % plot_google_map('MapType', 'terrain', 'ShowLabels', 0, 'AutoAxis', 0)
          xlim = get(gca, 'xlim');
          ylim = get(gca, 'ylim');
@@ -925,9 +925,9 @@ switch(option)
    case 'Seg.dispGrid'
       fprintf(GLOBAL.filestream, '%s\n', option);
       value                        = get(findobj(gcf, 'Tag', 'Seg.dispGrid'), 'Value');
-      if value == 1
+      if value == 0
          set(gca, 'XGrid', 'off', 'YGrid', 'off');
-      elseif value == 2
+      elseif value == 1
          set(gca, 'XGrid', 'on', 'YGrid', 'on');
       else
          return;
@@ -938,13 +938,13 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       value = get(findobj(gcf, 'Tag', 'Seg.dispDips'), 'Value');
       Segment = getappdata(gcf, 'Segment');
-      if value == 1
+      if value == 0
           % Remove surface projection of dipping structures
           h = (findobj(gcf, 'Tag', 'Dips'));
           if ~isempty(h)
               delete(h);
           end
-      elseif value == 2
+      elseif value == 1
           % Plot surface projection of dipping structures
           PlotDips(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2, Segment.dip, Segment.lDep, Segment.bDep)   
       else
