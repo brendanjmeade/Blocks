@@ -285,11 +285,11 @@ switch(option)
          set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
          
          % Select a segment graphically
-         [minIdx]                  = GetSegmentSingle(Segment);
+         [segIdx]                  = GetSegmentSingle(Segment);
 
          % Set the listbox and save the segment index segment
-         set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'Value', minIdx + 2);
-         setappdata(gcf, 'segIdx', minIdx);
+         set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'Value', segIdx + 2);
+         setappdata(gcf, 'segIdx', segIdx);
          set(findobj(gcf, 'Tag', 'Seg.modPropList'), 'Value', 1);
          set(findobj(gcf, 'Tag', 'Seg.modPropEdit'), 'String', ' ');
       end
@@ -844,7 +844,7 @@ switch(option)
       if exist(filename, 'file')
          filenameFull              = strcat(pwd, '\', filename);
       else
-         [filename, pathname]      = uigetfile({'*.msh'}, 'Load mesh file');
+         [filename, pathname]      = uigetfile({'*.msh; *.mat; *.mshp'}, 'Load mesh file');
          if filename == 0
             return;
             set(ha, 'string', '');
@@ -855,8 +855,13 @@ switch(option)
       end
       
       % Read in the mesh file and plot
-      P = ReadPatches(filenameFull);
+      if strmatch(filenameFull(end-4:end), '.mshp')
+         P = readmshp(filenameFull); % Optional .mshp file containing multiple meshes
+      else
+         P = ReadPatches(filenameFull);
+      end
       h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black', 'tag', 'Patch');
+      setappdata(gcf, 'Patch', P);
       % Enable the display check box
       set(findobj(gcf, 'Tag', 'Seg.dispCheckMesh'), 'enable', 'on', 'value', 1);
 	
@@ -880,6 +885,15 @@ switch(option)
       delete(findobj(gcf, 'tag', 'Patch'));
       set(findobj(gcf, 'Tag', 'Seg.dispCheckMesh'), 'enable', 'off', 'value', 0);
       
+   % Clear mesh file
+   case 'Seg.snapPushMesh'
+      fprintf(GLOBAL.filestream, '%s\n', option);
+      Segment = getappdata(gcf, 'Segment');
+      segIdx = getappdata(gcf, 'segIdx');
+      Patch = getappdata(gcf, 'Patch');
+      S = snapsegments(Segment, Patch, segIdx, 0);
+      setappdata(gcf, 'Segment', S);
+      SegmentManagerFunctions('RedrawSegments');
       
 % File integrity functions 
 

@@ -19,20 +19,33 @@ fprintf(filestream, 'other4   other5   other6\n');
 fprintf(filestream, 'other7   other8   other9\n');
 fprintf(filestream, 'other10  other11  other12\n');
 
-for cnt = 1 : length(Segment.lon1)
+% Set blank fields
+names = fieldnames(Segment);
+fullnames = {'name', 'lon1', 'lat1', 'lon2', 'lat2', 'lDep', 'lDepSig', 'lDepTog', 'dip', 'dipSig', 'dipTog' 'ssRate', 'ssRateSig', 'ssRateTog', 'dsRate', 'dsRateSig', 'dsRateTog', 'tsRate', 'tsRateSig', 'tsRateTog', 'bDep', 'bDepSig', 'bDepTog', 'res', 'resOver', 'resOther', 'patchFile', 'patchTog', 'other3', 'patchSlipFile', 'patchSlipTog', 'other6', 'other7', 'other8', 'other9', 'other10', 'other11', 'other12'};
+diffnames = setdiff(fullnames, names);
+for i = 1:length(diffnames)
+   Segment = setfield(Segment, diffnames{i}, zeros(size(Segment.lon1)));
+end
+
+for cnt = 1 : numel(Segment.lon1)
    fprintf(filestream, '%s\n', Segment.name(cnt, :));
-   fprintf(filestream, '%3.3f   %3.3f   %3.3f  %3.3f\n',   Segment.lon1(cnt),     Segment.lat1(cnt),        Segment.lon2(cnt),        Segment.lat2(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.lDep(cnt),     Segment.lDepSig(cnt),     Segment.lDepTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.dip(cnt),      Segment.dipSig(cnt),      Segment.dipTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.ssRate(cnt),   Segment.ssRateSig(cnt),   Segment.ssRateTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.dsRate(cnt),   Segment.dsRateSig(cnt),   Segment.dsRateTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.tsRate(cnt),   Segment.tsRateSig(cnt),   Segment.tsRateTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.bDep(cnt),     Segment.bDepSig(cnt),     Segment.bDepTog(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.res(cnt),      Segment.resOver(cnt),     Segment.resOther(cnt));   
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other1(cnt),   Segment.other2(cnt),      Segment.other3(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other4(cnt),   Segment.other5(cnt),      Segment.other6(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other7(cnt),   Segment.other8(cnt),      Segment.other9(cnt));
-   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other10(cnt),  Segment.other11(cnt),     Segment.other12(cnt));
+   fprintf(filestream, '%3.3f   %3.3f   %3.3f  %3.3f\n',   Segment.lon1(cnt),          Segment.lat1(cnt),         Segment.lon2(cnt),        Segment.lat2(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.lDep(cnt),          Segment.lDepSig(cnt),      Segment.lDepTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.dip(cnt),           Segment.dipSig(cnt),       Segment.dipTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.ssRate(cnt),        Segment.ssRateSig(cnt),    Segment.ssRateTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.dsRate(cnt),        Segment.dsRateSig(cnt),    Segment.dsRateTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.tsRate(cnt),        Segment.tsRateSig(cnt),    Segment.tsRateTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.bDep(cnt),          Segment.bDepSig(cnt),      Segment.bDepTog(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.res(cnt),           Segment.resOver(cnt),      Segment.resOther(cnt));   
+   if isfield(Segment, 'patchFile')
+      fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',        Segment.patchFile(cnt),     Segment.patchTog(cnt),     Segment.other3(cnt));
+      fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',        Segment.patchSlipFile(cnt), Segment.patchSlipTog(cnt), Segment.other6(cnt));
+   else
+      fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',        Segment.other1(cnt),        Segment.other2(cnt),       Segment.other3(cnt));
+      fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',        Segment.other4(cnt),        Segment.other5(cnt),       Segment.other6(cnt));
+   end
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other7(cnt),        Segment.other8(cnt),       Segment.other9(cnt));
+   fprintf(filestream, '%3.1f   %3.1f  %3.1f\n',           Segment.other10(cnt),       Segment.other11(cnt),      Segment.other12(cnt));
 end
 
 %%  Close file

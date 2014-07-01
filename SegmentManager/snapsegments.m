@@ -23,98 +23,95 @@ function S = snapsegments(s, p, sel, dtol)
 %
 
 % Find center of selected segments
-sc = [mean([s.lon1(sel); s.lon2(sel)]), mean([s.lat1(sel); s.lat2(sel)])];
+sc                             = [mean([s.lon1(sel); s.lon2(sel)]), mean([s.lat1(sel); s.lat2(sel)])];
 
 % Find centroids of meshes
-mn = length(p.nEl);
-   % Start and end indices
-vends = cumsum(p.nEl(:));
-vbegs = [1; vends(1:end-1)+1];
-
-mc = zeros(mn, 2);
+mn                             = length(p.nEl);
+% Start and end indices
+vends                          = cumsum(p.nEl(:));
+vbegs                          = [1; vends(1:end-1)+1];
+mc                             = zeros(mn, 2);
 for i = 1:mn
-   mc(i, :) = mean(p.c(p.v(vbegs(i):vends(i), :), 1:2), 1);
+   mc(i, :)                    = mean(p.c(p.v(vbegs(i):vends(i), :), 1:2), 1);
 end
 
 % Find the mesh closest to the segments
-dist = gcdist(sc(2), sc(1), mc(:, 2), mc(:, 1));
-[~, midx] = min(dist);
-
-
-
-% Find the updip elements of the selected mesh
-%cends = cumsum(p.nc(:));
-%cbegs = [1; cends(1:end-1)+1];
-%elRange                                   = vbegs(midx):vends(midx);
-%coRange                                   = cbegs(midx):cends(midx);
-%% find the zero depth coordinates
-if ~exist('dtol', 'var')
-   dtol = 0;
-end
-%zeroTest                               = abs(p.c(coRange, 3)) <= dtol;
-%zeroZ                                  = cbegs(midx) + find(zeroTest);
-%% find those elements having two zero-depth coordinates
-%updip                                  = vbegs(midx) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
+dist                           = gcdist(sc(2), sc(1), mc(:, 2), mc(:, 1));
+[~, midx]                      = min(dist);
 
 % Find the segments that are at the ends of the selection. These will be split, with the new endpoint
 % coincident with the corner of the mesh.
 
 % All coordinates
-lons										= [s.lon1(sel(:)); s.lon2(sel(:))];
-lats = [s.lat1(sel(:)); s.lat2(sel(:))];
-coords									= [lons(:) lats(:)];
+lons                           = [s.lon1(sel(:)); s.lon2(sel(:))];
+lats                           = [s.lat1(sel(:)); s.lat2(sel(:))];
+coords                         = [lons(:) lats(:)];
 % Unique coordinates
-[~, ucInd1]										= unique(coords, 'rows', 'first');
-[uc, ucInd2]										= unique(coords, 'rows', 'last');
+[~, ucInd1]                    = unique(coords, 'rows', 'first');
+[uc, ucInd2]                   = unique(coords, 'rows', 'last');
 % Dangling segments are those where the unique occurrence is in the same place
-[endsegs, endcol] = ismember(coords, uc(ucInd1 == ucInd2, :), 'rows');
-endsegs = find(endsegs);
+[endsegs, endcol]              = ismember(coords, uc(ucInd1 == ucInd2, :), 'rows');
+endsegs                        = find(endsegs);
 endsegs(endsegs > length(sel)) = endsegs(endsegs > length(sel)) - length(sel);
-endcol = endcol(endcol > 0); % Tells whether the hanging point is endpoint 1 or 2
-lons = reshape(lons, length(sel), 2);
-lats = reshape(lats, length(sel), 2);
+endcol                         = endcol(endcol > 0); % Tells whether the hanging point is endpoint 1 or 2
+lons                           = reshape(lons, length(sel), 2);
+lats                           = reshape(lats, length(sel), 2);
 
 % Find corner coordinates of mesh. 
 % - Find ordered edges
 % - Find those along updip edge
 % - Use distance to associate the first and last with the dangling segments
-elo = OrderedEdges(p.c, p.v(vbegs(midx):vends(midx), :));
-elo = elo(1, [2:end, 1]); % Ordered edge nodes
-updip = elo(find(abs(p.c(elo, 3)) <= dtol)); % Updip nodes
+elo                            = OrderedEdges(p.c, p.v(vbegs(midx):vends(midx), :));
+elo                            = elo(1, [2:end, 1]); % Ordered edge nodes
+% Check for a depth tolerance
+if ~exist('dtol', 'var')
+   dtol                        = 0;
+end
+updip                          = elo(find(abs(p.c(elo, 3)) <= dtol)); % Updip nodes
 
 % Find the corners
-d1 = gcdist(lats(endsegs(1), endcol(1)), lons(endsegs(1), endcol(1)), p.c(updip, 2), p.c(updip, 1));
-[~, c1] = min(d1);
-d2 = gcdist(lats(endsegs(2), endcol(2)), lons(endsegs(2), endcol(2)), p.c(updip, 2), p.c(updip, 1));
-[~, c2] = min(d2);
+d1                             = gcdist(lats(endsegs(1), endcol(1)), lons(endsegs(1), endcol(1)), p.c(updip, 2), p.c(updip, 1));
+[~, c1]                        = min(d1);
+d2                             = gcdist(lats(endsegs(2), endcol(2)), lons(endsegs(2), endcol(2)), p.c(updip, 2), p.c(updip, 1));
+[~, c2]                        = min(d2);
 
 % Split the hanging segments
 % New endpoints are mesh corners
-newseg.lon1 = zeros(length(updip)+1, 1);
-newseg.lon2 = zeros(length(updip)+1, 1);
-newseg.lat1 = zeros(length(updip)+1, 1);
-newseg.lat2 = zeros(length(updip)+1, 1);
+nns                            = length(updip)+1; % number of new segments
+newseg.lon1                    = zeros(nns, 1);
+newseg.lon2                    = zeros(nns, 1);
+newseg.lat1                    = zeros(nns, 1);
+newseg.lat2                    = zeros(nns, 1);
 
-newseg.lat2(1) = p.c(updip(c1), 2);
-newseg.lon2(1) = p.c(updip(c1), 1);
+newseg.lat2(1)                 = p.c(updip(c1), 2);
+newseg.lon2(1)                 = p.c(updip(c1), 1);
 % Other endpoint is the hanging endpoint
-newseg.lat1(1) = lats(endsegs(1), endcol(1));
-newseg.lon1(1) = lons(endsegs(1), endcol(1));
-newseg.lat2(2) = p.c(updip(c2), 2);
-newseg.lon2(2) = p.c(updip(c2), 1);
-newseg.lat1(2) = lats(endsegs(2), endcol(2));
-newseg.lon1(2) = lons(endsegs(2), endcol(2));
+newseg.lat1(1)                 = lats(endsegs(1), endcol(1));
+newseg.lon1(1)                 = lons(endsegs(1), endcol(1));
+newseg.lat2(2)                 = p.c(updip(c2), 2);
+newseg.lon2(2)                 = p.c(updip(c2), 1);
+newseg.lat1(2)                 = lats(endsegs(2), endcol(2));
+newseg.lon1(2)                 = lons(endsegs(2), endcol(2));
 
 % Remaining new segments are the mesh edges
-newseg.lon1(3:end) = p.c(updip(1:end-1), 1);
-newseg.lat1(3:end) = p.c(updip(1:end-1), 2);
-newseg.lon2(3:end) = p.c(updip(2:end), 1);
-newseg.lat2(3:end) = p.c(updip(2:end), 2);
-newseg.name = sprintf('Patch%g_%g', [midx*ones(1, length(updip)+1); 1:length(updip)+1]);
-% Stitch new and old segments together
-old = structsubset(s, setdiff(1:length(s.lon1), sel));
-S = AddGenericSegment(old, newseg.name, newseg.lon1, newseg.lat1, newseg.lon2, newseg.lat2);
+% Need to check the ordering of nodes
+if abs(c1 - c2) == 1 % If opposite ends of mesh are actually ordered adjacent
+   updip = updip([2:end, 1]);
+end
+newseg.lon1(3:end)             = p.c(updip(1:end-1), 1);
+newseg.lat1(3:end)             = p.c(updip(1:end-1), 2);
+newseg.lon2(3:end)             = p.c(updip(2:end), 1);
+newseg.lat2(3:end)             = p.c(updip(2:end), 2);
+newseg.name                    = [repmat('Patch', nns, 1), num2str(midx*ones(nns, 1)), repmat('_', nns, 1), num2str((1:nns)')];
 
+% Stitch new and old segments together
+% Isolate old segments
+old                            = structsubset(s, setdiff(1:length(s.lon1), sel)); so = length(old.lon1); 
+% Add new endpoints and default segment properties
+S                              = AddGenericSegment(old, newseg.name, newseg.lon1, newseg.lat1, newseg.lon2, newseg.lat2);
+% Set patch toggles for the new segments
+S.patchFile(so+1:end)          = midx;
+S.patchTog(so+1:end)           = 1;
 
 
 
