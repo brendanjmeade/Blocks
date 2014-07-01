@@ -36,6 +36,12 @@ Command.sarFileName                                   = '';
 Command.sarRamp                                       = 0;
 Command.sarWgt                                        = 1;
 Command.triSlipConstraintType                         = 0;
+Command.inversionType                                 = 'standard';
+Command.inversionParam01                              = 0;
+Command.inversionParam02                              = 0;
+Command.inversionParam03                              = 0;
+Command.inversionParam04                              = 0;
+Command.inversionParam05                              = 0;
 
 % Read in commands one line at a time
 while 1
@@ -177,6 +183,24 @@ while 1
          
       case('number of monte carlo iterations')
          Command.nIter                                = str2double(value); 
+
+      case('inversiontype')
+         Command.inversionType                        = lower(value);
+
+      case('inversionparam01')
+         Command.inversionParam01                     = str2double(value); 
+
+      case('inversionparam02')
+         Command.inversionParam02                     = str2double(value); 
+
+      case('inversionparam03')
+         Command.inversionParam03                     = str2double(value); 
+
+      case('inversionparam04')
+         Command.inversionParam04                     = str2double(value); 
+
+      case('inversionparam05')
+         Command.inversionParam05                     = str2double(value); 
 
    end   
 end
