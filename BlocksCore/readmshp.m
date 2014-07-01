@@ -19,7 +19,7 @@ function [p, pp] = readmshp(file)
 % Read file contents
 fid = fopen(file, 'r');
 c = textscan(fid, '%s\n%f\n%f%f%f\n%s\n');
-keyboard
+
 % Read patches
 p = ReadPatches(char(c{1}));
 
