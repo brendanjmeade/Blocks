@@ -1,4 +1,4 @@
-function [p, pp] = readmshp(file)
+function [p, pp] = readmshp(file, command)
 % readmshp  Reads a mesh property file. 
 %   [P, PP] = readmshp(FILE) reads mesh names and properties from the 
 %   specified FILE. The .mshp file contains groups of 3 lines and
@@ -15,6 +15,9 @@ function [p, pp] = readmshp(file)
 %   File contents are returned to structure P, containing the actual 
 %   triangular meshes, and PP, containing properties of the meshes. 
 %
+%   [P, COMMAND] = readmshp(FILE, COMMAND) updates an input COMMAND structure
+%   with mesh properties. 
+%
 
 % Read file contents
 fid = fopen(file, 'r');
@@ -24,6 +27,9 @@ c = textscan(fid, '%s\n%f\n%f%f%f\n%s\n');
 p = ReadPatches(char(c{1}));
 
 % Define mesh properties
-pp.smooth = c{2};
-pp.edge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
-pp.slipFiles = c{6};
+if exist('command', 'var')
+   pp = command;
+end
+pp.triSmooth = c{2}(:)';
+pp.triEdge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
+pp.slipFileNames = char(c{6});

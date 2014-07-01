@@ -142,6 +142,9 @@ while 1
       case('apriori block motions relative to')
          Command.aprioriBlockName                     = lower(value);
          
+      case('mesh parameter file')
+         Command.mshpFileName                         = lower(value);
+      
       case('triangulated patch files')
          Command.patchFileNames                       = strtrim(value);
 

@@ -9,7 +9,11 @@ Sar                                              = ReadSar(Command.sarFileName);
 Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ReadSegmentTri(Command.segFileName); % Read segment file
 Segment                                          = ProcessSegment(Segment, Command);
-Patches                                          = ReadPatches(Command.patchFileNames);
+if isfield(Command, 'mshpFileName')
+	[Patches, Command]                            = ReadMshp(Command.mshpFileName);
+else
+   Patches                                       = ReadPatches(Command.patchFileNames);
+end   
 [Patches, Command]                               = ProcessPatches(Patches, Command, Segment);
 Block                                            = ReadBlock(Command.blockFileName); % Read block file
 fprintf('done.\n')
