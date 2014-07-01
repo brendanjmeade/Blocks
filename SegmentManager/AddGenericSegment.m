@@ -7,46 +7,48 @@ Segment.lat1          = [Segment.lat1 ; lat1];
 Segment.lon2          = [Segment.lon2 ; lon2];
 Segment.lat2          = [Segment.lat2 ; lat2];
 
-Segment.lDep          = [Segment.lDep ; 15];
-Segment.lDepSig       = [Segment.lDepSig ; 5];
-Segment.lDepTog       = [Segment.lDepTog ; 0];
+ba                    = ones(size(lon1)); % Blank array for propagating through all properties
 
-Segment.dip           = [Segment.dip ; 90];
-Segment.dipSig        = [Segment.dipSig ; 1];
-Segment.dipTog        = [Segment.dipTog ; 0];
+Segment.lDep          = [Segment.lDep ; 15*ba];
+Segment.lDepSig       = [Segment.lDepSig ; 5*ba];
+Segment.lDepTog       = [Segment.lDepTog ; 0*ba];
 
-Segment.ssRate        = [Segment.ssRate ; 0];
-Segment.ssRateSig     = [Segment.ssRateSig ; 1];
-Segment.ssRateTog     = [Segment.ssRateTog ; 0];
+Segment.dip           = [Segment.dip ; 90*ba];
+Segment.dipSig        = [Segment.dipSig ; 1*ba];
+Segment.dipTog        = [Segment.dipTog ; 0*ba];
 
-Segment.dsRate        = [Segment.dsRate ; 0];
-Segment.dsRateSig     = [Segment.dsRateSig ; 1];
-Segment.dsRateTog     = [Segment.dsRateTog ; 0];
+Segment.ssRate        = [Segment.ssRate ; 0*ba];
+Segment.ssRateSig     = [Segment.ssRateSig ; 1*ba];
+Segment.ssRateTog     = [Segment.ssRateTog ; 0*ba];
 
-Segment.tsRate        = [Segment.tsRate ; 0];
-Segment.tsRateSig     = [Segment.tsRateSig ; 1];
-Segment.tsRateTog     = [Segment.tsRateTog ; 0];
+Segment.dsRate        = [Segment.dsRate ; 0*ba];
+Segment.dsRateSig     = [Segment.dsRateSig ; 1*ba];
+Segment.dsRateTog     = [Segment.dsRateTog ; 0*ba];
 
-Segment.bDep          = [Segment.bDep ; 15];
-Segment.bDepSig       = [Segment.bDepSig ; 5];
-Segment.bDepTog       = [Segment.bDepTog ; 0];
+Segment.tsRate        = [Segment.tsRate ; 0*ba];
+Segment.tsRateSig     = [Segment.tsRateSig ; 1*ba];
+Segment.tsRateTog     = [Segment.tsRateTog ; 0*ba];
 
-Segment.res           = [Segment.res ; 100];
-Segment.resOver       = [Segment.resOver ; 0];
-Segment.resOther      = [Segment.resOther ; 0];
+Segment.bDep          = [Segment.bDep ; 15*ba];
+Segment.bDepSig       = [Segment.bDepSig ; 5*ba];
+Segment.bDepTog       = [Segment.bDepTog ; 0*ba];
 
-Segment.patchFile     = [Segment.patchFile ; 0];
-Segment.patchTog      = [Segment.patchTog ; 0];
-Segment.other3        = [Segment.other3  ; 0];
+Segment.res           = [Segment.res ; 100*ba];
+Segment.resOver       = [Segment.resOver ; 0*ba];
+Segment.resOther      = [Segment.resOther ; 0*ba];
 
-Segment.patchSlipFile = [Segment.patchSlipFile ; 0];
-Segment.patchSlipTog  = [Segment.patchSlipTog  ; 0];
-Segment.other6        = [Segment.other6 ; 0];
+Segment.patchFile     = [Segment.patchFile ; 0*ba];
+Segment.patchTog      = [Segment.patchTog ; 0*ba];
+Segment.other3        = [Segment.other3  ; 0*ba];
 
-Segment.other7        = [Segment.other7 ; 0];
-Segment.other8        = [Segment.other8 ; 0];
-Segment.other9        = [Segment.other9 ; 0];
+Segment.patchSlipFile = [Segment.patchSlipFile ; 0*ba];
+Segment.patchSlipTog  = [Segment.patchSlipTog  ; 0*ba];
+Segment.other6        = [Segment.other6 ; 0*ba];
 
-Segment.other10       = [Segment.other10 ; 0];
-Segment.other11       = [Segment.other11 ; 0];
-Segment.other12       = [Segment.other12 ; 0];
+Segment.other7        = [Segment.other7 ; 0*ba];
+Segment.other8        = [Segment.other8 ; 0*ba];
+Segment.other9        = [Segment.other9 ; 0*ba];
+
+Segment.other10       = [Segment.other10 ; 0*ba];
+Segment.other11       = [Segment.other11 ; 0*ba];
+Segment.other12       = [Segment.other12 ; 0*ba];
