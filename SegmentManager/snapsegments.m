@@ -106,12 +106,28 @@ newseg.name                    = [repmat('Patch', nns, 1), num2str(midx*ones(nns
 
 % Stitch new and old segments together
 % Isolate old segments
-old                            = structsubset(s, setdiff(1:length(s.lon1), sel)); so = length(old.lon1); 
+old                            = structsubset(s, setdiff(1:length(s.lon1), sel)); so = length(old.lon1);
+nos                            = length(old.lon1); % number of old segments
+% Check to see if any of the modified segments were triple junctions; those points need adjusting, too
+ocoords                        = [old.lon1, old.lat1; old.lon2, old.lat2]; % Full array of old coordinates
+tj                             = find(ismember(ocoords, coords, 'rows')); % Check to see which share a node with selected (replaced) segments
+ncoords                        = [newseg.lon1, newseg.lat1; newseg.lon2, newseg.lat2]; % New coordinates
+tjidx                          = dsearchn(ncoords, ocoords(tj, :)); % Find closest new node
+p1idx                          = tj <= nos;
+p2idx                          = tj > nos; tj(p2idx) = tj(p2idx) - nos;
+old.lon1(tj(p1idx))            = ncoords(tjidx(p1idx), 1);
+old.lat1(tj(p1idx))            = ncoords(tjidx(p1idx), 2);
+old.lon2(tj(p2idx))            = ncoords(tjidx(p2idx), 1);
+old.lat2(tj(p2idx))            = ncoords(tjidx(p2idx), 2);
+
 % Add new endpoints and default segment properties
 S                              = AddGenericSegment(old, newseg.name, newseg.lon1, newseg.lat1, newseg.lon2, newseg.lat2);
 % Set patch toggles for the new segments
 S.patchFile(so+1:end)          = midx;
 S.patchTog(so+1:end)           = 1;
+
+
+
 
 
 

@@ -856,7 +856,7 @@ switch(option)
       
       % Read in the mesh file and plot
       if strmatch(filenameFull(end-4:end), '.mshp')
-         P = readmshp(filenameFull); % Optional .mshp file containing multiple meshes
+         P = ReadMshp(filenameFull); % Optional .mshp file containing multiple meshes
       else
          P = ReadPatches(filenameFull);
       end
@@ -900,13 +900,19 @@ switch(option)
    % Check segment boundaries
    case 'Seg.modCheckSegsBlock'
       fprintf(GLOBAL.filestream, '%s\n', option);
-      Segment                      = getappdata(gcf, 'Segment');
+      Segment                               = getappdata(gcf, 'Segment');
       if ~isempty(Segment)
-         try
-            [~, ~]  = BlockLabel(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2, Segment.name);
-            htemp                  = msgbox('All segments form closed blocks');
-         catch
-            htemp                  = msgbox('Segments do not form closed blocks!');
+         % Find unique points
+         lonVec                             = [Segment.lon1(:); Segment.lon2(:)];
+         latVec                             = [Segment.lat1(:); Segment.lat2(:)];
+         [uCoord1 uIdx1]                    = unique([lonVec latVec], 'rows', 'first');
+         [uCoord2 uIdx2]                    = unique([lonVec latVec], 'rows', 'last');
+         nOccur                             = uIdx2-uIdx1 + 1;
+
+         if ~isempty(find(nOccur == 1))
+         	htemp                           = msgbox('Segments do not form closed blocks!');
+         else               
+         	htemp                           = msgbox('All segments form closed blocks');
          end
       end
    
@@ -914,16 +920,18 @@ switch(option)
    % Check interior points
    case 'Seg.modCheckIpsBlock'
       fprintf(GLOBAL.filestream, '%s\n', option);
-      Segment                      = getappdata(gcf, 'Segment');
-      Block                        = getappdata(gcf, 'Block');
+      Segment                               = getappdata(gcf, 'Segment');
+      Block                                 = getappdata(gcf, 'Block');
+      [fst.lon, fst.lat]                    = deal(0); % fake station file for passing to BlockLabel
 
       if ~isempty(Segment) && ~isempty(Block)
          try
-            [Segment.eastLabel Segment.westLabel]            = BlockLabel(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2, Segment.name);
-            [Block.associateLabel Block.exteriorBlockLabel]  = BlockAssociate(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2, Segment.westLabel, Segment.eastLabel, Block.interiorLon, Block.interiorLat, Block.name);
-            htemp                  = msgbox(sprintf('Interior points uniquely identify blocks %n blocks', numel(Block.associateLabel)));
+            Segment                         = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
+            [Segment.midLon Segment.midLat] = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
+            [Segment, Block, fst]           = BlockLabel(Segment, Block, fst); % passing Block as the 3rd argument because we might not have a station file
+            htemp                           = msgbox(sprintf('Interior points uniquely identify %d blocks.', numel(Block.associateLabel)));
          catch
-            htemp                  = msgbox('Interior points do not uniquely identify blocks!');
+            htemp                           = msgbox('Interior points do not uniquely identify blocks!');
          end
       end
       

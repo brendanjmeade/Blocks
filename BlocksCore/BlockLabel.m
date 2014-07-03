@@ -28,8 +28,8 @@ allc 								= [segx(:) segy(:) segz(:)];
 [cou, i2]						= unique(allc, 'rows', 'last');
 if isempty(~find(i2-i1, 1))
 	fprintf(1, '*** All blocks are not closed! ***\n');
-else
-	fprintf(1, 'No hanging segments found');
+%else
+	%fprintf(1, 'No hanging segments found');
 end
 
 % Carry out a few operations on all segments
