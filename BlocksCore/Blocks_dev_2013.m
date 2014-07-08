@@ -8,7 +8,7 @@ Station                                          = ProcessStation(Station, Comma
 Sar                                              = ReadSar(Command.sarFileName); % Read SAR file
 Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ReadSegmentTri(Command.segFileName); % Read segment file
-Segment                                          = ProcessSegment(Segment, Command);
+Segment                                          = ProcessSegment_old(Segment, Command);
 if isfield(Command, 'mshpFileName')
 	[Patches, Command]                            = ReadMshp(Command.mshpFileName);
 else
@@ -20,7 +20,7 @@ fprintf('done.\n')
 
 % Assign block labels and put sites on the correct blocks
 fprintf('Labeling blocks...')
-[Segment, Block, Station]                        = BlockLabel(Segment, Block, Station);
+[Segment, Block, Station]                        = BlockLabel_old(Segment, Block, Station);
 Sar                                              = SarBlockLabel(Sar, Block);
 fprintf('...done.\n')
 
