@@ -42,6 +42,7 @@ Command.inversionParam02                              = 0;
 Command.inversionParam03                              = 0;
 Command.inversionParam04                              = 0;
 Command.inversionParam05                              = 0;
+Command.dumpall                                       = 'no';
 
 % Read in commands one line at a time
 while 1
@@ -204,6 +205,10 @@ while 1
 
       case('inversionparam05')
          Command.inversionParam05                     = str2double(value); 
+
+      case('dumpall')
+         Command.dumpall                              = strtrim(value);
+
 
    end   
 end
