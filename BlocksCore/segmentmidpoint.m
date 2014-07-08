@@ -11,3 +11,6 @@ lon(lon > 360) = lon(lon > 360) - 360;
 
 % Correspondinging latitudes
 lat = gclatfind(lon1, lat1, lon2, lat2, lon);
+
+% Correction for N-S segments
+lat(isnan(lat)) = 0.5*(lat1(isnan(lat)) + lat2(isnan(lat)));
