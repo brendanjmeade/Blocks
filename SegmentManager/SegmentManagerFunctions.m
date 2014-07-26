@@ -1124,7 +1124,7 @@ switch(option)
       if exist(filename, 'file')
          filenameFull              = strcat(pwd, '\', filename);
       else
-         [filename, pathname]      = uigetfile({'*.sta.data'}, 'Load station file');
+         [filename, pathname]      = uigetfile({'*.sta;*.sta.data', 'Station file'}, 'Load station file');
          if filename == 0
             return;
             set(ha, 'string', '');

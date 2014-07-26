@@ -33,7 +33,11 @@ if strcmpi(Command.reuseElastic, 'yes')
 
    % Load the accompanying segment, station, and SAR files
    os = ReadSegmentTri(sprintf('%s%sMod.segment', pa, filesep));
-   ost = ReadStation(sprintf('%s%sMod.sta.data', pa, filesep));
+   ost = sprintf('%s%sMod.sta.data', pa, filesep);
+   if ~exist(ost, 'file')
+      ost = sprintf('%s%sMod.sta', pa, filesep);
+   end
+   ost = ReadStation(ost);
    if ~isempty(Sar.x)
       osar = ReadSarPred(sprintf('%s%sSar.pred', pa, filesep));
    else

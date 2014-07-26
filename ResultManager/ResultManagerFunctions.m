@@ -44,22 +44,29 @@ switch(option)
       	plotsegs = DrawSegment(Segment, 'color', 'b', 'tag', 'Segs');
 	  end
 	  
-	  if exist([dirname filesep 'Obs.sta.data']);
-	  	Obs 						= ReadStation([dirname filesep 'Obs.sta.data']);
+	  % Check the extension of station files
+	  osn = dir([dirname filesep 'Obs.sta*']);
+	  [~, ~, ext] = fileparts(osn.name);
+	  if strmatch(ext, '.data')
+	     ext = '.sta.data';
+	  end
+	  
+	  if exist([dirname filesep 'Obs' ext]);
+	  	Obs 						= ReadStation([dirname filesep 'Obs' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Obsv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Mod.sta.data']);
-	  	Mod						= ReadStation([dirname filesep 'Mod.sta.data']);
+	  if exist([dirname filesep 'Mod' ext]);
+	  	Mod						= ReadStation([dirname filesep 'Mod' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Modv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Res.sta.data']);
-	  	Res						= ReadStation([dirname filesep 'Res.sta.data']);
+	  if exist([dirname filesep 'Res' ext]);
+	  	Res						= ReadStation([dirname filesep 'Res' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Resv'), 'enable', 'on');
@@ -69,29 +76,29 @@ switch(option)
 	    end
 	  end
 	  
-	  if exist([dirname filesep 'Rot.sta.data']);
-	  	Rot						= ReadStation([dirname filesep 'Rot.sta.data']);
+	  if exist([dirname filesep 'Rot' ext]);
+	  	Rot						= ReadStation([dirname filesep 'Rot' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Rotv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Def.sta.data']);
-	  	Def						= ReadStation([dirname filesep 'Def.sta.data']);
+	  if exist([dirname filesep 'Def' ext]);
+	  	Def						= ReadStation([dirname filesep 'Def' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Defv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Strain.sta.data']);
-	  	Str						= ReadStation([dirname filesep 'Strain.sta.data']);
+	  if exist([dirname filesep 'Strain' ext]);
+	  	Str						= ReadStation([dirname filesep 'Strain' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Strv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Tri.sta.data']);
-	  	Tri						= ReadStation([dirname filesep 'Tri.sta.data']);
+	  if exist([dirname filesep 'Tri' ext]);
+	  	Tri						= ReadStation([dirname filesep 'Tri' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.Triv'), 'enable', 'on');
@@ -379,22 +386,29 @@ switch(option)
       	plotsegsc = DrawSegment(cSegment, 'color', 'b', 'linestyle', '--', 'tag', 'cSegs');
 	  end
 	  
-	  if exist([dirname filesep 'Obs.sta.data']);
-	  	cObs 						= ReadStation([dirname filesep 'Obs.sta.data']);
+	  % Check the extension of station files
+	  osn = dir([dirname filesep 'Obs.sta*']);
+	  [~, ~, ext] = fileparts(osn.name);
+	  if strmatch(ext, '.data')
+	     ext = '.sta.data';
+	  end
+	  
+	  if exist([dirname filesep 'Obs' ext]);
+	  	cObs 						= ReadStation([dirname filesep 'Obs' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cObsv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Mod.sta.data']);
-	  	cMod						= ReadStation([dirname filesep 'Mod.sta.data']);
+	  if exist([dirname filesep 'Mod' ext]);
+	  	cMod						= ReadStation([dirname filesep 'Mod' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cModv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Res.sta.data']);
-	  	cRes						= ReadStation([dirname filesep 'Res.sta.data']);
+	  if exist([dirname filesep 'Res' ext]);
+	  	cRes						= ReadStation([dirname filesep 'Res' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cResv'), 'enable', 'on');
@@ -408,29 +422,29 @@ switch(option)
 	   end
 	  end
 	  
-	  if exist([dirname filesep 'Rot.sta.data']);
-	  	cRot						= ReadStation([dirname filesep 'Rot.sta.data']);
+	  if exist([dirname filesep 'Rot' ext]);
+	  	cRot						= ReadStation([dirname filesep 'Rot' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cRotv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Def.sta.data']);
-	   cDef						= ReadStation([dirname filesep 'Def.sta.data']);
+	  if exist([dirname filesep 'Def' ext]);
+	   cDef						= ReadStation([dirname filesep 'Def' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cDefv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Strain.sta.data']);
-	  	cStr						= ReadStation([dirname filesep 'Strain.sta.data']);
+	  if exist([dirname filesep 'Strain' ext]);
+	  	cStr						= ReadStation([dirname filesep 'Strain' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cStrv'), 'enable', 'on');
 	  end
 	  
-	  if exist([dirname filesep 'Tri.sta.data']);
-	  	cTri						= ReadStation([dirname filesep 'Tri.sta.data']);
+	  if exist([dirname filesep 'Tri' ext]);
+	  	cTri						= ReadStation([dirname filesep 'Tri' ext]);
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
 	  	set(findobj(gcf, '-regexp', 'tag', 'Rst.cTriv'), 'enable', 'on');
