@@ -32,30 +32,33 @@ function p = PatchCoords(p);
 %          .zc   : depth of element centroid
 %
 
-p.lon1                 = p.c(p.v(:, 1), 1);
-p.lat1                 = p.c(p.v(:, 1), 2);
-p.z1                   = p.c(p.v(:, 1), 3);
-p.lon2                 = p.c(p.v(:, 2), 1);
-p.lat2                 = p.c(p.v(:, 2), 2);
-p.z2                   = p.c(p.v(:, 2), 3);
-p.lon3                 = p.c(p.v(:, 3), 1);
-p.lat3                 = p.c(p.v(:, 3), 2);
-p.z3                   = p.c(p.v(:, 3), 3);
-[p.lonc, p.latc, p.zc] = centroid3([p.lon1 p.lon2 p.lon3],...
-                                   [p.lat1 p.lat2 p.lat3],...
-                                   [p.z1 p.z2 p.z3]);
-[p.x1, p.y1, dep]      = long_lat_to_xyz(deg_to_rad(p.lon1), deg_to_rad(p.lat1));
-[p.x2, p.y2, dep]      = long_lat_to_xyz(deg_to_rad(p.lon2), deg_to_rad(p.lat2));
-[p.x3, p.y3, dep]      = long_lat_to_xyz(deg_to_rad(p.lon3), deg_to_rad(p.lat3));
-[p.xc, p.yc]           = centroid3([p.x1 p.x2 p.x3],...
-                                   [p.y1 p.y2 p.y3],...
-                                   [p.z1 p.z2 p.z3]);
-z1r                    = 1+p.z1./6371;
-z2r                    = 1+p.z2./6371;
-z3r                    = 1+p.z3./6371;
-nv                     = cross([deg2rad(p.lon2-p.lon1), deg2rad(p.lat2-p.lat1), z2r-z1r], [deg2rad(p.lon3-p.lon1), deg2rad(p.lat3-p.lat1), z3r-z1r], 2);
+p.lon1                    = p.c(p.v(:, 1), 1);
+p.lat1                    = p.c(p.v(:, 1), 2);
+p.z1                      = p.c(p.v(:, 1), 3);
+p.lon2                    = p.c(p.v(:, 2), 1);
+p.lat2                    = p.c(p.v(:, 2), 2);
+p.z2                      = p.c(p.v(:, 2), 3);
+p.lon3                    = p.c(p.v(:, 3), 1);
+p.lat3                    = p.c(p.v(:, 3), 2);
+p.z3                      = p.c(p.v(:, 3), 3);
+[p.lonc, p.latc, p.zc]    = centroid3([p.lon1 p.lon2 p.lon3],...
+                                      [p.lat1 p.lat2 p.lat3],...
+                                      [p.z1 p.z2 p.z3]);
+[p.x1, p.y1, dep]         = long_lat_to_xyz(deg_to_rad(p.lon1), deg_to_rad(p.lat1));
+[p.x2, p.y2, dep]         = long_lat_to_xyz(deg_to_rad(p.lon2), deg_to_rad(p.lat2));
+[p.x3, p.y3, dep]         = long_lat_to_xyz(deg_to_rad(p.lon3), deg_to_rad(p.lat3));
+[p.xc, p.yc]              = centroid3([p.x1 p.x2 p.x3],...
+                                      [p.y1 p.y2 p.y3],...
+                                      [p.z1 p.z2 p.z3]);
+z1r                       = 1+p.z1./6371;
+z2r                       = 1+p.z2./6371;
+z3r                       = 1+p.z3./6371;
+nv                        = cross([deg2rad(p.lon2-p.lon1), deg2rad(p.lat2-p.lat1), z2r-z1r], [deg2rad(p.lon3-p.lon1), deg2rad(p.lat3-p.lat1), z3r-z1r], 2);
 % Enforce clockwise circulation
-nv(nv(:, 3) < 0, :)    = -nv(nv(:, 3) < 0, :);
-[s, d]                 = cart2sph(nv(:, 1), nv(:, 2), nv(:, 3));
-p.strike               = wrapTo360(-rad2deg(s));
-p.dip                  = 90 - rad2deg(d);
+nv(nv(:, 3) < 0, :)       = -nv(nv(:, 3) < 0, :);
+[s, d]                    = cart2sph(nv(:, 1), nv(:, 2), nv(:, 3));
+p.strike                  = wrapTo360(-rad2deg(s));
+p.dip                     = 90 - rad2deg(d);
+p.tz                      = zeros(size(p.dip));
+p.tz(abs(p.dip - 90) > 1) = 2;
+p.tz(p.tz == 0)           = 3;

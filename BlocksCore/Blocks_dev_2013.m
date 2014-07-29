@@ -8,12 +8,12 @@ Station                                          = ProcessStation(Station, Comma
 Sar                                              = ReadSar(Command.sarFileName); % Read SAR file
 Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ReadSegmentTri(Command.segFileName); % Read segment file
-Segment                                          = ProcessSegment(Segment, Command);
 if isfield(Command, 'mshpFileName')
-	[Patches, Command]                            = ReadMshp(Command.mshpFileName);
+	[Patches, Command]                            = ReadMshp(Command.mshpFileName, Command);
 else
    Patches                                       = ReadPatches(Command.patchFileNames);
 end   
+Segment                                          = ProcessSegment(Segment, Command);
 [Patches, Command]                               = ProcessPatches(Patches, Command, Segment);
 Block                                            = ReadBlock(Command.blockFileName); % Read block file
 fprintf('done.\n')
@@ -22,7 +22,7 @@ fprintf('done.\n')
 fprintf('Labeling blocks...')
 [Segment, Block, Station]                        = BlockLabel(Segment, Block, Station);
 Sar                                              = SarBlockLabel(Sar, Block);
-fprintf('...done.\n')
+fprintf('done.\n')
 
 % Merge GPS station and SAR velocities and uncertainties so that all observation locations can be used in partials calculations
 [Data, Sigma, Index]                             = MergeStaSar(Station, Sar);  
@@ -108,10 +108,10 @@ fprintf('\n  Assembling design matrix, data vector, and weighting matrix...')
 fprintf('done.\n')
 
 % Estimate rotation vectors, triangular slip rates, and strain tensors
-fprintf('Doing the inversion...\n')
+fprintf('Doing the inversion...')
 Model.covariance                                 = (R'*W*R)\eye(size(R, 2));
 Model.omegaEst                                   = Model.covariance*R'*W*d;
-fprintf('done.')
+fprintf('done.\n')
 
 % Extract different parts of the state vector
 fprintf('Calculating model results...')

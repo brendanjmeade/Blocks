@@ -73,7 +73,7 @@ switch(option)
 
       % Process the .msh files...only works for one right now
       P = ReadPatches(Command.patchFileNames);
-      h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black');
+      h = patch('Vertices', P.c, 'faces', P.v, 'facecolor', 'g', 'edgecolor', 'black', 'Tag', 'Patch');
       if ~isempty(Command.patchFileNames)
          set(findobj(gcf, 'tag', 'Seg.dispCheckMesh'), 'enable', 'on', 'value', 1);
       end
@@ -301,6 +301,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      setappdata(gcf, 'Segment', Segment);
       set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
       
       % Find the segments that are inside a clickable box
@@ -322,6 +323,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      setappdata(gcf, 'Segment', Segment);
 	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
@@ -374,6 +376,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      setappdata(gcf, 'Segment', Segment);
 		set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 		
       if ~isempty(Segment)         
@@ -399,6 +402,7 @@ switch(option)
       % Calculate segment midpoints here, assuming they'll be needed in the future
       Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
       Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      setappdata(gcf, 'Segment', Segment);
 	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
@@ -1611,7 +1615,7 @@ fclose(fileStream);
 
 function Station = PlotSta(filename)
 % PlotSta
-Station         = GetVelStruct(filename);
+Station         = ReadStation(filename);
 on 				 = find(Station.tog);
 plot(Station.lon(on), Station.lat(on), 'bo', 'color', [0 0 1], 'MarkerSize', 2, 'MarkerFaceColor', 'b', 'Tag', 'staAll');
 

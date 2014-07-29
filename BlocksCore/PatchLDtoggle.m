@@ -14,7 +14,11 @@ function lockingDepths = PatchLDtoggle(lockingDepths, patchFiles, patchToggles, 
 %
 
 % Check the number of files that are included
-npf                   = ~isempty(patchNames) + length(regexp(patchNames, '\s\S'));
+if size(patchNames, 1) == 1
+   npf                = ~isempty(patchNames) + length(regexp(patchNames, '\s\S'));
+else
+   npf                = size(patchNames, 1);
+end
 
 % find the segments actively associated with a patch file
 i                     = intersect(find(patchFiles), find(patchToggles == 1));

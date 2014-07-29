@@ -44,6 +44,7 @@ if numel(filenames) > 0
       negp                       = find(crossd(:, 3) < 0);
       [v(negp, 2), v(negp, 3)]   = swap(v(negp, 2), v(negp, 3));
       Patches.v                  = [Patches.v; v + sum(size(Patches.c, 1))];
+      c                          = [str2num(num2str(c(:, 1), '%3.3f')), str2num(num2str(c(:, 2), '%3.3f')), str2num(num2str(c(:, 3), '%3.3f'))]; % Consistent with precision of station, segment files. We need a consistent precision when checking for existing kernels
       Patches.c                  = [Patches.c; c];
       Patches.nEl                = [Patches.nEl; size(v, 1)];
       Patches.nc                 = [Patches.nc; size(c, 1)];

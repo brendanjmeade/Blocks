@@ -1,4 +1,4 @@
-function [p, pp] = readmshp(file, command)
+function [p, pp] = readmshp(file, pp)
 % readmshp  Reads a mesh property file. 
 %   [P, PP] = readmshp(FILE) reads mesh names and properties from the 
 %   specified FILE. The .mshp file contains groups of 3 lines and
@@ -22,9 +22,10 @@ function [p, pp] = readmshp(file, command)
 % Read file contents
 fid = fopen(file, 'r');
 c = textscan(fid, '%s\n%f\n%f%f%f\n%s\n');
+pp.patchFileNames = char(c{1});
 
 % Read patches
-p = ReadPatches(char(c{1}));
+p = ReadPatches(pp.patchFileNames);
 
 % Define mesh properties
 if exist('command', 'var')

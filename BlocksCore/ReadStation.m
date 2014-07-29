@@ -28,6 +28,9 @@ end
 [Station.lon, Station.lat, Station.eastVel, Station.northVel, ...
  Station.eastSig, Station.northSig, Station.corr, ...
  Station.other1, Station.tog, Station.name]                          = textread(fileName, '%f%f%f%f%f%f%f%d%d%s');
+% Convert station coordinates to 3 decimal places. This is consistent with how results are written
+Station.lon                                                          = str2num(num2str(Station.lon, '%3.3f'));
+Station.lat                                                          = str2num(num2str(Station.lat, '%3.3f'));
 Station.name                                                         = char(Station.name);
 
 % Add fields to Station to deal that are not included in a .sta.data file

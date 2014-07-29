@@ -20,7 +20,7 @@ function Sar = ReadSar(sarfile)
 if ~isempty(sarfile)
    [p, n, e] = fileparts(sarfile);
 
-   if e == '.mat'
+   if strmatch(e, '.mat')
       load(sarfile)
    else
       fid = fopen(sarfile, 'r');

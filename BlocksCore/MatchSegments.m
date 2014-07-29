@@ -27,6 +27,7 @@ n2                      = numel(s2.lon1);
 % find matched characteristics
 [match, m1, m2]         = intersect([s1.lon1(:), s1.lon2(:), s1.lat1(:), s1.lat2(:), s1.lDep(:), s1.bDep(:), s1.dip(:)], ...
                                     [s2.lon1(:), s2.lon2(:), s2.lat1(:), s2.lat2(:), s2.lDep(:), s2.bDep(:), s2.dip(:)], 'rows');
+
 match                   = [m1 m2];         
 unique1                 = setdiff(1:n1, m1);
 unique2                 = setdiff(1:n2, m2);

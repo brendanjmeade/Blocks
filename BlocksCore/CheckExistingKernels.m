@@ -46,13 +46,13 @@ if strcmpi(Command.reuseElastic, 'yes')
 
    % Compare station coordinates for segmentSegment...
    % *nio refers to the index of the new stations in the old
-   [~, stnio] = ismember([Data.lon(1:Data.nSta) Data.lat(1:Data.nSta)], [ost.lon ost.lat], 'rows');
+   [stniotf, stnio] = ismember([Data.lon(1:Data.nSta) Data.lat(1:Data.nSta)], [ost.lon ost.lat], 'rows');
    stnio3 = stack3([3*stnio(:)-2 3*stnio(:)-1 3*stnio(:)]);
-   [~, sarnio] = ismember([Sar.lon, Sar.lat], [osar.lon, osar.lat], 'rows');
-   
+   [sarniotf, sarnio] = ismember([Sar.lon, Sar.lat], [osar.lon, osar.lat], 'rows');
+
    % If there are no new stations, match the old segments to new
-   if sum(stnio == 0) + sum(sarnio == 0) == 0 
-      [match, ~, un2] = MatchSegments(os, Segment);
+   if (sum(~stniotf) == 0) + (sum(~sarniotf) == 0) == 2 
+      [match, un1, un2] = MatchSegments(os, Segment);
    end
 
    % Independent check for triangles because a mismatch in number of triangles usually means total remeshing
@@ -60,8 +60,8 @@ if strcmpi(Command.reuseElastic, 'yes')
       [op.c, op.v] = PatchData(sprintf('%s%sMod.patch', pa, filesep)); % Load the old patch data
       op.nc = size(op.c, 1); op.nEl = size(op.v, 1);
       op = PatchCoords(op);
-      if sum(stnio == 0) + sum(sarnio == 0) == 0 % If the numbers of coordinates and stations are equal,
-         [~, tnio] = ismember([Patches.lonc, Patches.latc, Patches.zc], [op.lonc op.latc op.zc], 'rows'); % This requires centroid coordinates to be identical; gives the new elements' indices in old
+      if (sum(~stniotf) == 0) + (sum(~sarniotf) == 0) == 2 % If the numbers of coordinates and stations are equal,
+         [tniotf, tnio] = ismember([Patches.lonc, Patches.latc, Patches.zc], [op.lonc op.latc op.zc], 'rows'); % This requires centroid coordinates to be identical; gives the new elements' indices in old
          tric = logical(sum(tnio) == 0); % Set tri. calc to false so that we'll reuse triangles, but we'll check later to get any new triangles
       end
    else
@@ -72,7 +72,7 @@ if strcmpi(Command.reuseElastic, 'yes')
    if ~isempty(match) % Match has been calculated, which means that at least the size of the partials is the same
       load(Command.reuseElasticFile, 'elastic'); % Load the elastic partials for GPS stations
       load(Command.reuseElasticFile, 'selastic'); % Load the elastic partials for SAR coordinates
-      if ~isequal(match(:, 1), match(:, 2)) % there are unique values, need to modify the elastic partials
+      if length(un1) + length(un2) > 0 % there are unique values, need to modify the elastic partials
          Partials.elastic = NaN(3*Data.nSta, 3*numel(Segment.lon1));
          Partials.selastic = NaN(Data.nSar, 3*numel(Segment.lon1));
          fullIdx1 = ([3*match(:, 1)-2; 3*match(:, 1)-1; 3*match(:, 1)]);
@@ -117,12 +117,12 @@ if strcmpi(Command.reuseElastic, 'yes')
       tnio3 = stack3([3*tnio(:)-2 3*tnio(:)-1 3*tnio(:)]);
       load(Command.reuseElasticFile, 'tri');
       load(Command.reuseElasticFile, 'stri');
-      if numel(tnio) < op.nEl
+      if numel(tnio) < sum(op.nEl)
          fprintf('\n  Extracting subset of existing triangular kernels...');
          % Place existing partials
          Partials.tri = tri(stnio3, tnio3);
          Partials.stri = stri(sarnio, tnio3);
-      elseif numel(tnio) == op.nEl
+      elseif numel(tnio) == sum(op.nEl)
          fprintf('\n  Using existing triangular kernels...');
          % Place existing partials
          Partials.tri = tri(stnio3, tnio3);
@@ -149,3 +149,4 @@ if strcmpi(Command.reuseElastic, 'yes')
       end
    end
 end
+fprintf('\n');

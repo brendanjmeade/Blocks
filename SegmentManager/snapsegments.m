@@ -50,10 +50,13 @@ coords                         = [lons(:) lats(:)];
 [~, ucInd1]                    = unique(coords, 'rows', 'first');
 [uc, ucInd2]                   = unique(coords, 'rows', 'last');
 % Dangling segments are those where the unique occurrence is in the same place
-[endsegs, endcol]              = ismember(coords, uc(ucInd1 == ucInd2, :), 'rows');
+endsegs                        = ismember(coords, uc(ucInd1 == ucInd2, :), 'rows');
+endcol                         = endsegs;
 endsegs                        = find(endsegs);
 endsegs(endsegs > length(sel)) = endsegs(endsegs > length(sel)) - length(sel);
-endcol                         = endcol(endcol > 0); % Tells whether the hanging point is endpoint 1 or 2
+endcol                         = find(endcol);
+endcol(endcol <= length(sel))  = 1;
+endcol(endcol > length(sel))   = 2;
 lons                           = reshape(lons, length(sel), 2);
 lats                           = reshape(lats, length(sel), 2);
 
@@ -95,8 +98,8 @@ newseg.lon1(2)                 = lons(endsegs(2), endcol(2));
 
 % Remaining new segments are the mesh edges
 % Need to check the ordering of nodes
-if abs(c1 - c2) == 1 % If opposite ends of mesh are actually ordered adjacent
-   updip = updip([2:end, 1]);
+if abs(c2 - c1) == 1 % If opposite ends of mesh are actually ordered adjacent
+   updip = updip([end, 1:end-1]);
 end
 newseg.lon1(3:end)             = p.c(updip(1:end-1), 1);
 newseg.lat1(3:end)             = p.c(updip(1:end-1), 2);

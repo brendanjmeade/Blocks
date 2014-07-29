@@ -1,4 +1,4 @@
-function [mmag, tarea] = couprelease(p, coup, area, incr, wcscale, subset)
+function [mmag, clus, alldis] = couprelease(p, coup, area, incr, wcscale, filebase)
 % couprelease   Earthquake magnitude releasing coupling fraction.
 %   couprelease(P, COUP, AREA, INCR) calculates the earthquake magnitude
 %   necessary to release coupling accumulated within the areas with
@@ -33,22 +33,29 @@ id = mean(diff(incr));
 
 % Allocate space for total area
 tarea = NaN(sum(p.nEl), length(incr));
+alldis = tarea;
 
 % For each coupling fraction,
 for i = 1:length(incr)
    % Find the elements that are coupled at least as much as this increment (with a small correction)
    coupinc = coup >= incr(i)-2*(id/10);
-   incr(i)
    % Determine how many clusters comprise this increment
-   clus = meshclusters(p, coupinc);
+   [clus, dis] = meshclusters(p, coupinc);
+   if exist('filebase', 'var')
+      file = sprintf('%sp%g.xy', filebase, 10*incr(i));
+      writegmtclusters(p, area, clus, file, wcscale)
+   end
    % Loop through clusters to define individual events
    for j = 1:length(clus)
       % Multiply binary array by element area and sum to give total area
       tarea(j, i) = sum(area(clus{j}));
+      alldis(1:numel(dis), i) = dis(:);
    end
 end
 % Trim unused rows
 tarea(sum(isnan(tarea), 2) == length(incr), :) = [];
+alldis(sum(isnan(alldis), 2) == length(incr), :) = [];
+numeq = sum(~isnan(tarea), 1);
 
 % Multiply total area by Wells and Coppersmith (1994) scaling parameters to give M_W
 
@@ -80,26 +87,121 @@ else
 end
 % Convert area to moment magnitude
 mmag = a + b*log10(tarea);
-mmag(mmag < 7.0) = NaN;
+minmag = 6.0;
+smalleq = mmag < minmag;
+% Set distances referring to the small earthquakes equal to zero
+[r, c] = find(smalleq);
+Alldis = NaN*alldis;
+
+if ~isempty(Alldis)
+	for i = 1:length(incr)
+		% Find the row numbers corresponding to small earthquakes at this increment
+		sminc = find(c == i);
+		% Reshape distance array from column vector to a matrix
+		tempdis = reshape(alldis(1:numeq(i).^2, i), numeq(i), numeq(i));
+		% Wipe out the small earthquake rows and columns
+		tempdis(sminc, :) = [];
+		tempdis(:, sminc) = [];
+		% Reshape back to column vector
+		tempdis = tempdis(:); tempdis = sort(tempdis(tempdis > 0));
+		% Reduce to nearly unique values
+		dtempdis = diff([sort(tempdis); 1e20]);
+		tempdis = tempdis(dtempdis > 1e-4);
+		Alldis(1:length(tempdis), i) = tempdis;
+	end
+else
+   Alldis = NaN(0, length(incr));
+end
+Alldis(sum(isnan(Alldis), 2) == length(incr), :) = [];
+   
+% And set the magnitudes equal to NaN
+mmag(smalleq) = NaN;
+[mmag, si] = sort(mmag, 1, 'ascend');
 merr = aunc + bunc*log10(tarea);
+si = repmat(size(mmag, 1)*(0:size(mmag, 2)-1), size(mmag, 1), 1) + si;
+merr = merr(si);
+
+
 
 % Make a plot
-figure
-% Define min. and max. range for each increment value
-minv = min(mmag-merr, [], 1);
-maxv = max(mmag+merr, [], 1);
-range = patch([incr(:); flipud(incr(:))], [minv(:); flipud(maxv(:))], 0.75*[1 1 1]);
-set(range, 'edgecolor', 'none');
-hold on
-if ~exist('subset', 'var')
-   subset = 1:length(incr);
+% Make a coupling vs. magnitude plot
+figure('Position', [0 0 600 300]);
+hold on;
+
+for i = 1:2:numel(incr) % Draw some pretty fill to differentiate coupling values
+    xfill = [-0.05 0.05 0.05 -0.05] + incr(i);
+    yfill = [0 0 10 10];
+    fh = fill(xfill, yfill, 'y');
+    set(fh, 'edgeColor', 'none', 'FaceColor', 0.75*[1 1 1]);
 end
-plot(incr(:, subset), mmag(:, subset), '.w', 'markersize', 25, 'markeredgecolor', 'k');
-axis([minmax(incr) 7.0 9.5]);
+
+Xvec = [];
+Yvec = [];
+Xerr = [];
+Yerr = [];
+Colo = [];
+% Cycle through the increments and draw events with uncertainties
+for i = 1:numel(incr)
+   nrup = sum(~isnan(mmag(:, i)));
+   space = 0.1./(nrup+1);
+   xvec = 0:space:0.1; xvec = xvec(2:end-1) - 0.05 + incr(i);
+   [yvec, si] = sort(mmag(1:nrup, i), 1, 'descend');
+   xerr = repmat(xvec, 2, 1);
+   yerr = [mmag(1:nrup, i)' + merr(1:nrup, i)'; mmag(1:nrup, i)' - merr(1:nrup, i)'];
+   yerr = yerr(:, si);
+   Xvec = [Xvec; xvec'];
+   Yvec = [Yvec; yvec];
+   Xerr = [Xerr, xerr];
+   Yerr = [Yerr, yerr];
+   Colo = [Colo; incr(i)*ones(size(xvec'))];
+end
+lin = line(Xerr, Yerr, 'color', 'k', 'linewidth', 2);
+sca = scatter(Xvec, Yvec, 75, Colo, 'filled', 'markeredgecolor', 'k', 'linewidth', 2);
+caxis([0 1]); colormap(flipud(hot));
+axis([0.05 1.05 max([minmag 6]) 9.5]);
+set(gca, 'xtick', 0.1:0.1:1, 'ytick', 6:0.5:9.5);
 set(gca, 'xticklabel', num2str((0.1:0.1:1)', '%.1f'))
-set(gca, 'yticklabel', num2str((7:0.5:9.5)', '%.1f'))
+set(gca, 'yticklabel', num2str((6:0.5:9.5)', '%.1f'))
 prepfigprint
 xlabel('Coupling fraction', 'fontsize', 12)
 ylabel('M_W', 'fontsize', 12)
+set(lin, 'linewidth', 2);
+set(sca, 'linewidth', 2);
 
+% Make a coupling vs. distance plot
+figure('Position', [0 0 600 300]);
+hold on;
+
+for i = 1:2:numel(incr) % Draw some pretty fill to differentiate coupling values
+    xfill = [-0.05 0.05 0.05 -0.05] + incr(i);
+    yfill = [0 0 1000 1000];
+    fh = fill(xfill, yfill, 'y');
+    set(fh, 'edgeColor', 'none', 'FaceColor', 0.75*[1 1 1]);
+end
+
+Xvec = [];
+Yvec = [];
+Colo = [];
+% Cycle through the increments and draw events with uncertainties
+for i = 1:numel(incr)
+   nrup = sum(~isnan(Alldis(:, i)));
+   if nrup > 0
+		space = 0.1./(nrup+1);
+		xvec = 0:space:0.1; xvec = xvec(2:end-1) - 0.05 + incr(i);
+		[yvec, si] = sort(Alldis(1:nrup, i), 1, 'descend');
+      Xvec = [Xvec; xvec'];
+      Yvec = [Yvec; yvec];
+		Colo = [Colo; incr(i)*ones(size(xvec'))];
+   end
+end
+sca = scatter(Xvec, Yvec, 75, Colo, 'filled', 'markeredgecolor', 'k', 'linewidth', 2);
+caxis([0 1]); colormap(flipud(hot));
+% axis([0.05 1.05 max([minmag 6]) 9.5]);
+set(gca, 'xtick', 0.1:0.1:1, 'ytick', 6:0.5:9.5);
+set(gca, 'xticklabel', num2str((0.1:0.1:1)', '%.1f'))
+% set(gca, 'yticklabel', num2str((6:0.5:9.5)', '%.1f'))
+prepfigprint
+xlabel('Coupling fraction', 'fontsize', 12)
+ylabel('Separation distance (km)', 'fontsize', 12)
+set(sca, 'linewidth', 2);
 
