@@ -1,4 +1,4 @@
-Segment file name: ./japan_new380.segment
+Segment file name: ./japan_new380_adjusted.segment
 Station file name: ./All_in_Apel2006_RF_trim_Tog_Tog.sta.data
 Block file name: ./japan_new181.block
 Reuse old elastic kernel: no
