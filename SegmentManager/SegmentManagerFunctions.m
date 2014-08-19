@@ -38,12 +38,14 @@ switch(option)
       end
       
       % Read in the command file
-      Command                      = ReadCommand(filenameFull)
+      Command                      = ReadCommand(filenameFull);
 
       % Process .segment file
       ha                           = findobj(gcf, 'Tag', 'Seg.loadEdit');
       set(ha, 'string', Command.segFileName);
       Segment                      = ReadSegmentTri(Command.segFileName);
+      Segment.midLon               = 0.5*(Segment.lon1 + Segment.lon2);
+      Segment.midLat               = 0.5*(Segment.lat1 + Segment.lat2);
       setappdata(gcf, 'Segment', Segment);
       SegmentManagerFunctions('DrawSegments');
       set(findobj(gcf, 'Tag', 'Seg.modSegList'), 'string', cellstr(strvcat('< none >', 'Multiple', Segment.name)));
@@ -103,7 +105,9 @@ switch(option)
       
       % Read in the segment file
       Segment                      = ReadSegmentTri(filenameFull);
-
+      Segment.midLon               = 0.5*(Segment.lon1 + Segment.lon2);
+      Segment.midLat               = 0.5*(Segment.lat1 + Segment.lat2);
+      
       setappdata(gcf, 'Segment', Segment);
       
       % Plot segments file
@@ -299,8 +303,8 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       Segment                      = getappdata(gcf, 'Segment');
       % Calculate segment midpoints here, assuming they'll be needed in the future
-      Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
-      Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      Segment.midLon               = (Segment.lon1 + Segment.lon2)/2;
+      Segment.midLat               = (Segment.lat1 + Segment.lat2)/2;
       setappdata(gcf, 'Segment', Segment);
       set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
       
@@ -309,7 +313,7 @@ switch(option)
       segRange                     = GetRangeRbbox(getappdata(gcf, 'Range'));
       segPolyX                     = [min(segRange.lon) max(segRange.lon) max(segRange.lon) min(segRange.lon)];
       segPolyY                     = [min(segRange.lat) min(segRange.lat) max(segRange.lat) max(segRange.lat)];
-      segIdx                       = find(inpolygon(Segment.midlon, Segment.midlat, segPolyX, segPolyY) == 1);
+      segIdx                       = find(inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY) == 1);
       for i = 1:numel(segIdx)
          fprintf(GLOBAL.filestream, '%s\n', Segment.name(segIdx(i), :));
          set(findobj('Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
@@ -321,11 +325,11 @@ switch(option)
       Segment                      = getappdata(gcf, 'Segment');  		
       Range 					   = getappdata(gcf, 'Range');
       % Calculate segment midpoints here, assuming they'll be needed in the future
-      Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
-      Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      Segment.midLon               = (Segment.lon1 + Segment.lon2)/2;
+      Segment.midLat               = (Segment.lat1 + Segment.lat2)/2;
       setappdata(gcf, 'Segment', Segment);
 	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
-	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
+	   mp = plot(Segment.midLon, Segment.midLat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
       segIdx							  = myselectdata('sel', 'lasso', 'ignore', mp);
       for i = 1:numel(segIdx)
@@ -374,8 +378,8 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       Segment                      = getappdata(gcf, 'Segment');
       % Calculate segment midpoints here, assuming they'll be needed in the future
-      Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
-      Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      Segment.midLon               = (Segment.lon1 + Segment.lon2)/2;
+      Segment.midLat               = (Segment.lat1 + Segment.lat2)/2;
       setappdata(gcf, 'Segment', Segment);
 		set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
 		
@@ -384,7 +388,7 @@ switch(option)
          segRange                     = GetRangeRbbox(getappdata(gcf, 'Range'));
          segPolyX                     = [min(segRange.lon) max(segRange.lon) max(segRange.lon) min(segRange.lon)];
          segPolyY                     = [min(segRange.lat) min(segRange.lat) max(segRange.lat) max(segRange.lat)];
-         segIdx                       = find(inpolygon(Segment.midlon, Segment.midlat, segPolyX, segPolyY) == 1);
+         segIdx                       = find(inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY) == 1);
          for i = 1:numel(segIdx)
             fprintf(GLOBAL.filestream, 'Deleting %s\n', Segment.name(segIdx(i), :));
             set(findobj('Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
@@ -400,11 +404,11 @@ switch(option)
       Segment                      = getappdata(gcf, 'Segment');  		
       Range 					   = getappdata(gcf, 'Range');
       % Calculate segment midpoints here, assuming they'll be needed in the future
-      Segment.midlon               = (Segment.lon1 + Segment.lon2)/2;
-      Segment.midlat               = (Segment.lat1 + Segment.lat2)/2;
+      Segment.midLon               = (Segment.lon1 + Segment.lon2)/2;
+      Segment.midLat               = (Segment.lat1 + Segment.lat2)/2;
       setappdata(gcf, 'Segment', Segment);
 	   set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
-	   mp = plot(Segment.midlon, Segment.midlat, '.', 'visible', 'off');
+	   mp = plot(Segment.midLon, Segment.midLat, '.', 'visible', 'off');
       %ignore = setdiff(get(gca, 'children'), mp);
       segIdx							  = myselectdata('sel', 'lasso', 'ignore', mp);
       for i = 1:numel(segIdx)
@@ -926,18 +930,52 @@ switch(option)
       fprintf(GLOBAL.filestream, '%s\n', option);
       Segment                               = getappdata(gcf, 'Segment');
       Block                                 = getappdata(gcf, 'Block');
-      [fst.lon, fst.lat]                    = deal(0); % fake station file for passing to BlockLabel
-
+      Station                               = getappdata(gcf, 'Station');                      
+      % Check to see if the station structure really exists
+      if ~isempty(Station)
+         % If so, just extract the toggled on stations
+         Station                            = structsubset(Station, logical(Station.tog));
+      else
+         % If not, make a fake station file
+         [Station.lon, Station.lat]         = deal(0); % fake station file for passing to BlockLabel
+      end
+      
       if ~isempty(Segment) && ~isempty(Block)
-         try
+          try
             Segment                         = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
             [Segment.midLon Segment.midLat] = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
-            [Segment, Block, fst]           = BlockLabel(Segment, Block, fst); % passing Block as the 3rd argument because we might not have a station file
-            htemp                           = msgbox(sprintf('Interior points uniquely identify %d blocks.', numel(Block.associateLabel)));
+            [Segment, Block, Station]       = BlockLabel(Segment, Block, Station); % passing true station file or fake station file, if no real station file is loaded
+            % If BlockLabel was successful, check for any blocks lacking stations
+            ub                              = unique(Station.blockLabel);
+            emptyBlocks                     = setdiff(1:length(Block.interiorLon), ub);
+            if ~isempty(emptyBlocks) & sum(abs(Station.lon)) ~= 0 % Need this second condition for the case when we haven't loaded a segment file but still want to check IPs
+               for i = 1:length(emptyBlocks)
+                  eb(i)                     = plot(Block.orderLon{emptyBlocks(i)}, Block.orderLat{emptyBlocks(i)}, 'color', 'r', 'linewidth', 3);
+               end
+               legend(eb(1), 'Blocks containing no stations', 'location', 'southeast')
+               setappdata(gcf, 'emptyBlocks', eb);
+            end
+            if numel(Block.orderLon) == numel(Block.interiorLon)
+               htemp                        = msgbox(sprintf('Interior points uniquely identify %d blocks.', numel(Block.associateLabel)));
+            else
+               noIntPt                      = setdiff(1:numel(Block.orderLon), unique(Block.associateLabel))
+               for i = 1:length(noip)
+                  ni(i)                     = plot(Block.orderLon{noIntPt(i)}, Block.orderLat{noIntPt(i)}, 'color', 'c', 'linewidth', 3, 'linestyle', '--');
+                  setappdata(gcf, 'noIntPt', ni);
+               end
+               if exist('eb', 'var')
+                  legend([eb(1); ni(1)], 'Blocks containing no stations', 'Blocks lacking an interior point', 'location', 'southeast')
+               else
+                  legend(ni(1), 'Blocks lacking an interior point', 'location', 'southeast')
+               end
+               htemp                        = msgbox('Interior points do not uniquely identify blocks!');
+            end
          catch
             htemp                           = msgbox('Interior points do not uniquely identify blocks!');
          end
       end
+      
+      
       
       
    % Check for problematic segments
@@ -959,7 +997,17 @@ switch(option)
 		hg = findobj(gcf, 'tag', 'hang');
 		if ~isempty(hg)
 			delete(hg)
-        end
+      end
+      eb = getappdata(gcf, 'emptyBlocks');
+      if ~isempty(eb)
+         delete(eb)
+         setappdata(gcf, 'emptyBlocks', []);
+      end
+      ni = getappdata(gcf, 'noIntPt');
+      if ~isempty(ni)
+         delete(ni)
+         setappdata(gcf, 'noIntPt', []);
+      end
 
         
 % Start Display Commands

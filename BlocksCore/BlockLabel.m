@@ -202,8 +202,8 @@ for i = 1:nblock
    end
 
    % Add ordered polygons to the blocks structure
-   b.orderLon{i} = bco;
-   b.orderLat{i} = bca;
+   b.orderLon{i} = [bco(:); bco(1)];
+   b.orderLat{i} = [bca(:); bca(1)];
 
    
 end

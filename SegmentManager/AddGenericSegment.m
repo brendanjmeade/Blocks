@@ -7,8 +7,8 @@ Segment.lat1          = [Segment.lat1 ; lat1];
 Segment.lon2          = [Segment.lon2 ; lon2];
 Segment.lat2          = [Segment.lat2 ; lat2];
 
-Segment.midlon        = [Segment.midlon; 0.5*(lon1 + lon2)];
-Segment.midlat        = [Segment.midlat; 0.5*(lat1 + lat2)];
+Segment.midLon        = [Segment.midLon; 0.5*(lon1 + lon2)];
+Segment.midLat        = [Segment.midLat; 0.5*(lat1 + lat2)];
 
 ba                    = ones(size(lon1)); % Blank array for propagating through all properties
 
