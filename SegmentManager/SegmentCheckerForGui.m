@@ -25,11 +25,11 @@ end
 
 % Show vertical segments
 hvec = union(find(avec == 0), find(avec == 180));
-set(h(hvec), 'color', 'r');
+set(h(hvec), 'color', 'r', 'linewidth', 6);
 
 % Show horizontal segments
 hvec = union(find(avec == 90), find(avec == 270));
-set(h(hvec), 'color', 'r');
+set(h(hvec), 'color', 'r', 'linewidth', 6);
 
 hv = findobj('color', 'r', 'marker', 'none');
 if ~isempty(hv)
@@ -47,18 +47,21 @@ for i = 1:numel(S.lon1)-1
 	latMatch1 = repmat(S.lat1(i), numel(j), 1) - S.lat1(j)';
 	latMatch2 = repmat(S.lat2(i), numel(j), 1) - S.lat2(j)';
 
-	j = j(intersect(find(lonMatch1 == 0), find(lonMatch2 == 0)));
-	if ~isempty(j)
+	lom = j(intersect(find(lonMatch1 == 0), find(lonMatch2 == 0)));
+    lam = j(intersect(find(latMatch1 == 0), find(latMatch2 == 0)));
+    
+    dup = intersect(lom, lam);
+	if ~isempty(lom)
 %		disp('same coords - longitude - same ordering')        
 		set(h(i), 'marker', '>', 'color', [0.5 0 0.5]);
-		set(h(j), 'marker', '>', 'color', [0.5 0 0.5]);
-	end
+		set(h(lom), 'marker', '>', 'color', [0.5 0 0.5]);
+    end
+%if i == 674; keyboard; end
 	
-	j = j(intersect(find(latMatch1 == 0), find(latMatch2 == 0)));
-	if ~isempty(j)
+	if ~isempty(lam)
 %		disp('same coords - latitude - same ordering')        
 		set(h(i), 'marker', '^', 'color', [0.5 0 0.5]);
-		set(h(j), 'marker', '^', 'color', [0.5 0 0.5]);
+		set(h(lam), 'marker', '^', 'color', [0.5 0 0.5]);
 	end
 end
 
@@ -78,18 +81,18 @@ for i = 1:numel(S.lon1)-1
 	latMatch1 = repmat(S.lat1(i), numel(j), 1) - S.lat2(j)';
 	latMatch2 = repmat(S.lat2(i), numel(j), 1) - S.lat1(j)';
 
-	j = j(intersect(find(lonMatch1 == 0), find(lonMatch2 == 0)));
-	if ~isempty(j)
+	lom = j(intersect(find(lonMatch1 == 0), find(lonMatch2 == 0)));
+	if ~isempty(lom)
 %		disp('same coords - longitude - opposite ordering')        
 		set(h(i), 'marker', '<', 'color', 'c');
-		set(h(j), 'marker', '<', 'color', 'c');
-	end
-	
-	if ~isempty(j)
-		j = j(intersect(find(latMatch1 == 0), find(latMatch2 == 0)));
+		set(h(lom), 'marker', '<', 'color', 'c');
+    end
+    
+	lam = j(intersect(find(latMatch1 == 0), find(latMatch2 == 0)));
+	if ~isempty(lam)		
 %		disp('same coords - latitude - opposite ordering')        
 		set(h(i), 'marker', 'v', 'color', 'c');
-		set(h(j), 'marker', 'v', 'color', 'c');
+		set(h(lam), 'marker', 'v', 'color', 'c');
 	end
 end
 
@@ -135,9 +138,9 @@ latVec = [S.lat1'; S.lat2'];
 [uCoord2 uIdx2] = unique([lonVec latVec], 'rows', 'last');
 nOccur = uIdx2-uIdx1 + 1;
 
-hang = plot(uCoord1(find(nOccur == 1), 1), uCoord1(find(nOccur == 1), 2), '.r', 'tag', 'hang');
+hang = plot(uCoord1(find(nOccur == 1), 1), uCoord1(find(nOccur == 1), 2), '.r', 'tag', 'hang', 'markersize', 50);
 if ~isempty(hang)
-	hangm = line(0, 0, 'marker', '.', 'color', 'r', 'linestyle', 'none', 'visible', 'off');
+	hangm = line(0, 0, 'marker', '.', 'markersize', 50, 'color', 'r', 'linestyle', 'none', 'visible', 'off');
 	leg(leginc) = hangm(1);
 	legflag(5) = 1;
 end
