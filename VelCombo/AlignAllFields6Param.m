@@ -65,7 +65,7 @@ mkdir([direc runName])
 
 
 % find all .sta or .sta.data files in specified directory
-dirdata                             = dir([direc '*.sta']);
+dirdata                             = dir([direc '*.sta.data']);
 nfiles                              = numel(dirdata);
 nOverlap                            = zeros(nfiles);
 nOverlapi                           = zeros(nfiles);
