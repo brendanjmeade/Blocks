@@ -65,7 +65,7 @@ mkdir([direc runName])
 
 
 % find all .sta or .sta.data files in specified directory
-dirdata                             = dir([direc '*.sta']);
+dirdata                             = dir([direc '*.sta.data']);
 nfiles                              = numel(dirdata);
 nOverlap                            = zeros(nfiles);
 nOverlapi                           = zeros(nfiles);
@@ -210,7 +210,7 @@ end
 toRotate                            = setdiff(1:nfiles,target);
 
 % carry out all rotations
-keyboard
+
 for rots = 1:nfiles-1; 
    i                                = toRotate(rots); % define the index
    omega                            = zeros(5, 1);
@@ -311,3 +311,5 @@ WriteStation(filename, s.lon, s.lat, s.eastVel, s.northVel, s.eastSig, s.northSi
 % Save a few variables to a .mat file
 matname                       = sprintf('%s.mat', filename(1:end-9));
 save(matname, 'names', 'sumnStations', 'paths', '-mat');
+keyboard
+save('%s_allvariables.mat', filename(1:end-9));
