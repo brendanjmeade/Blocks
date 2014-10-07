@@ -30,5 +30,7 @@ Gp             = G;
 % Do rotation
 caz            = cosd(az);
 saz            = sind(az);
-Gp(1:3:end, :) = caz.*G(1:3:end, :) + -saz.*G(2:3:end, :);
-Gp(2:3:end, :) = saz.*G(1:3:end, :) + caz.*G(2:3:end, :);
+xid            = 1:3:sG(1);
+yid            = 2:3:sG(1);
+Gp(1:3:end, :) = caz.*G(xid, :) + -saz.*G(yid, :);
+Gp(2:3:end, :) = saz.*G(xid, :) + caz.*G(yid, :);

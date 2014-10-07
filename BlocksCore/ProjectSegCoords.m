@@ -24,7 +24,7 @@ function [f, s]               = ProjectSegCoords(f, s)
 R                             = 6371;
 
 if ~isstruct(f)
-   p = struct('lon1', f(:, 1), 'lat1', f(:, 2), 'lon2', p(:, 3), 'lat2', p(:, 4));
+   f = struct('lon1', f(:, 1), 'lat1', f(:, 2), 'lon2', f(:, 3), 'lat2', f(:, 4));
 end
 if ~isstruct(s)
    s = struct('lon', s(:, 1), 'lat', s(:, 2));

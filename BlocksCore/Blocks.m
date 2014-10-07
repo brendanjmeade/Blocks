@@ -166,5 +166,5 @@ fprintf('done.  All files saved to .%s%s.\n', filesep, runName)
 %save 'new.mat'
 
 if strcmp(Command.dumpall, 'yes')
-   save(sprintf('./%s%s.mat', runName, runName(1:end-1)));
+   save(sprintf('./%s%s.mat', runName, runName(1:end-1)), '-v7.3');
 end

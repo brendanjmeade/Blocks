@@ -51,9 +51,9 @@ if nPatches > 0
          [uxs, uys, uzs,...
           uxd, uyd, uzd,...
           uxt, uyt, uzt]                       = tri_dislz_partials([p.px1, p.px2, p.px3], [p.py1, p.py2, p.py3], abs([p.z1, p.z2, p.z3]), s.tpx(op(:, 1)), s.tpy(op(:, 1)), abs(s.dep(op(:, 1))), 0.25);
-	      v1u{iPatches}                         = reshape(-[uxs uys -uzs]', 3*sum(op(:, 1)), 1);
-	      v2u{iPatches}                         = reshape(-[uxd uyd -uzd]', 3*sum(op(:, 1)), 1);
-	      v3u{iPatches}                         = reshape(-[uxt uyt -uzt]', 3*sum(op(:, 1)), 1);
+	      v1u{iPatches}                         = reshape(-[uxs uys uzs]', 3*sum(op(:, 1)), 1);
+	      v2u{iPatches}                         = reshape(-[uxd uyd uzd]', 3*sum(op(:, 1)), 1);
+	      v3u{iPatches}                         = reshape(-[uxt uyt uzt]', 3*sum(op(:, 1)), 1);
 	  end
       
       % If strain partials are requested...
