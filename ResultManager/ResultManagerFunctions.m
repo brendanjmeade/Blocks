@@ -1383,8 +1383,14 @@ switch(option)
             set(ha, 'Visible', 'on');
          end
       end
-     
-    
+   
+   % Vector scale buttons
+   case 'Rst.velPushUp'
+      ScaleAllVectors(1.1);
+
+
+   case 'Rst.velPushDown'
+      ScaleAllVectors(0.9);  
       
    %%%   Start Navigation Commands   %%%
    case 'Rst.navZoomRange'

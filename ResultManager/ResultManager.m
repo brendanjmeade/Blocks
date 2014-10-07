@@ -23,7 +23,7 @@ set(gcf, 'ToolBar', 'none');
 % Main file I/O
 fileYOffset = 775;
 compareXOffset = 170;
-Seg.loadCommandFrame             = uicontrol('style', 'frame',          'position', [5 fileYOffset     290 64], 'visible', 'on', 'tag', 'Seg.navFrame', 'BackgroundColor', lightGrey);
+Rst.loadCommandFrame             = uicontrol('style', 'frame',          'position', [5 fileYOffset     290 64], 'visible', 'on', 'tag', 'Rst.navFrame', 'BackgroundColor', lightGrey);
 Rst.loadText                     = uicontrol('style', 'text',           'position', [10 fileYOffset+41 120 15],  'visible', 'on', 'tag', 'Rst.loadText', 'string', 'Result directory', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs);
 Rst.loadEdit                     = uicontrol('style', 'edit',           'position', [10 fileYOffset+20 120 20],  'visible', 'on', 'tag', 'Rst.loadEdit', 'BackgroundColor', white, 'HorizontalAlignment', 'left', 'Fontsize', 8);
 Rst.loadPush                     = uicontrol('style', 'pushbutton',     'position', [10 fileYOffset+5  60 20],   'visible', 'on', 'tag', 'Rst.loadPush', 'callback', 'ResultManagerFunctions(''Rst.loadPush'')', 'string', 'Load', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'center', 'FontName', fn, 'FontSize', fs);
@@ -91,19 +91,23 @@ Rst.cResmText                  	= uicontrol('style', 'text', 'position', [25+com
 
 % Slider to control velocity scaling (operates on ALL plotted vectors identically)
 vsc = uipanel('units', 'pixels', 'position', [10 418 280 70], 'bordertype', 'none', 'backgroundcolor', lightGrey);
+dispYOffset = 500;
 Rst.velScaleText    	  		      = uicontrol('parent', vsc, 'style', 'text', 'position', [0 28 85 20],    'visible', 'on', 'tag', 'Rst.velScaleText', 'string', 'Vector scaling', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off');
-Rst.velScale							= uicontrol('parent', vsc, 'style', 'edit', 'position', [0 12 50 20], 'string', '0.5', 'visible', 'on', 'tag', 'Rst.velScale', 'callback', 'ResultManagerFunctions(''Rst.velScale'')', 'BackgroundColor', white, 'FontName', fn, 'Fontsize', 8, 'enable', 'off');
-Rst.velSlider							= uicontrol('parent', vsc, 'style', 'slider', 'position', [50 0 230 30], 'min', 1e-6, 'max', 1, 'value', 0.5, 'visible', 'on', 'tag', 'Rst.velSlider', 'callback', 'ResultManagerFunctions(''Rst.velSlider'')', 'BackgroundColor', white, 'HorizontalAlignment', 'left', 'Fontsize', 8, 'enable', 'off');
+%Rst.velScale							= uicontrol('parent', vsc, 'style', 'edit', 'position', [0 12 50 20], 'string', '0.5', 'visible', 'on', 'tag', 'Rst.velScale', 'callback', 'ResultManagerFunctions(''Rst.velScale'')', 'BackgroundColor', white, 'FontName', fn, 'Fontsize', 8, 'enable', 'off');
+%Rst.velSlider							= uicontrol('parent', vsc, 'style', 'slider', 'position', [50 0 230 30], 'min', 1e-6, 'max', 1, 'value', 0.5, 'visible', 'on', 'tag', 'Rst.velSlider', 'callback', 'ResultManagerFunctions(''Rst.velSlider'')', 'BackgroundColor', white, 'HorizontalAlignment', 'left', 'Fontsize', 8, 'enable', 'off');
+Rst.velPushUp                    = uicontrol('style', 'push', 'position', [200 75+dispYOffset 20 20], 'String', '+',  'visible', 'on', 'tag', 'Rst.velPushUp', 'callback', 'ResultManagerFunctions(''Rst.velPushUp'')', 'BackgroundColor', white, 'HorizontalAlignment', 'left', 'Fontsize', 12, 'enable', 'on', 'tooltipstring', 'Increase velocity vector scaling');
+Rst.velPushDown                  = uicontrol('style', 'push', 'position', [220 75+dispYOffset 20 20], 'String', '-', 'visible', 'on', 'tag', 'Rst.velPushDown', 'callback', 'ResultManagerFunctions(''Rst.velPushDown'')', 'BackgroundColor', white, 'HorizontalAlignment', 'left', 'Fontsize', 12, 'enable', 'on', 'tooltipstring', 'Decrease velocity vector scaling');
+
 
 % Residual improvement
 res = uipanel('units', 'pixels', 'position', [10 380 290 40], 'bordertype', 'none', 'backgroundcolor', lightGrey);
-Rst.ResidImpCheck						= uicontrol('parent', res, 'style', 'checkbox', 'position', [0 20 20 20],    'visible', 'on', 'tag', 'Rst.ResidImpCheck', 'callback', 'ResultManagerFunctions(''Rst.ResidImpCheck'')', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
-Rst.ResidImpCheckText				= uicontrol('parent', res, 'style', 'text', 'position', [25 15 265 20],    'visible', 'on', 'tag', 'Rst.ResidImpCheckText', 'string', 'Show residual improvement', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off');
+Rst.ResidImpCheck						= uicontrol    ('parent', res, 'style', 'checkbox', 'position', [0 20 20 20],    'visible', 'on', 'tag', 'Rst.ResidImpCheck', 'callback', 'ResultManagerFunctions(''Rst.ResidImpCheck'')', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
+Rst.ResidImpCheckText				= uicontrol    ('parent', res, 'style', 'text', 'position', [25 15 265 20],    'visible', 'on', 'tag', 'Rst.ResidImpCheckText', 'string', 'Show residual improvement', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off');
 Rst.pickResid							= uibuttongroup('parent', res, 'units', 'pixels', 'position', [20 0 290 20], 'tag', 'Rst.pickResid', 'SelectionChangeFcn', @pickResid, 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'bordertype', 'none'); 
-Rst.ResidRadioW						= uicontrol('style', 'radio', 'pos', [0 0 20 20], 'parent', Rst.pickResid, 'visible', 'on', 'tag', 'Rst.ResidRadioW', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
-Rst.ResidRadioTextW					= uicontrol('style', 'text', 'position', [25 -5 120 20], 'parent', Rst.pickResid,   'visible', 'on', 'tag', 'Rst.ResidRadioTextW', 'string', 'Weighted by uncertainty', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
-Rst.ResidRadioNW						= uicontrol('style', 'radio', 'pos', [140 0 20 20], 'parent', Rst.pickResid, 'visible', 'on', 'tag', 'Rst.ResidRadioNW', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
-Rst.ResidRadioTextNW					= uicontrol('style', 'text', 'position', [165 -5 80 20], 'parent', Rst.pickResid,   'visible', 'on', 'tag', 'Rst.ResidRadioTextNW', 'string', 'Unweighted', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
+Rst.ResidRadioW						= uicontrol    ('style', 'radio', 'pos', [0 0 20 20], 'parent', Rst.pickResid, 'visible', 'on', 'tag', 'Rst.ResidRadioW', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
+Rst.ResidRadioTextW					= uicontrol    ('style', 'text', 'position', [25 -5 120 20], 'parent', Rst.pickResid,   'visible', 'on', 'tag', 'Rst.ResidRadioTextW', 'string', 'Weighted by uncertainty', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
+Rst.ResidRadioNW						= uicontrol    ('style', 'radio', 'pos', [140 0 20 20], 'parent', Rst.pickResid, 'visible', 'on', 'tag', 'Rst.ResidRadioNW', 'BackgroundColor', lightGrey, 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
+Rst.ResidRadioTextNW					= uicontrol    ('style', 'text', 'position', [165 -5 80 20], 'parent', Rst.pickResid,   'visible', 'on', 'tag', 'Rst.ResidRadioTextNW', 'string', 'Unweighted', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
 
 % Main results:
 % Toggle slip rate views
