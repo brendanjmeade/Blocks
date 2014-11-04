@@ -1383,8 +1383,14 @@ switch(option)
             set(ha, 'Visible', 'on');
          end
       end
-     
-    
+   
+   % Vector scale buttons
+   case 'Rst.velPushUp'
+      ScaleAllVectors(1.1);
+
+
+   case 'Rst.velPushDown'
+      ScaleAllVectors(0.9);  
       
    %%%   Start Navigation Commands   %%%
    case 'Rst.navZoomRange'
@@ -1631,7 +1637,7 @@ switch(option)
    case 'DrawClean'
       fprintf(GLOBAL.filestream, '%s\n', option);
       delete(gca);
-      Rst.axHandle                 = axes('parent', gcf, 'units', 'pixels', 'position', [340 60 640 640],     'visible', 'on', 'Tag', 'Rst.axHandle', 'Layer', 'top', 'xlim', [0 360], 'ylim', [-90 90], 'nextplot', 'add');
+      Rst.axHandle                 = axes('parent', gcf, 'units', 'pixels', 'position', [360 80 800 700],     'visible', 'on', 'Tag', 'Rst.axHandle', 'Layer', 'top', 'xlim', [0 360], 'ylim', [-90 90], 'nextplot', 'add');
       WorldHiVectors               = load('WorldHiVectors');
       coast = plot(WorldHiVectors.lon, WorldHiVectors.lat, '-k', 'LineWidth', 0.25, 'visible', 'on', 'tag', 'Rst.coast', 'Color', 0.7 * [1 1 1]);
       box on;

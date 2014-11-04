@@ -2,7 +2,7 @@ function [G, strainBlockIdx] = GetStrain34Partials(Block, Station, Segment)
 % Calculate strain partial derivatives
 nStations                                   = numel(Station.lon);
 nBlocks	                                   = numel(Block.interiorLon);
-G                                           = zeros(2*nStations, 4*nBlocks);
+G                                           = zeros(3*nStations, 4*nBlocks);
 R              				                 = 6371*1e6; % radius of Earth in mm
 minSta                                      = 3; % 3 for Jack
 
