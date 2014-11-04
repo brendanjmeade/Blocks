@@ -58,6 +58,8 @@ northSigIdx                    = find(S.northSig>sigCutoff);
 for i = 1:length(northSigIdx)
    fprintf(togf, '%s 0 Large north uncertainty\n', S.name(northSigIdx(i), :));
 end
+% Update running list of toggles
+togIdx = unique([togIdx(:); eastSigIdx(:); northSigIdx(:)]);
 
 % Find very large velocities
 eastLargeIdx                   = find(abs(S.eastVel)>velCutoff);
@@ -68,13 +70,14 @@ northLargeIdx                  = find(abs(S.northVel)>velCutoff);
 for i = 1:length(northLargeIdx)
    fprintf(togf, '%s 0 Large north vel.\n', S.name(northLargeIdx(i), :));
 end
+togIdx = unique([togIdx(:); eastLargeIdx(:); northLargeIdx(:)]);
 
 % Find _EDM and _VLB
-edmIdx                         = strmatch('_EDM', S.name(:,5:8));
+edmIdx                         = strmatch('_EDM', S.name);
 for i = 1:length(edmIdx)
    fprintf(togf, '%s 0 EDM site\n', S.name(edmIdx(i), :));
 end
-vlbIdx                         = strmatch('_VLB', S.name(:,5:8));
+vlbIdx                         = strmatch('_VLB', S.name);
 for i = 1:length(vlbIdx)
    fprintf(togf, '%s 0 VLB site\n', S.name(vlbIdx(i), :));
 end
@@ -102,6 +105,7 @@ colocateIdx                    = unique(colocateIdx);
 for i = 1:length(colocateIdx)
    fprintf(togf, '%s 0 Collocated station\n', S.name(colocateIdx(i), :));
 end
+togIdx = unique([togIdx(:); colocateIdx(:)]);
 
 % Find very close stations and if there is more than toggle off the higher
 % uncertainty
@@ -124,6 +128,7 @@ rangeIdx                       = unique(rangeIdx);
 for i = 1:length(rangeIdx)
    fprintf(togf, '%s 0 Nearby station\n', S.name(rangeIdx(i), :));
 end
+togIdx = unique([togIdx(:); rangeIdx(:)]);
 
 % Look at stations with NNN km.  Find the average of these and see if there
 % any outliers
@@ -133,6 +138,7 @@ for i = 1:numel(S.lon)
    [RNG, AZ]                   = distance(S.lat(i), S.lon(i), S.lat(:), S.lon(:), [6371 0]);
    nearIdx                     = find(RNG <= outlierRange);
    nearIdx                     = intersect(nearIdx, tIdx);
+   nearIdx                     = setdiff(nearIdx, togIdx); % Remove from consideration any of the stations that have been flagged for toggling off in the previous analyses
    if numel(nearIdx) > 3 % say we need 3 stations to bother
       meanEast                 = mean(S.eastVel(nearIdx));
       meanNorth                = mean(S.northVel(nearIdx));
@@ -155,6 +161,7 @@ outlierIdx                     = unique(outlierIdx);
 for i = 1:length(outlierIdx)
    fprintf(togf, '%s 0 Local outlier\n', S.name(outlierIdx(i), :));
 end
+togIdx = unique([togIdx(:); outlierIdx(:)]);
 
 % Calculate the keeper idx
 %deleteIdx                      = unique([togIdx(:) ; samenameIdx(:) ; eastSigIdx(:) ; northSigIdx(:) ; eastLargeIdx(:) ; northLargeIdx(:) ; edmIdx(:) ; vlbIdx(:) ; colocateIdx(:) ; rangeIdx(:) ; outlierIdx(:)]);

@@ -24,6 +24,7 @@ Command.aprioriBlockName                              = '';
 Command.patchFileNames                                = '';
 Command.triSmooth                                     = 1;
 Command.pmagTriSmooth                                 = 0;
+Command.smoothType                                    = 1;
 Command.nIter                                         = 1;
 Command.triRake                                       = [];
 Command.triKinCons                                    = 0; 
@@ -169,7 +170,10 @@ while 1
          
       case('spatially variable smoothing weighted by resolution')
          Command.pmagTriSmooth                        = str2num(value);
-      
+         
+      case('smooth slip components individually (1) or simultaneously (2)')
+         Command.smoothType                           = str2num(value);
+         
       case('set [updip downdip lateral] limits to zero slip')
          Command.triEdge                              = str2num(value); 
 

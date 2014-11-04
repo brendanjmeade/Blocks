@@ -13,7 +13,7 @@ np = p;
 nc = c;
 
 % Cumulative number of elements
-cel = [0; cumsum(p.nEl)]';
+cel = [0; cumsum(p.nEl(:))]';
 
 % Empty arrays for retained patches and discarded elements
 np.up = 1:length(p.nEl); np.uue = []; 

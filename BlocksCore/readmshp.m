@@ -1,6 +1,6 @@
-function [p, pp] = readmshp(file, pp)
+function [p, pp] = ReadMshp(file, pp)
 % readmshp  Reads a mesh property file. 
-%   [P, PP] = readmshp(FILE) reads mesh names and properties from the 
+%   [P, PP] = ReadMshp(FILE) reads mesh names and properties from the 
 %   specified FILE. The .mshp file contains groups of 3 lines and
 %   specifies the file name for a mesh along with its properties:
 %
@@ -15,7 +15,7 @@ function [p, pp] = readmshp(file, pp)
 %   File contents are returned to structure P, containing the actual 
 %   triangular meshes, and PP, containing properties of the meshes. 
 %
-%   [P, COMMAND] = readmshp(FILE, COMMAND) updates an input COMMAND structure
+%   [P, COMMAND] = ReadMshp(FILE, COMMAND) updates an input COMMAND structure
 %   with mesh properties. 
 %
 

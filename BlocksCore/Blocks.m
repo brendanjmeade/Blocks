@@ -1,8 +1,11 @@
-function Blocks_dev_2013(commandFile)
+function Blocks(commandFile, varargin)
 % Main Blocks function
 fprintf('Parsing input data...')
 runName                                          = GetRunName; % Create new directory for output
 Command                                          = ReadCommand(commandFile); % Read command file
+if nargin > 1
+   Command                                       = ParseOptCommands(Command, varargin{:}); % Parse optional input arguments
+end
 Station                                          = ReadStation(Command.staFileName); % Read station file
 Station                                          = ProcessStation(Station, Command);
 Sar                                              = ReadSar(Command.sarFileName); % Read SAR file

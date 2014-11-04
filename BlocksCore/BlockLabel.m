@@ -2,17 +2,14 @@ function [S, b, st] = BlockLabel(s, b, st)
 %
 
 
-nseg = numel(s.lon1);
-
-
 % Split any prime meridian-crossing segments
-[split, splitidx] = segmeridian(s);
+split = segmeridian(s);
 nseg = numel(split.lon1);
 
 % make sure western vertex is the start point
 [S, i] = OrderEndpointsSphere(split);
-[S.x1 S.y1 S.z1]               = sph2cart(DegToRad(S.lon1(:)), DegToRad(S.lat1(:)), 6371);
-[S.x2 S.y2 S.z2]               = sph2cart(DegToRad(S.lon2(:)), DegToRad(S.lat2(:)), 6371);
+[S.x1, S.y1, S.z1]               = sph2cart(DegToRad(S.lon1(:)), DegToRad(S.lat1(:)), 6371);
+[S.x2, S.y2, S.z2]               = sph2cart(DegToRad(S.lon2(:)), DegToRad(S.lat2(:)), 6371);
 sego = [S.lon1(:) S.lon2(:)];
 sega = [S.lat1(:) S.lat2(:)];
 segx = [S.x1(:) S.x2(:)];
@@ -24,8 +21,8 @@ i = (i-1)*nseg + repmat((1:nseg)', 1, 2);
 % make sure there are no hanging segments
 allc 								= [segx(:) segy(:) segz(:)];
 %allc                       = [[s.x1(:) s.y1(:) s.z1(:)]; [s.x2(:) s.y2(:) s.z2(:)]];
-[cou, i1]					 	= unique(allc, 'rows', 'first');
-[cou, i2]						= unique(allc, 'rows', 'last');
+[~, i1]					 	= unique(allc, 'rows', 'first');
+[~, i2]						= unique(allc, 'rows', 'last');
 if isempty(~find(i2-i1, 1))
 	fprintf(1, '*** All blocks are not closed! ***\n');
 %else
@@ -35,7 +32,7 @@ end
 % Carry out a few operations on all segments
 
 % Find unique points and indices to them
-[unp, unidx, ui] = unique(allc, 'rows', 'first');
+[~, ~, ui] = unique(allc, 'rows', 'first');
 us = ui(1:nseg); ue = ui(nseg+1:end);
 
 % Calculate the azimuth of each fault segment
@@ -99,7 +96,7 @@ for i = 1:nseg
       if numel(match) > 1
       	daz = saz(cs, se) - [eaz(matchss, 1); saz(matches, 1)];
       	daz(abs(daz) > 180) = daz(abs(daz) > 180) - sign(daz(abs(daz) > 180))*360;
-         [maz, mi] = max(daz);
+         [~, mi] = max(daz);
       else
          mi = 1;
       end
@@ -145,10 +142,10 @@ end
 [so, blockrows] = unique(sort(seg_poly_ver, 2), 'rows');
 seg_poly_ver = seg_poly_ver(blockrows, :);
 seg_trav_ord = seg_trav_ord(blockrows, :);
-z = find(so == 0);
+z = ~so;
 so(z) = NaN;
 so = sort(so, 2);
-[so, blockrows] = sortrows(so);
+[~, blockrows] = sortrows(so);
 seg_poly_ver = seg_poly_ver(blockrows, :);
 seg_trav_ord = seg_trav_ord(blockrows, :);
 
@@ -165,16 +162,16 @@ wl = el;
 stl = zeros(numel(st.lon), 1);
 dLon = 1e-6;
 
-[bix, biy, biz] = sph2cart(DegToRad(b.interiorLon), DegToRad(b.interiorLat), 6371);
+%[bix, biy, biz] = sph2cart(DegToRad(b.interiorLon), DegToRad(b.interiorLat), 6371);
 
 for i = 1:nblock
 	% Take block coordinates from the traversal order matrix
 	sib = seg_poly_ver(i, (seg_poly_ver(i, :) ~= 0)); % segments in block
 	ooc = seg_trav_ord(i, (seg_trav_ord(i, :) ~= 0)); % order in which the segments are traversed
 	cind = (ooc-1)*nseg + sib; % convert index pairs to linear index
-   bcx = segx(cind)';
-   bcy = segy(cind)';
-   bcz = segz(cind)';
+%    bcx = segx(cind)';
+%    bcy = segy(cind)';
+%    bcz = segz(cind)';
    bco = sego(cind)';
    bca = sega(cind)';
    % Test which interior points lie within the current block
@@ -186,12 +183,12 @@ for i = 1:nblock
    % Now test the station coordinates for block identification
    stin = inpolygonsphere(st.lon, st.lat, bco, bca);
    
-	if sum(bin) > 1 % exterior block or error
+   if sum(bin) > 1 % exterior block or error
       if barea(i) == max(barea) && ext == 0 % if the area is the largest and exterior hasn't yet been assigned
-	      alabel(find(~bin)) = i; % ...assign this block as the exterior
-   	   ext = i; % and specifically declare the exterior label
-   	elseif ext > 0
-   		disp('Interior points do not uniquely define blocks!')
+	     alabel(find(~bin)) = i; % ...assign this block as the exterior
+   	     ext = i; % and specifically declare the exterior label
+   	  elseif ext > 0
+         disp('Interior points do not uniquely define blocks!')
          break;
       end
    else % if there is only one interior point within the segment polygon (i.e., all other blocks)...

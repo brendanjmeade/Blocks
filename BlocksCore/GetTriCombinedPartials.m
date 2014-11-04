@@ -51,9 +51,9 @@ if nPatches > 0
          [uxs, uys, uzs,...
           uxd, uyd, uzd,...
           uxt, uyt, uzt]                       = tri_dislz_partials([p.px1, p.px2, p.px3], [p.py1, p.py2, p.py3], abs([p.z1, p.z2, p.z3]), s.tpx(op(:, 1)), s.tpy(op(:, 1)), abs(s.dep(op(:, 1))), 0.25);
-	      v1u{iPatches}                         = reshape(-[uxs uys uzs]', 3*sum(op(:, 1)), 1);
-	      v2u{iPatches}                         = reshape(-[uxd uyd uzd]', 3*sum(op(:, 1)), 1);
-	      v3u{iPatches}                         = reshape(-[uxt uyt uzt]', 3*sum(op(:, 1)), 1);
+	      v1u{iPatches}                         = reshape(-[uxs uys -uzs]', 3*sum(op(:, 1)), 1);
+	      v2u{iPatches}                         = reshape(-[uxd uyd -uzd]', 3*sum(op(:, 1)), 1);
+	      v3u{iPatches}                         = reshape(-[uxt uyt -uzt]', 3*sum(op(:, 1)), 1);
 	  end
       
       % If strain partials are requested...
@@ -61,9 +61,9 @@ if nPatches > 0
          [uxxs, uyys, uzzs, uxys, uxzs, uyzs,...
           uxxd, uyyd, uzzd, uxyd, uxzd, uyzd,...
           uxxt, uyyt, uzzt, uxyt, uxzt, uyzt]  = tri_strain_fast_partials([p.px1, p.px2, p.px3], [p.py1, p.py2, p.py3], abs([p.z1, p.z2, p.z3]), s.tpx(op(:, 2)), s.tpy(op(:, 2)), abs(s.dep(op(:, 2))), 0.25);
-         v1e{iPatches}                         = reshape(-[uxxs uyys uzzs uxys uxzs uyzs]', 6*sum(op(:, 2)), 1);
-         v2e{iPatches}                         = reshape(-[uxxd uyyd uzzd uxyd uxzd uyzd]', 6*sum(op(:, 2)), 1);
-         v3e{iPatches}                         = reshape(-[uxxt uyyt uzzt uxyt uxzt uyzt]', 6*sum(op(:, 2)), 1);
+         v1e{iPatches}                         = reshape(-[uxxs uyys uzzs -uxys -uxzs uyzs]', 6*sum(op(:, 2)), 1);
+         v2e{iPatches}                         = reshape(-[uxxd uyyd uzzd -uxyd -uxzd uyzd]', 6*sum(op(:, 2)), 1);
+         v3e{iPatches}                         = reshape(-[uxxt uyyt uzzt -uxyt -uxzt uyzt]', 6*sum(op(:, 2)), 1);
 	  end
       parfor_progress;
    end

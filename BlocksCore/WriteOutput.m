@@ -41,7 +41,9 @@ WritePatches(sprintf('.%s%s%sMod.patch', filesep, runName, filesep), Patches.c, 
 WriteSarResults(Sar, Model, runName);
 
 % Copy command file to results directory
-system(sprintf('cp %s .%s%s%s.', Command.fileName, filesep, runName, filesep));
+[p, f, e] = fileparts(Command.fileName);
+WriteCommand(Command, sprintf('%s%s%s%s', runName, filesep, f, e));
+% system(sprintf('cp %s .%s%s%s.', Command.fileName, filesep, runName, filesep));
 
 % Write kernels to results directory if requested
 if exist('./tempkernels.mat', 'file')

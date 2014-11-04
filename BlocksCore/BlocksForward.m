@@ -40,7 +40,7 @@ end
 
 % Put the stations in a structure
 [Station.lon, Station.lat]                       = deal(x(:), y(:));
-[Station.x Station.y Station.z]                  = sph2cart(DegToRad(Station.lon), DegToRad(Station.lat), 6371);
+[Station.x, Station.y, Station.z]                = sph2cart(DegToRad(Station.lon), DegToRad(Station.lat), 6371);
 [Segment, Block, Station]                        = BlockLabel(Segment, Block, Station);
 
 % Calculate all partials

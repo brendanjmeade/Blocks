@@ -1,4 +1,4 @@
-function [wmean,nComSta,G,omegaEst] = AlignVelFieldsQuiet6Param(file1, file2, fuzz)
+function [wmean,nComSta,G,omegaEst] = AlignVelFieldsQuiet6Param(file1, file2, fuzz, omegaEstAP)
 
 S1                         = ReadStation(file1);
 S2                         = ReadStation(file2);
@@ -59,8 +59,13 @@ s                          = zeros(size(G,1), 1);
 s(1:2:end)                 = esig;
 s(2:2:end)                 = nsig;
 W                          = diag(s);
-omegaEst                   = G\d;
-% omegaEst                   = inv(G'*W*G)*G'*W*d;
+%omegaEst                   = G\d;
+cov                        = (G'*W*G)\eye(size(G, 2));
+omegaEst                   = cov*G'*W*d;
+
+if exist('omegaEstAP', 'var')
+   omegaEst                = omegaEstAP;
+end  
 
 dEst                       = G*omegaEst;
 nvEst                      = dEst(2:2:end);

@@ -27,24 +27,27 @@ coOrd                                           = [0; cumsum(p.nc)];
 % make the Laplacian smoothing matrix
 share                                           = SideShare(p.v); % For each element, give indices of N <= 3 elements that share sides
 dists                                           = TriDistCalc(share, p.xc, p.yc, p.zc); % calculate distance between element centroids and neighbors
-%partials.smooth                                 = MakeTriSmooth(share, dists);
-partials.smooth                                 = MakeTriSmoothAlt(share);
+partials.smooth                                 = MakeTriSmooth(share, dists);
+% partials.smooth                                 = MakeTriSmoothAlt(share);
+index.triSmoothkeep                             = index.triColkeep;
 
 % Weight the smoothing matrix by the constant beta, normalized by the square of the average distance between each element's centroid and those of its neighbors
 data.smooth                                     = zeros(3*elOrd(end), 1); 
-sig.smooth                                      = data.smooth;
-
 for i = 1:numel(p.nEl)
-   dist                                         = dists(elOrd(i)+1:elOrd(i+1), :);
-   distScale                                    = repmat((sum(dist, 2)./sum(dist ~= 0, 2))', 3, 1);
-   sig.smooth(3*(elOrd(i)+1)-2:3*elOrd(i+1))    = distScale(:)*c.triSmooth(i);
+   sig.smooth(3*(elOrd(i)+1)-2:3*elOrd(i+1))    = c.triSmooth(i);
 end
+
+% for i = 1:numel(p.nEl)
+%    dist                                         = dists(elOrd(i)+1:elOrd(i+1), :);
+%    distScale                                    = repmat((sum(dist, 2)./sum(dist ~= 0, 2))', 3, 1);
+%    sig.smooth(3*(elOrd(i)+1)-2:3*elOrd(i+1))    = distScale(:)*c.triSmooth(i);
+% end
 
 % Optionally weight beta by magnitude of partial derivatives
 if c.pmagTriSmooth > 0
    stpd                                         = sqrt(partials.tri(1:3:end, :).^2 + partials.tri(2:3:end, :).^2 + partials.tri(3:3:end, :).^2); % Station magnitudes from components
    stpd                                         = sum(stpd); % Sum of station magnitudes
-   sig.smooth                                   = sig.smooth./(stpd.^c.pmagTriSmooth'); % Larger sums    = better resolved    = less reliance on smoothing
+   sig.smooth                                   = sig.smooth(:)./(stpd(:).^c.pmagTriSmooth); % Larger sums    = better resolved    = less reliance on smoothing
 end
 
 % Slip estimation constraints, with several options.  Each patch should have three values specified:

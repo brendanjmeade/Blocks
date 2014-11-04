@@ -24,11 +24,11 @@ taz = sphereazimuth(tlon, tlat, [lonv; lon], [latv; lat]);
 
 % Test 1: azimuth to interior point should lie between azimuth to bounding vertices
 % Test by subtracting test-I.P. azimuth from vertex azimuth; pass if different signs
-test1 = isbetweenaz(repmat(taz(1:nv), 1, np), repmat(taz([2:nv, 1]), 1, np), repmat(taz(nv+1:end)', nv, 1));
-% test1 = NaN(nv, np);
-% parfor i = 1:np
-%    test1(:, i) = isbetweenaz(taz(1:nv), taz([2:nv, 1]), taz(nv+i));
-% end
+% test1 = isbetweenaz(repmat(taz(1:nv), 1, np), repmat(taz([2:nv, 1]), 1, np), repmat(taz(nv+1:end)', nv, 1));
+test1 = NaN(nv, np);
+parfor i = 1:np
+   test1(:, i) = isbetweenaz(taz(1:nv), taz([2:nv, 1]), taz(nv+i));
+end
 
 % Calculate circulated edge azimuths
 eaz = sphereazimuth(lonv, latv, lonv([2:end, 1]), latv([2:end, 1]));
@@ -36,11 +36,11 @@ eaz = sphereazimuth(lonv, latv, lonv([2:end, 1]), latv([2:end, 1]));
 % Calculate azimuths between vertices and test point, and between vertices and interior points
 Tlon = [tlon lon'];
 Tlat = [tlat lat'];
-% vaz = NaN(nv, np+1);
-% parfor i = 1:np+1
-%    vaz(:, i) = sphereazimuth(lonv, latv, Tlon(i), Tlat(i));
-% end
-vaz = sphereazimuth(repmat(lonv, 1, np+1), repmat(latv, 1, np+1), repmat(Tlon, nv, 1), repmat(Tlat, nv, 1));
+vaz = NaN(nv, np+1);
+parfor i = 1:np+1
+   vaz(:, i) = sphereazimuth(lonv, latv, Tlon(i), Tlat(i));
+end
+% vaz = sphereazimuth(repmat(lonv, 1, np+1), repmat(latv, 1, np+1), repmat(Tlon, nv, 1), repmat(Tlat, nv, 1));
 
 % Test 2: azimuth to test point should be on the same side of the segment (E-W) as that to interior point
 % Test by comparing the difference between the azimuth to test point and segment azimuth with the 

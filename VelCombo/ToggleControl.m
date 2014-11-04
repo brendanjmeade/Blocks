@@ -10,7 +10,7 @@ fclose(fid);
 
 % Find toggle locations, need to use a for loop in case some stations are duplicates
 for i = 1:length(c{1})
-   loc = strmatch(c{1}(i), S.name);
+   loc = strmatch(strtrim(c{1}(i)), S.name);
    if ~isempty(loc)
       S.tog(loc) = c{2}(i);
    end

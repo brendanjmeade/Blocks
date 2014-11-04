@@ -15,7 +15,7 @@ function patchStruct = PatchEndAdjust(patchStruct, segStruct)
 %   This is accomplished by looking for segment end points that occur exactly
 %   once, because all other end points within the patch will occur twice.
 
-coordOrd													= [0; cumsum(patchStruct.nc)];
+coordOrd													= [0; cumsum(patchStruct.nc(:))];
 
 for i = 1:numel(patchStruct.nEl);
 	patchSegs						 					= intersect(find(segStruct.patchFile == i), find(segStruct.patchTog > 0)); % determine which segments belong to the patch
