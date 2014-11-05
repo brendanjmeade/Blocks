@@ -43,7 +43,7 @@ percent = 0;
 w = 50; % Width of progress bar
 
 if N > 0
-    f = fopen('~/Desktop/.parfor_progress.txt', 'w');
+    f = fopen('.parfor_progress.txt', 'w');
     if f<0
         error('Do you have write permissions for %s?', pwd);
     end
@@ -54,22 +54,22 @@ if N > 0
         disp(['  0%[>', repmat(' ', 1, w), ']']);
     end
 elseif N == 0
-    delete('~/Desktop/.parfor_progress.txt');
+    delete('.parfor_progress.txt');
     percent = 100;
     
     if nargout == 0
         disp([repmat(char(8), 1, (w+9)), char(10), '100%[', repmat('=', 1, w+1), ']']);
     end
 else
-    if ~exist('~/Desktop/.parfor_progress.txt', 'file')
-        error('~/Desktop/.parfor_progress.txt not found. Run PARFOR_PROGRESS(N) before PARFOR_PROGRESS to initialize ~/Desktop/parfor_progress.txt.');
+    if ~exist('.parfor_progress.txt', 'file')
+        error('.parfor_progress.txt not found. Run PARFOR_PROGRESS(N) before PARFOR_PROGRESS to initialize ~/Desktop/parfor_progress.txt.');
     end
     
-    f = fopen('~/Desktop/.parfor_progress.txt', 'a');
+    f = fopen('.parfor_progress.txt', 'a');
     fprintf(f, '1\n');
     fclose(f);
     
-    f = fopen('~/Desktop/.parfor_progress.txt', 'r');
+    f = fopen('.parfor_progress.txt', 'r');
     progress = fscanf(f, '%d');
     fclose(f);
     percent = (length(progress)-1)/progress(1)*100;

@@ -47,7 +47,7 @@ WriteCommand(Command, sprintf('%s%s%s%s', runName, filesep, f, e));
 
 % Write kernels to results directory if requested
 if exist('./tempkernels.mat', 'file')
-   system(sprintf('mv ./tempkernels.mat .%s%skernels.mat', filesep, runName));
+   movefile('./tempkernels.mat', sprintf('.%s%skernels.mat', filesep, runName));
 end
 
 % Calculate and write out stats
