@@ -65,7 +65,7 @@ function Command = ParseOptCommands(Command, varargin)
 % Parse arguments
 
 % Check that an even number of arguments were specified
-if isodd(nargin-1)
+if rem(nargin-1, 2) == 1
    error('Optional input arguments must follow the form "Name", "Value"')
 end
 
