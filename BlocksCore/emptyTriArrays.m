@@ -13,3 +13,4 @@ Data.triSlipCon      = [];
 Sigma.triSlipCon     = [];
 Index.triConkeep     = [];
 Index.triColkeep     = [];
+Index.triSmoothkeep  = [];
