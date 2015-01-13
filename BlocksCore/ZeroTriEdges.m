@@ -1,4 +1,4 @@
-function r = ZeroTriEdges(p, c, tol)
+function [r, lengths] = ZeroTriEdges(p, c, tol)
 %
 % ZeroTriEdges enforces a zero-slip constraint on the updip, and optionally,
 % the downdip edges of a triangular mesh.  This is carried out by zeroing the
@@ -43,44 +43,49 @@ latedges                                     = [];
 for i = 1:numel(p.nEl);
    elRange                                   = elOrd(i)+1:elOrd(i+1);
    coRange                                   = coOrd(i)+1:coOrd(i+1);
+   % find all edge coordinates
+   edge                                      = OrderedEdges(p.c, p.v(elRange, :));
+   % find all edge elements
+   edgeEls                                   = elOrd(i) + find(sum(ismember(p.v(elRange, :), edge), 2) == 2);
    % find the zero depth coordinates
    if c.triEdge(3*i-2) == 1
-      zeroTest                               = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= tol(1);
+      zeroTest                               = abs(p.c(coRange, 3)) <= (min(abs(p.c(coRange, 3))) + tol(1));
       zeroZ                                  = coOrd(i) + find(zeroTest);
       % find those elements having two zero-depth coordinates
-      updip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
+      updip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) >= 2);
+      updip                                  = intersect(updip, edgeEls);
       updips                                 = [updips; updip];
    end
    if c.triEdge(3*i-1) == 1
       % find the deepest coordinates
-      maxTest                                = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= tol(2);
+      maxTest                                = abs(p.c(coRange, 3)) >= (max(abs(p.c(coRange, 3))) - tol(2));
       maxZ                                   = coOrd(i) + find(maxTest);
       % find those elements having two max. depth coordinates
-      downdip                                = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
+      downdip                                = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) >= 2);
+      downdip                                = intersect(downdip, edgeEls);
       downdips                               = [downdips; downdip];
    end
    if c.triEdge(3*i-0) == 1
-      % find all edge coordinates
-      edge                                   = OrderedEdges(p.c, p.v(elRange, :));
-      % find all edge elements
-      edgeEls                                = elOrd(i) + find(sum(ismember(p.v(elRange, :), edge), 2) == 2);
       % separate out those that aren't on the up- or downdip extent
-      zeroTest                               = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= tol(1);
+      zeroTest                               = abs(p.c(coRange, 3)) <= (min(abs(p.c(coRange, 3))) + tol(1));
       zeroZ                                  = coOrd(i) + find(zeroTest);
       % find those elements having two zero-depth coordinates
-      updip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
+      updip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) >= 2);
+      updip                                  = intersect(updip, edgeEls);
       
       % find the deepest coordinates
-      maxTest                                = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= tol(2);
+      maxTest                                = abs(p.c(coRange, 3)) >= (max(abs(p.c(coRange, 3))) - tol(2));
       maxZ                                   = coOrd(i) + find(maxTest);
       % find those elements having two max. depth coordinates
-      downdip                                = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
-
+      downdip                                = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) >= 2);
+      downdip                                = intersect(downdip, edgeEls);
+      
       latedge                                = setdiff(edgeEls, [updip(:); downdip(:)]);
       latedges                               = [latedges; latedge];
    end
 end
 nzs                                          = [updips; downdips; latedges];
+lengths                                      = [length(updips); length(downdips); length(latedges)];
 r                                            = zeros(2*length(nzs), 2*elOrd(end));
 for i = 1:length(nzs)
    r(2*i-1, 2*nzs(i)-1)                      = 1;

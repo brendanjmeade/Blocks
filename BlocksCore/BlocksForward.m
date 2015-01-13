@@ -19,7 +19,7 @@ function varargout = BlocksForward(x, y, outdir, notri)
 % Read in the necessary files
 cmname                                           = dir([outdir filesep '*.command']);
 Command                                          = ReadCommand([outdir filesep cmname(1).name]);
-Segment                                          = ReadSegmentTri([outdir 'Mod.segment']);
+Segment                                          = ReadSegmentTri([outdir filesep 'Mod.segment']);
 Segment                                          = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
 [Segment.x1 Segment.y1 Segment.z1]               = sph2cart(DegToRad(Segment.lon1(:)), DegToRad(Segment.lat1(:)), 6371);
 [Segment.x2 Segment.y2 Segment.z2]               = sph2cart(DegToRad(Segment.lon2(:)), DegToRad(Segment.lat2(:)), 6371);
@@ -27,8 +27,8 @@ Segment                                          = OrderEndpoints(Segment); % Re
 [Segment.midX Segment.midY Segment.midZ]         = sph2cart(DegToRad(Segment.midLon), DegToRad(Segment.midLat), 6371);
 Segment.lDep                                     = PatchLDtoggle(Segment.lDep, Segment.patchFile, Segment.patchTog, Command.patchFileNames); % Set locking depth to zero on segments that are associated with patches
 Segment                                          = SegCentroid(Segment);
-Block                                            = ReadBlock([outdir 'Mod.block']);
-[Patches.c, Patches.v, Patches.s]                = PatchData([outdir 'Mod.patch']);
+Block                                            = ReadBlock([outdir filesep 'Mod.block']);
+[Patches.c, Patches.v, Patches.s]                = PatchData([outdir filesep 'Mod.patch']);
 Patches.nc                                       = size(Patches.c, 1);
 Patches.nEl                                      = size(Patches.v, 1);
 Patches                                          = PatchCoords(Patches);
@@ -85,3 +85,4 @@ elseif nargout == 5
    varargout{4} = vs;
    varargout{5} = vb - vd - vt;
 end
+keyboard

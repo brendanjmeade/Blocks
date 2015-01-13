@@ -1,4 +1,4 @@
-function pn = patchsubset(p, idx)
+function pn = patchsubset(p, idx, except)
 % PATCHSUBSET  Returns a subset of elements contained in patch structure.
 %   PN = PATCHSUBSET(P, IDX) creates a new structure, PN, that contains
 %   the subset of elements of structure P defined by indices IDX.  IDX 
@@ -6,8 +6,15 @@ function pn = patchsubset(p, idx)
 %   P.v.
 %
 
+% Parse optional exceptions
+if exist('except', 'var')
+   ign = cat(2, {'c', 'nc', 'nEl', 'up', 'uue'}, except(:)');
+else 
+   ign = {'c', 'nc', 'nEl', 'up', 'uue'};
+end
+
 % Take the subset
-pn = structsubset(p, idx, {'c', 'nc', 'nEl', 'up', 'uue'});
+pn = structsubset(p, idx, ign);
 
 % Determine how many elements of each individual geometry are retained 
 % (i.e., define p.nEl)

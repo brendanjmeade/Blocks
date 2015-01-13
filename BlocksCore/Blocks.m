@@ -47,7 +47,7 @@ if isempty(Partials.elastic)
    fprintf('done.')
 end
 Index.szelastic                                  = size(Partials.elastic);
-keyboard
+
 % Save elastic partials
 SaveKernels(Partials, Command, 'elastic', 'selastic')
 
