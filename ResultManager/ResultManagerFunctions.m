@@ -7,7 +7,7 @@ function ResultManagerFunctions(option)
 % Declare variables
 global GLOBAL ul cul st Segment plotsegs Obs Mod Res Rot Def Str Tri cSegment cplotsegs cObs cMod cRes cRot cDef cStr cTri vecScale
 translateScale                     = 0.2;
-vecScale						   = get(findobj(gcf, 'tag', 'Rst.velSlider'), 'value');
+vecScale						   = 0.5;
 
 % Parse callbacks
 switch(option)
@@ -113,12 +113,13 @@ switch(option)
      % check for optional files
      if exist([dirname filesep 'Strain.block']);
         StrBlock					= ReadBlock([dirname filesep 'Strain.block']);
+        set(findobj(gcf, '-regexp', 'tag', 'Rst.opText'), 'enable', 'on');
      else
         StrBlock              = [];
      end
      setappdata(gcf, 'StrBlock', StrBlock)
      set(findobj(gcf, '-regexp', 'tag', 'Rst.Strain'), 'enable', 'on');
-     set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
+     set(findobj(gcf, 'tag', 'Rst.velS'), 'enable', 'on');
      
      if exist([dirname filesep 'Mod.patch']);
      	[C, V, tSlip]			= PatchData([dirname filesep 'Mod.patch']);
@@ -127,6 +128,7 @@ switch(option)
       end  
      	setappdata(gcf, 'C', C); setappdata(gcf, 'V', V); setappdata(gcf, 'tSlip', tSlip);
      	set(findobj(gcf, '-regexp', 'tag', 'Rst.TriCheck'), 'enable', 'on');
+      set(findobj(gcf, 'tag', 'Rst.opText'), 'enable', 'on');
      end
 	  	  
    % Clear directory
@@ -745,25 +747,6 @@ switch(option)
 	      end
       end
       
-%%%%%%%%%%%%%%%%%%%%
-% Set vector scale %
-%%%%%%%%%%%%%%%%%%%%
-
-	case 'Rst.velScale'
-		ha 								= get(findobj(gcf, 'tag', 'Rst.velScale'), 'string');
-		if isempty(ha)
-			set(ha, 'string', num2str(get(findobj(gcf, 'tag', 'Rst.velSlider'), 'value'), '%0.2f'));
-		else
-			vecScale						= str2double(ha);
-			set(findobj(gcf, 'tag', 'Rst.velSlider'), 'value', vecScale);
-			ScaleAllVectors(vecScale)
-		end
-		
-	case 'Rst.velSlider'
-		vecScale							= get(findobj(gcf, 'tag', 'Rst.velSlider'), 'value');
-		set(findobj(gcf, 'tag', 'Rst.velScale'), 'string', num2str(vecScale, '%0.2f'));
-		ScaleAllVectors(vecScale)
-		
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Show residual improvement %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1836,45 +1819,48 @@ bubs = findobj(groups, '-regexp', 'tag', '^diffres');
 saxs = findobj(groups, '-regexp', 'tag', 'StrainAxes$');
 % scale the vectors
 if ~isempty(vecs)
-	if length(vecs) == 1
-		ovs = get(vecs, 'userdata');
-		ud = (get(vecs, 'udata')/ovs*vecScale);
-		vd = (get(vecs, 'vdata')/ovs*vecScale);
-		set(vecs, 'udata', ud);
-		set(vecs, 'vdata', vd);
-	else
-		ovs = get(vecs(1), 'userdata');
-		ud = cellfun(@(x) x/ovs*vecScale, get(vecs, 'udata'), 'uniformoutput', false);
-		vd = cellfun(@(x) x/ovs*vecScale, get(vecs, 'vdata'), 'uniformoutput', false);
-		set(vecs, {'udata'}, ud);
-		set(vecs, {'vdata'}, vd);
-	end
-end
-set(vecs, 'userdata', vecScale)
+   set(vecs, 'udata', vecScale*get(vecs, 'udata'));
+   set(vecs, 'vdata', vecScale*get(vecs, 'vdata'));
+end   
+% 	if length(vecs) == 1
+% 		ovs = get(vecs, 'userdata');
+% 		ud = (get(vecs, 'udata')/ovs*vecScale);
+% 		vd = (get(vecs, 'vdata')/ovs*vecScale);
+% 		set(vecs, 'udata', ud);
+% 		set(vecs, 'vdata', vd);
+% 	else
+% 		ovs = get(vecs(1), 'userdata');
+% 		ud = cellfun(@(x) x/ovs*vecScale, get(vecs, 'udata'), 'uniformoutput', false);
+% 		vd = cellfun(@(x) x/ovs*vecScale, get(vecs, 'vdata'), 'uniformoutput', false);
+% 		set(vecs, {'udata'}, ud);
+% 		set(vecs, {'vdata'}, vd);
+% 	end
+% end
+% set(vecs, 'userdata', vecScale)
 % scale the bubbles
-if ~isempty(bubs)
-   bv = get(bubs, 'visible');
-	if length(bubs) > 1 % actual bubbles exist
-		sc = vecScale*10000;
-		ms = cellfun(@(x) ceil(sc*abs(x)) + 1, get(bubs, 'userdata'), 'uniformoutput', false);
-		set(bubs, {'sizedata'}, ms);
-	else
-		set(bubs, 'sizedata', vecScale*10001);
-	end
-   % Turn bubbles back off if they were off; having some issues in 2009b where, if they're turned on,
-   % then turned off, then the vector scale is reset, they'll turn back on
-   set(bubs, {'visible'}, bv);
-end
-
-% scale the strain axes
-if ~isempty(saxs)
-	ovs = get(saxs(1), 'userdata');
-	ud = cellfun(@(x) x/ovs*vecScale, get(saxs, 'udata'), 'uniformoutput', false);
-	vd = cellfun(@(x) x/ovs*vecScale, get(saxs, 'vdata'), 'uniformoutput', false);
-	set(saxs, {'udata'}, ud);
-	set(saxs, {'vdata'}, vd);
-	set(saxs, 'userdata', vecScale)
-end
+% if ~isempty(bubs)
+%    bv = get(bubs, 'visible');
+% 	if length(bubs) > 1 % actual bubbles exist
+% 		sc = vecScale*10000;
+% 		ms = cellfun(@(x) ceil(sc*abs(x)) + 1, get(bubs, 'userdata'), 'uniformoutput', false);
+% 		set(bubs, {'sizedata'}, ms);
+% 	else
+% 		set(bubs, 'sizedata', vecScale*10001);
+% 	end
+%    % Turn bubbles back off if they were off; having some issues in 2009b where, if they're turned on,
+%    % then turned off, then the vector scale is reset, they'll turn back on
+%    set(bubs, {'visible'}, bv);
+% end
+% 
+% % scale the strain axes
+% if ~isempty(saxs)
+% 	ovs = get(saxs(1), 'userdata');
+% 	ud = cellfun(@(x) x/ovs*vecScale, get(saxs, 'udata'), 'uniformoutput', false);
+% 	vd = cellfun(@(x) x/ovs*vecScale, get(saxs, 'vdata'), 'uniformoutput', false);
+% 	set(saxs, {'udata'}, ud);
+% 	set(saxs, {'vdata'}, vd);
+% 	set(saxs, 'userdata', vecScale)
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Show residual improvement %
