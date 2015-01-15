@@ -73,7 +73,7 @@ lambdap(phip < 0) = lambdap(phip < 0) + 180;
 phip(phip < 0) = -phip(phip < 0);
 % Find origin longitude
 lambda0 = lambdap + 90; % Origin longitude is pole + 90 degrees
-%lambda0(lambda0 > 180) = lambda0(lambda0 > 180) - 360; % Wrap to 180
+lambda0(lambda0 > 180) = lambda0(lambda0 > 180) - 360; % Wrap to 180
 
 cphip = cosd(phip);
 sphip = sind(phip);
@@ -82,7 +82,7 @@ A = sphip.*sphi - cphip.*cphi.*sind(dlamb);
 
 % Projection
 x = atan((tand(phi).*cphip + sphip.*sind(dlamb))./cosd(dlamb));
-x = x + (cosd(dlamb) > 0)*pi + pi/2; % This is different from the reference but agrees with Mapping Toolbox
+x = x - (cosd(dlamb) > 0)*pi + pi/2; % This is different from the reference but agrees with Mapping Toolbox
 y = atanh(A);
 x = -sp.*x;
 y = -sp.*y;
