@@ -1676,7 +1676,7 @@ quiver(Station.lon(on), Station.lat(on), Station.eastVel(on), Station.northVel(o
 
 % Scale station vectors
 function ScaleAllVectors(vecScale)
-groups = findobj(gcf, 'type', 'hggroup');
+groups = findobj(gcf, 'type', 'quiver');
 set(groups, 'Udata', vecScale*get(groups, 'UData'));
 set(groups, 'Vdata', vecScale*get(groups, 'VData'));
 
