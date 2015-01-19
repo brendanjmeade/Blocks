@@ -7,7 +7,9 @@ function ResultManagerFunctions(option)
 % Declare variables
 global GLOBAL ul cul st Segment plotsegs Obs Mod Res Rot Def Str Tri cSegment cplotsegs cObs cMod cRes cRot cDef cStr cTri vecScale
 translateScale                     = 0.2;
-vecScale						   = 0.5;
+if ~exist('vecScale', 'var')
+   vecScale						   = 0.5;
+end
 
 % Parse callbacks
 switch(option)
@@ -21,9 +23,7 @@ switch(option)
       % Get the name of the segment file
       ha                          = findobj(gcf, 'Tag', 'Rst.loadEdit');
       dirname                     = get(ha, 'string');
-      if exist(dirname, 'dir')
-         dirname              = strcat(pwd, filesep, dirname);
-      else
+      if ~exist(dirname, 'dir')
          dirname      = uigetdir(pwd, 'Choose results directory');
          if dirname == 0
             return;
@@ -43,7 +43,7 @@ switch(option)
          % Plot segments
       	plotsegs = DrawSegment(Segment, 'color', 'b', 'tag', 'Segs');
 	  end
-	  
+
 	  % Check the extension of station files
 	  osn = dir([dirname filesep 'Obs.sta*']);
 	  [~, ~, ext] = fileparts(osn.name);
@@ -363,9 +363,8 @@ switch(option)
       % Get the name of the segment file
       ha                          = findobj(gcf, 'Tag', 'Rst.cloadEdit');
       dirname                     = get(ha, 'string');
-      if exist(dirname, 'dir')
-         dirname              = strcat(pwd, filesep, dirname);
-      else
+
+      if ~exist(dirname, 'dir')
          dirname      = uigetdir(pwd, 'Choose results directory');
          if dirname == 0
             return;
@@ -1369,12 +1368,15 @@ switch(option)
    
    % Vector scale buttons
    case 'Rst.velPushUp'
+      vecScale = 1.1*vecScale;
       ScaleAllVectors(1.1);
 
 
    case 'Rst.velPushDown'
+      vecScale = 0.9*vecScale;
       ScaleAllVectors(0.9);  
-      
+
+            
    %%%   Start Navigation Commands   %%%
    case 'Rst.navZoomRange'
       fprintf(GLOBAL.filestream, '%s\n', option);
@@ -1786,6 +1788,7 @@ text(Station.lon, Station.lat, [repmat(' ', numel(Station.lon), 1) Station.name]
 %%%%%%%%%%%%%%%%%%%%%%%%
 function PlotStaVec(Station, vecScale, varargin)
 	% PlotStaVec
+	vecScale
 quiver(Station.lon, Station.lat, vecScale*Station.eastVel, vecScale*Station.northVel, 0, 'userdata', vecScale, varargin{:});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1810,47 +1813,45 @@ rmgc = scatter(Res.lon, Res.lat, sc, cvec, 'filled', varargin{:});
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % Scale station vectors %
 %%%%%%%%%%%%%%%%%%%%%%%%%
-function ScaleAllVectors(vecScale)
+function ScaleAllVectors(scaleFactor)
 	% ScaleAllVectors
 global Obs Mod Res Rot Def Str Tri cObs cMod cRes cRot cDef cStr cTri
-groups = findobj(gcf, 'type', 'hggroup');
+groups = findobj(gcf, 'type', 'quiver');
 vecs = findobj(groups, '-regexp', 'tag', '\w+v');
-bubs = findobj(groups, '-regexp', 'tag', '^diffres');
+bubs = findobj('type', 'scatter');
 saxs = findobj(groups, '-regexp', 'tag', 'StrainAxes$');
 % scale the vectors
 if ~isempty(vecs)
-   set(vecs, 'udata', vecScale*get(vecs, 'udata'));
-   set(vecs, 'vdata', vecScale*get(vecs, 'vdata'));
-end   
-% 	if length(vecs) == 1
-% 		ovs = get(vecs, 'userdata');
-% 		ud = (get(vecs, 'udata')/ovs*vecScale);
-% 		vd = (get(vecs, 'vdata')/ovs*vecScale);
-% 		set(vecs, 'udata', ud);
-% 		set(vecs, 'vdata', vd);
-% 	else
-% 		ovs = get(vecs(1), 'userdata');
-% 		ud = cellfun(@(x) x/ovs*vecScale, get(vecs, 'udata'), 'uniformoutput', false);
-% 		vd = cellfun(@(x) x/ovs*vecScale, get(vecs, 'vdata'), 'uniformoutput', false);
-% 		set(vecs, {'udata'}, ud);
-% 		set(vecs, {'vdata'}, vd);
-% 	end
-% end
-% set(vecs, 'userdata', vecScale)
+	if length(vecs) == 1
+		ovs = get(vecs, 'userdata');
+		ud = (get(vecs, 'udata')*scaleFactor);
+		vd = (get(vecs, 'vdata')*scaleFactor);
+		set(vecs, 'udata', ud);
+		set(vecs, 'vdata', vd);
+	else
+		ovs = get(vecs(1), 'userdata');
+		ud = cellfun(@(x) x*scaleFactor, get(vecs, 'udata'), 'uniformoutput', false);
+		vd = cellfun(@(x) x*scaleFactor, get(vecs, 'vdata'), 'uniformoutput', false);
+		set(vecs, {'udata'}, ud);
+		set(vecs, {'vdata'}, vd);
+	end
+end
+
 % scale the bubbles
-% if ~isempty(bubs)
-%    bv = get(bubs, 'visible');
-% 	if length(bubs) > 1 % actual bubbles exist
-% 		sc = vecScale*10000;
-% 		ms = cellfun(@(x) ceil(sc*abs(x)) + 1, get(bubs, 'userdata'), 'uniformoutput', false);
-% 		set(bubs, {'sizedata'}, ms);
-% 	else
-% 		set(bubs, 'sizedata', vecScale*10001);
-% 	end
-%    % Turn bubbles back off if they were off; having some issues in 2009b where, if they're turned on,
-%    % then turned off, then the vector scale is reset, they'll turn back on
-%    set(bubs, {'visible'}, bv);
-% end
+if ~isempty(bubs)
+   bv = get(bubs, 'visible');
+	if length(bubs) > 1 % actual bubbles exist
+		ms = cellfun(@(x) ceil(scaleFactor*abs(x)), get(bubs, 'sizedata'), 'uniformoutput', false);
+		set(bubs, {'sizedata'}, ms);
+	end
+   % Turn bubbles back off if they were off; having some issues in 2009b where, if they're turned on,
+   % then turned off, then the vector scale is reset, they'll turn back on
+   if length(bubs) == 1
+      set(bubs, 'visible', bv);
+   else
+      set(bubs, {'visible'}, bv);
+   end
+end
 % 
 % % scale the strain axes
 % if ~isempty(saxs)

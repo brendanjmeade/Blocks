@@ -1,4 +1,4 @@
-function ResultManager
+function ResultManager(dir1, dir2)
 
 % Color variables
 white                            = [1 1 1];
@@ -169,13 +169,6 @@ Rst.cTriDRadio							= uicontrol('style', 'radio', 'pos', [0  0 20 20], 'parent'
 Rst.cTriSText							= uicontrol('style', 'text', 'position', [compareXOffset+45 opYOffset+20 85 20],    'visible', 'on', 'tag', 'Rst.cTriSText', 'string', 'Strike-slip', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
 Rst.cTriDText							= uicontrol('style', 'text', 'position', [compareXOffset+45 opYOffset+0 85 20],     'visible', 'on', 'tag', 'Rst.cTriDText', 'string', 'Dip-slip/tensile', 'BackgroundColor', lightGrey, 'HorizontalAlignment', 'left', 'FontName', fn, 'FontSize', fs, 'enable', 'off'); 
 
-
-
-
-
-
-
-
 %
 %% (Result Manager) Additional features frame
 %% Rst.dispFrame                    = uicontrol('style', 'frame',          'position', [5 90 290 75],     'visible', 'on', 'tag', 'Rst.dispFrame', 'BackgroundColor', lightGrey);
@@ -248,7 +241,30 @@ set(h, 'userdata', Handles);
 set(h, 'visible', 'on', 'name', 'Result Manager');
 set(gcf, 'DoubleBuffer', 'on');
 
+% Load directory or directories upon figure opening
+if exist('dir1', 'var')
+   slashes = strfind(dir1, filesep);
+   if length(slashes) == 0 || (length(slashes == 1) && slashes == length(dir1))
+      dir1 = [pwd filesep dir1];
+      if strmatch(dir1(end), filesep)
+         dir1 = dir1(1:end-1);
+      end
+   end
+   set(findobj(gcf, 'Tag', 'Rst.loadEdit'), 'string', dir1);
+   ResultManagerFunctions('Rst.loadPush')
+end
 
+if exist('dir2', 'var')
+   slashes = strfind(dir2, filesep);
+   if length(slashes) == 0 || (length(slashes == 1) && slashes == length(dir2))
+      dir2 = [pwd filesep dir2];
+      if strmatch(dir2(end), filesep)
+         dir2 = dir2(1:end-1);
+      end
+   end
+   set(findobj(gcf, 'Tag', 'Rst.cloadEdit'), 'string', dir2);
+   ResultManagerFunctions('Rst.cloadPush');
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Radio button functions %
