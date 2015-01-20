@@ -7,7 +7,7 @@ function ResultManagerFunctions(option)
 % Declare variables
 global GLOBAL ul cul st Segment plotsegs Obs Mod Res Rot Def Str Tri cSegment cplotsegs cObs cMod cRes cRot cDef cStr cTri vecScale
 translateScale                     = 0.2;
-if ~exist('vecScale', 'var')
+if ~exist('vecScale', 'var') || isempty(vecScale)
    vecScale						   = 0.5;
 end
 
@@ -1788,7 +1788,6 @@ text(Station.lon, Station.lat, [repmat(' ', numel(Station.lon), 1) Station.name]
 %%%%%%%%%%%%%%%%%%%%%%%%
 function PlotStaVec(Station, vecScale, varargin)
 	% PlotStaVec
-	vecScale
 quiver(Station.lon, Station.lat, vecScale*Station.eastVel, vecScale*Station.northVel, 0, 'userdata', vecScale, varargin{:});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1816,10 +1815,18 @@ rmgc = scatter(Res.lon, Res.lat, sc, cvec, 'filled', varargin{:});
 function ScaleAllVectors(scaleFactor)
 	% ScaleAllVectors
 global Obs Mod Res Rot Def Str Tri cObs cMod cRes cRot cDef cStr cTri
-groups = findobj(gcf, 'type', 'quiver');
-vecs = findobj(groups, '-regexp', 'tag', '\w+v');
-bubs = findobj('type', 'scatter');
-saxs = findobj(groups, '-regexp', 'tag', 'StrainAxes$');
+verstruct = ver;
+if datenum(verstruct(1).Date) >= datenum('08-Sep-2014')
+	groups = findobj(gcf, 'type', 'quiver');
+	vecs = findobj(groups, '-regexp', 'tag', '\w+v');
+	bubs = findobj('type', 'scatter');
+	saxs = findobj(groups, '-regexp', 'tag', 'StrainAxes$');
+else
+	groups = findobj(gcf, 'type', 'hggroup');
+	vecs = findobj(groups, '-regexp', 'tag', '\w+v');
+	bubs = findobj(groups, '-regexp', 'tag', '^diffres');
+	saxs = findobj(groups, '-regexp', 'tag', 'StrainAxes$');
+end
 % scale the vectors
 if ~isempty(vecs)
 	if length(vecs) == 1

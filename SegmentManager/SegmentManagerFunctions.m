@@ -10,6 +10,9 @@ function SegmentManagerFunctions(option)
 % Declare variables
 global GLOBAL ul cul st;
 translateScale                     = 0.2;
+if ~exist('vecScale', 'var') || isempty(vecScale)
+   vecScale						        = 0.5;
+end
 
 % Parse callbacks
 switch(option)
@@ -68,7 +71,7 @@ switch(option)
       ha                           = findobj(gcf, 'Tag', 'Seg.dispEditSta');
       set(ha, 'String', Command.staFileName);
       Station = PlotSta(Command.staFileName);
-      PlotStaVec(Station)
+      PlotStaVec(Station, vecScale);
       setappdata(gcf, 'Station', Station);
       hb                           = findobj(gcf, 'Tag', 'Seg.dispCheckSta');
       set(hb, 'Value', 1);
@@ -1187,7 +1190,7 @@ switch(option)
       end
       Station = PlotSta(filenameFull);
 
-      PlotStaVec(Station)
+      PlotStaVec(Station, vecScale)
       setappdata(gcf, 'Station', Station);
       hb                           = findobj(gcf, 'Tag', 'Seg.dispCheckSta');
       set(hb, 'Value', 1);
@@ -1247,10 +1250,12 @@ switch(option)
             
       
    case 'Seg.velPushUp'
+      vecScale = 1.1*vecScale;
       ScaleAllVectors(1.1);
 
 
    case 'Seg.velPushDown'
+      vecScale = 0.9*vecScale;
       ScaleAllVectors(0.9);
 
 
@@ -1668,15 +1673,19 @@ on 				 = find(Station.tog);
 plot(Station.lon(on), Station.lat(on), 'bo', 'color', [0 0 1], 'MarkerSize', 2, 'MarkerFaceColor', 'b', 'Tag', 'staAll');
 
 
-function PlotStaVec(Station)
+function PlotStaVec(Station, vecScale)
 on					 = find(Station.tog);
-vecScale = get(findobj(gcf, 'tag', 'Seg.velSlider'), 'value');
-quiver(Station.lon(on), Station.lat(on), Station.eastVel(on), Station.northVel(on), 0, 'userdata', vecScale, 'color', [0 0 1], 'tag', 'staAllVec', 'visible', 'off');
+quiver(Station.lon(on), Station.lat(on), vecScale*Station.eastVel(on), vecScale*Station.northVel(on), 0, 'userdata', vecScale, 'color', [0 0 1], 'tag', 'staAllVec', 'visible', 'off');
 
 
 % Scale station vectors
 function ScaleAllVectors(vecScale)
-groups = findobj(gcf, 'type', 'quiver');
+verstruct = ver;
+if datenum(verstruct(1).Date) >= datenum('08-Sep-2014')
+   groups = findobj(gcf, 'type', 'quiver');
+else
+   groups = findobj(gcf, 'type', 'hggroup');
+end
 set(groups, 'Udata', vecScale*get(groups, 'UData'));
 set(groups, 'Vdata', vecScale*get(groups, 'VData'));
 
