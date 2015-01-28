@@ -19,7 +19,9 @@ cul                              = ul - 1; % current undo level
 st                               = 2; % where to start counting the undo levels
 
 % Open figure
-h                                = figure('Position', [0 0 1200 850], 'Color', lightGrey, 'menubar', 'figure', 'toolbar', 'figure');
+screensize                        = get(0, 'screensize');
+figloc                           = screensize(3:4)./2 - [600 425];
+h                                = figure('Position', [figloc 1200 850], 'Color', lightGrey, 'menubar', 'figure', 'toolbar', 'figure');
 set(gcf, 'MenuBar', 'none');
 set(gcf, 'ToolBar', 'none');
 
