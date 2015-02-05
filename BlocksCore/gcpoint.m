@@ -13,5 +13,9 @@ plat = asind(sind(lat).*cosd(dist) + cosd(lat).*sind(dist).*cosd(az));
 a = sind(dist).*sind(az).*cosd(lat);
 b = cosd(dist) - sind(lat).*sind(plat);
 
-plon = lon + atan2d(a, b);
+if verLessThan('matlab', '8.0')
+   plon = lon + rad2deg(atan2(a, b));
+else
+   plon = lon + atan2d(a, b);
+end
 plon(b == 0) = lon(b == 0);
