@@ -139,9 +139,9 @@ for i = 1:numel(S.lon)
    nearIdx                     = find(RNG <= outlierRange);
    nearIdx                     = intersect(nearIdx, tIdx);
    nearIdx                     = setdiff(nearIdx, togIdx); % Remove from consideration any of the stations that have been flagged for toggling off in the previous analyses
-   if numel(nearIdx) > 3 % say we need 3 stations to bother
-      meanEast                 = mean(S.eastVel(nearIdx));
-      meanNorth                = mean(S.northVel(nearIdx));
+   if numel(nearIdx) > 2 % say we need 3 stations to bother
+      meanEast                 = median(S.eastVel(nearIdx));
+      meanNorth                = median(S.northVel(nearIdx));
       meanSigE                 = mean(S.eastSig(nearIdx));
       meanSigN                 = mean(S.northSig(nearIdx));
       if sigMult ~= 0

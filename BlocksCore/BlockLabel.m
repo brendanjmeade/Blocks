@@ -184,7 +184,7 @@ for i = 1:nblock
    stin = inpolygonsphere(st.lon, st.lat, bco, bca);
    
    if sum(bin) > 1 % exterior block or error
-      if barea(i) == max(barea) && ext == 0 % if the area is the largest and exterior hasn't yet been assigned
+      if abs(barea(i)) == max(abs(barea)) && ext == 0 % if the area is the largest and exterior hasn't yet been assigned
 	     alabel(find(~bin)) = i; % ...assign this block as the exterior
    	     ext = i; % and specifically declare the exterior label
    	  elseif ext > 0
