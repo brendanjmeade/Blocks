@@ -44,7 +44,7 @@ else
 end
 smag(isnan(leng)) = 1;
 leng(isnan(leng)) = 1e-6;
-
+leng(leng < 0.045) = 0.05;
 
 % Assemble into a neat array
 out = [s.lon(:) s.lat(:) smag(:) az(:) leng(:)];

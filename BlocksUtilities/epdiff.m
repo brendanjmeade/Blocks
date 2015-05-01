@@ -1,4 +1,4 @@
-function epdiff(dirnames, refidx)
+function [angdiff, rotdiff] = epdiff(dirnames, refidx)
 % epdiff  Makes a plot showing Euler pole differences. 
 %    epdiff(DIRNAMES) makes a plot showing the differences
 %    in estimated Euler poles contained in the Mod.block files
@@ -25,14 +25,17 @@ b(refidx) = ReadBlock([dirnames(refidx, :) filesep 'Mod.block']);
 nblocks = size(b(refidx).name, 1);
 [pn, pe, pd, prot, angdiff, rotdiff, loc] = deal(zeros(nblocks, ndirs));
 bc = ReadBlockCoords(dirnames(refidx, :));
+barea = zeros(nblocks, 1);
+for i = 1:length(bc)
+   barea(i) = polyareasphere(bc{i}(:, 1), bc{i}(:, 2));
+end
 
-[~, loc(:, refidx)] = 1:nblocks;
+[~, sidx] = sort(barea);
+b(refidx) = structsubset(b(refidx), sidx);
 [pn(:, refidx), pe(:, refidx), pd(:, refidx)] = sph2cart(deg2rad(b(refidx).eulerLon), deg2rad(b(refidx).eulerLat), 1);
 prot(:, refidx) = b(refidx).rotationRate;
 
 figure; hold on
-cmap = jet(ndirs-1);
-j = length(otheridx);
 % Load in the other block structures 
 for i = fliplr(otheridx)
    b(i) = ReadBlock([dirnames(i, :) filesep 'Mod.block']);
@@ -45,16 +48,20 @@ for i = fliplr(otheridx)
    angdiff(:, i) = acosd(dot([pn(:, i), pe(:, i), pd(:, i)], [pn(:, refidx), pe(:, refidx), pd(:, refidx)], 2));
    angdiff(angdiff(:, i) > 90, i) = 180 - angdiff(angdiff(:, i) > 90, i);
    rotdiff(:, i) = prot(:, i) - prot(:, refidx);
-   scatter(1:nblocks, angdiff(:, i), 5+ceil(50*abs(rotdiff(:, i))), cmap(j, :), 'filled', 'markeredgecolor', 'k');
-   j = j-1;
 end
 
-cb = colorbar;
-caxis([0 ndirs]); colormap(jet);
+% Sort so that smallest circles appear on top
+ad = angdiff(:, otheridx)';
+rd = rotdiff(:, otheridx)';
+for i = 1:nblocks
+   [~, sidx] = sort(abs(rd(:, i)), 'descend');
+   scatter(i*ones(size(ad, 1), 1), ad(sidx, i), 5+ceil(100*abs(rd(sidx, i))), 0:size(ad, 1)-1, 'filled', 'markeredgecolor', 'k');
+end
 
+%scatter(1:nblocks, angdiff(:, i), 5+ceil(100*abs(rotdiff(:, i))), (i-1)*ones(1, nblocks), 'filled', 'markeredgecolor', 'k');
+colormap(bluewhitered)
 prepfigprint;
-ylabel(cb, 'Run number');
-set(cb, 'ticks', 1:ndirs-1);
+
 xlabel('Block number')
 ylabel('Angular difference in Euler pole (degrees)')
 axis tight

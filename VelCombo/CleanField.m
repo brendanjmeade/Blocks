@@ -185,13 +185,13 @@ WriteStation([filename(1:end-9) '_CleanAll.sta.data'], S.lon, S.lat, S.eastVel, 
 WriteStation([filename(1:end-9) '_CleanAll1Sig.sta.data'], S.lon, S.lat, S.eastVel, S.northVel, ones(size(S.eastSig)), ones(size(S.northSig)), S.corr, S.other1, newTog, S.name);
 
 % Make a plot showing the flagged stations
-% figure
-% sta = plot(S.lon(tIdx), S.lat(tIdx), '.k'); hold on;
-% es = plot(S.lon(eastSigIdx), S.lat(eastSigIdx), '.r');
-% ns = plot(S.lon(northSigIdx), S.lat(northSigIdx), '.m');
-% el = plot(S.lon(eastLargeIdx), S.lat(eastLargeIdx), '.g');
-% nl = plot(S.lon(northLargeIdx), S.lat(northLargeIdx), 'ob');
-% co = plot(S.lon(colocateIdx), S.lat(colocateIdx), '.c');
-% nr = plot(S.lon(rangeIdx), S.lat(rangeIdx), 'xb');
-% ol = plot(S.lon(outlierIdx), S.lat(outlierIdx), 'or');
-%legend([sta, es, ns, el, nl, co, nr, ol], {'Stations', 'E Sig.', 'N Sig.', 'E Lg.', 'N Lg.', 'Colo.', 'Near', 'Out'});
+ figure
+ sta = plot(S.lon(tIdx), S.lat(tIdx), '.k'); hold on;
+ es = plot(S.lon(eastSigIdx), S.lat(eastSigIdx), '.r');
+ ns = plot(S.lon(northSigIdx), S.lat(northSigIdx), '.m');
+ el = plot(S.lon(eastLargeIdx), S.lat(eastLargeIdx), '.g');
+ nl = plot(S.lon(northLargeIdx), S.lat(northLargeIdx), 'ob');
+ co = plot(S.lon(colocateIdx), S.lat(colocateIdx), '.c');
+ nr = plot(S.lon(rangeIdx), S.lat(rangeIdx), 'xb');
+ ol = plot(S.lon(outlierIdx), S.lat(outlierIdx), 'or');
+legend([sta, es, ns, el, nl, co, nr, ol], {'Stations', 'E Sig.', 'N Sig.', 'E Lg.', 'N Lg.', 'Colo.', 'Near', 'Out'});
