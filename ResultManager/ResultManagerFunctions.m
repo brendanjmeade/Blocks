@@ -17,20 +17,30 @@ switch(option)
    %%%   Start File I/O commands   %%%
 % Load segment file
    case 'Rst.loadPush'
-      % Delete all the childrean of the current axes
+      % Delete all the children of the current axes
       fprintf(GLOBAL.filestream, '%s\n', option);
       
       % Get the name of the segment file
       ha                          = findobj(gcf, 'Tag', 'Rst.loadEdit');
       dirname                     = get(ha, 'string');
       if ~exist(dirname, 'dir')
-         dirname      = uigetdir(pwd, 'Choose results directory');
-         if dirname == 0
-            return;
-            set(ha, 'string', '');
-         else
-            set(ha, 'string', dirname);
-         end
+          try
+              dirname = getpref('Blocks','ResultsDir');
+          catch
+              try
+                  dirname = getpref('Blocks','CompareDir');
+              catch
+                  dirname = pwd;
+              end
+          end
+          dirname = uigetdir(dirname, 'Choose results directory');
+          if dirname == 0
+              return;
+              set(ha, 'string', '');
+          else
+              set(ha, 'string', dirname);
+          end
+          setpref('Blocks','ResultsDir',dirname);
       end
       
       % Read in the results files
@@ -365,13 +375,23 @@ switch(option)
       dirname                     = get(ha, 'string');
 
       if ~exist(dirname, 'dir')
-         dirname      = uigetdir(pwd, 'Choose results directory');
-         if dirname == 0
-            return;
-            set(ha, 'string', '');
-         else
-            set(ha, 'string', dirname);
-         end
+          try
+              dirname = getpref('Blocks','CompareDir');
+          catch
+              try
+                  dirname = getpref('Blocks','ResultsDir');
+              catch
+                  dirname = pwd;
+              end
+          end
+          dirname = uigetdir(dirname, 'Choose compare directory');
+          if dirname == 0
+              return;
+              set(ha, 'string', '');
+          else
+              set(ha, 'string', dirname);
+          end
+          setpref('Blocks','CompareDir',dirname);
       end
       
       % Read in the results files
