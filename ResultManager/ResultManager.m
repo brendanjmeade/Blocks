@@ -239,6 +239,15 @@ Rst.pszCoords                    = uicontrol('style', 'edit',           'positio
 Handles.Rst                      = Rst;
 set(h, 'userdata', Handles);
 
+% Make all figure components normalized so that they auto-resize on figure resize
+set(findall(h,'-property','Units'),'Units','norm');
+
+% Maximize the GUI in its current screen
+drawnow;  % this is required for jFrame to be accessible
+warning off MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame
+jFrame = get(handle(h),'JavaFrame');
+jFrame.setMaximized(true);
+
 % Making the GUI visible and give it a name
 set(h, 'visible', 'on', 'name', 'Result Manager');
 set(gcf, 'DoubleBuffer', 'on');
@@ -320,5 +329,3 @@ if get(get(source,'SelectedObject'),'Tag') == 'Rst.cTriSRadio'
 else
 	ResultManagerFunctions('Rst.cTriDRadio')
 end
-
-
