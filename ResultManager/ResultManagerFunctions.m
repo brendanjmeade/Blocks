@@ -11,12 +11,13 @@ function ResultManagerFunctions(option)
     end
 
     % Get the struct holding the uicontrols' direct handles (avoiding runtime findobj() calls)
-    drawnow;
+    %drawnow;
     ud = get(gcf,'UserData');
     Rst = ud.Rst;
 
     % Parse callbacks
-    fprintf(GLOBAL.filestream, '%s\n', option);
+    %fprintf(GLOBAL.filestream, '%s => %s\n', datestr(now,'HH:MM:SS.FFF'), option);
+    t=tic;
     switch(option)
 
         %%%   Start File I/O commands   %%%
@@ -49,11 +50,11 @@ function ResultManagerFunctions(option)
             end
 
             % Read in the results files
-            if exist([dirname filesep 'Mod.segment'])
+            if exist([dirname filesep 'Mod.segment'],'file')
                 Segment = ReadSegmentTri([dirname filesep 'Mod.segment']);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipText'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipNumCheck'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipColCheck'), 'enable', 'on');
+                Rst.SlipText.Enable     = 'on';
+                Rst.SlipNumCheck.Enable = 'on';
+                Rst.SlipColCheck.Enable = 'on';
                 setappdata(gcf, 'Segment', Segment);
                 % Plot segments
                 plotsegs = DrawSegment(Segment, 'color', 'b', 'tag', 'Segs');
@@ -66,57 +67,57 @@ function ResultManagerFunctions(option)
                 ext = '.sta.data';
             end
 
-            if exist([dirname filesep 'Obs' ext])
+            if exist([dirname filesep 'Obs' ext],'file')
                 Obs = ReadStation([dirname filesep 'Obs' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Obsv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                Rst.velScaleText.Enable = 'on';
+                Rst.ObsvCheck.Enable    = 'on';
             end
 
-            if exist([dirname filesep 'Mod' ext])
+            if exist([dirname filesep 'Mod' ext],'file')
                 Mod = ReadStation([dirname filesep 'Mod' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Modv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                Rst.velScaleText.Enable = 'on';
+                Rst.ModvCheck.Enable    = 'on';
             end
 
-            if exist([dirname filesep 'Res' ext])
+            if exist([dirname filesep 'Res' ext],'file')
                 Res = ReadStation([dirname filesep 'Res' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Resv'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Resm'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.ResvCheck, 'enable', 'on');
+                set(Rst.ResmCheck, 'enable', 'on');
                 if ~isempty(strmatch(get(Rst.cResvCheck, 'enable'), 'on', 'exact'))
-                    set(findobj(gcf, '-regexp', 'tag', 'Rst.ResidImpCheck'), 'enable', 'on');
+                    set(Rst.ResidImpCheck, 'enable', 'on');
                 end
             end
 
-            if exist([dirname filesep 'Rot' ext])
+            if exist([dirname filesep 'Rot' ext],'file')
                 Rot = ReadStation([dirname filesep 'Rot' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Rotv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.RotvCheck, 'enable', 'on');
             end
 
-            if exist([dirname filesep 'Def' ext])
+            if exist([dirname filesep 'Def' ext],'file')
                 Def = ReadStation([dirname filesep 'Def' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Defv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.DefvCheck, 'enable', 'on');
             end
 
-            if exist([dirname filesep 'Strain' ext])
+            if exist([dirname filesep 'Strain' ext],'file')
                 Str = ReadStation([dirname filesep 'Strain' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Strv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.StrvCheck, 'enable', 'on');
             end
 
-            if exist([dirname filesep 'Tri' ext])
+            if exist([dirname filesep 'Tri' ext],'file')
                 Tri = ReadStation([dirname filesep 'Tri' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Sta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Triv'), 'enable', 'on');
+                set([Rst.StanCheck Rst.StatCheck Rst.StavText], 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.TrivCheck, 'enable', 'on');
             end
             %s = whos('Obs', 'Mod', 'Res', 'Rot', 'Def', 'Str', 'Tri'); % at least one of these exists, or else the button would be inactive
             %varName = eval(s(round(find([s.size], 1)/2)).name);
@@ -127,47 +128,56 @@ function ResultManagerFunctions(option)
             MoveLegend
 
             % check for optional files
-            if exist([dirname filesep 'Strain.block'])
+            if exist([dirname filesep 'Strain.block'],'file')
                 StrBlock = ReadBlock([dirname filesep 'Strain.block']);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.opText'), 'enable', 'on');
+                set(Rst.opText, 'enable', 'on');
             else
                 StrBlock = [];
             end
             setappdata(gcf, 'StrBlock', StrBlock)
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Strain'), 'enable', 'on');
+            set(Rst.StrainCheck,  'enable', 'on');
             set(Rst.velScaleText, 'enable', 'on');
 
-            if exist([dirname filesep 'Mod.patch'])
+            if exist([dirname filesep 'Mod.patch'],'file')
                 [C, V, tSlip] = PatchData([dirname filesep 'Mod.patch']);
                 if ~isempty(C)
                     C(:, 1) = wrapTo360(C(:, 1));
                 end
-                setappdata(gcf, 'C', C); setappdata(gcf, 'V', V); setappdata(gcf, 'tSlip', tSlip);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.TriCheck'), 'enable', 'on');
-                set(Rst.opText, 'enable', 'on');
+                setappdata(gcf, 'C', C); 
+                setappdata(gcf, 'V', V); 
+                setappdata(gcf, 'tSlip', tSlip);
+                set(Rst.TriCheck, 'enable', 'on');
+                set(Rst.opText,   'enable', 'on');
             end
         case 'Rst.clearPush'  % Clear directory
             setappdata(gcf, 'Segment', []);
             %set(Rst.loadEdit, 'string', '');
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipNumCh'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipColCh'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.SlipText'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Stav'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Stat'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Stan'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Obsv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Modv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Resv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Resm'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Rotv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Defv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Str'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Tri'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.srate'), 'enable', 'off', 'value', 1);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.drate'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Resid'), 'enable', 'off', 'value', 0);
-            set(Rst.ResidRadioW, 'value', 1);
-            set(Rst.TriSRadio, 'value', 1);
+            set(Rst.SlipNumCheck,  'enable', 'off', 'value', 0);
+            set(Rst.SlipColCheck,  'enable', 'off', 'value', 0);
+            set(Rst.SlipText,      'enable', 'off', 'value', 0);
+            set(Rst.StavText,      'enable', 'off', 'value', 0);
+            set(Rst.StatCheck,     'enable', 'off', 'value', 0);
+            set(Rst.StanCheck,     'enable', 'off', 'value', 0);
+            set(Rst.ObsvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.ModvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.ResvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.ResmCheck,     'enable', 'off', 'value', 0);
+            set(Rst.RotvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.DefvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.StrainCheck,   'enable', 'off', 'value', 0);
+            set(Rst.StrvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.TriCheck,      'enable', 'off', 'value', 0);
+            set(Rst.TriDRadio,     'enable', 'off', 'value', 0);
+            set(Rst.TriSRadio,     'enable', 'off', 'value', 1);
+            set(Rst.TrivCheck,     'enable', 'off', 'value', 0);
+            set(Rst.srateColRadio, 'enable', 'off', 'value', 1);
+            set(Rst.srateNumRadio, 'enable', 'off', 'value', 1);
+            set(Rst.drateColRadio, 'enable', 'off', 'value', 0);
+            set(Rst.drateNumRadio, 'enable', 'off', 'value', 0);
+            set(Rst.ResidImpCheck, 'enable', 'off', 'value', 0);
+            set(Rst.ResidRadioNW,  'enable', 'off', 'value', 0);
+            set(Rst.ResidRadioW,   'enable', 'off', 'value', 1);
+
             delete(findobj(gcf, '-regexp', 'tag', '^Sta')); % delete stations and names
             delete(findobj(gcf, 'tag', 'Segs')); % delete segments
             delete(findobj(gcf, '-regexp', 'tag', '^\w{3,3}[v]')); % delete main vectors
@@ -178,7 +188,14 @@ function ResultManagerFunctions(option)
             delete(findobj(gcf, '-regexp', 'tag', '^StrainAxes')); % delete strain axes
             delete(findobj(gcf, 'tag', 'tscav'));
             clear -regexp '[A-Z]\w+'
-            try rmappdata(gcf, 'StrBlock'); rmappdata(gcf, 'C'); rmappdata(gcf, 'V'); rmappdata(gcf, 'tSlip'); catch, end
+            try
+                rmappdata(gcf, 'StrBlock');
+                rmappdata(gcf, 'C');
+                rmappdata(gcf, 'V');
+                rmappdata(gcf, 'tSlip');
+            catch
+                % ignore
+            end
             colorbar off
         case 'Rst.StatCheck'  % Plot stations
             %ha = findobj(gcf, 'Tag', 'Sta');
@@ -326,9 +343,9 @@ function ResultManagerFunctions(option)
             end
             CheckVecScale
         case 'Rst.ResmCheck'
-            ha = findobj(gcf, 'Tag', 'Resm');
+            ha  = findobj(gcf, 'Tag', 'Resm');
             hac = findobj(gcf, 'Tag', 'cResm');
-            hb = Rst.ResmCheck;
+            hb  = Rst.ResmCheck;
             hbc = Rst.cResmCheck;
             if get(hb, 'Value') == 0
                 if isempty(ha)
@@ -338,7 +355,6 @@ function ResultManagerFunctions(option)
                 end
                 if ~isempty(cRes)
                     set(hbc, 'value', 0, 'enable', 'on');
-                    %set(Rst.cResmText, 'enable', 'on');
                 end
             else
                 if isempty(ha)
@@ -347,7 +363,6 @@ function ResultManagerFunctions(option)
                     set(ha, 'Visible', 'on');
                 end
                 set(hbc, 'value', 0, 'enable', 'off');
-                %set(Rst.cResmText, 'enable', 'off');
                 if ~isempty(hac)
                     delete(hac);  %set(hac, 'visible', 'off');
                 end
@@ -382,13 +397,12 @@ function ResultManagerFunctions(option)
             end
 
             % Read in the results files
-            if exist([dirname filesep 'Mod.segment']);
+            if exist([dirname filesep 'Mod.segment'],'file');
                 cSegment = ReadSegmentTri([dirname filesep 'Mod.segment']);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipText'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipNumCheck'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipColCheck'), 'enable', 'on');
-                %set(findobj(gcf, '-regexp', 'tag', 'Rst.csrate'), 'enable', 'on');
-                %set(findobj(gcf, '-regexp', 'tag', 'Rst.cdrate'), 'enable', 'on');
+                set(Rst.cSlipNumCheck, 'enable', 'on');
+                set(Rst.cSlipColCheck, 'enable', 'on');
+                %set(Rst.csrate'), 'enable', 'on');
+                %set(Rst.cdrate'), 'enable', 'on');
                 setappdata(gcf, 'cSegment', cSegment);
                 % Plot segments
                 plotsegsc = DrawSegment(cSegment, 'color', 'b', 'linestyle', '--', 'tag', 'cSegs');
@@ -401,28 +415,31 @@ function ResultManagerFunctions(option)
                 ext = '.sta.data';
             end
 
-            if exist([dirname filesep 'Obs' ext])
+            if exist([dirname filesep 'Obs' ext],'file')
                 cObs = ReadStation([dirname filesep 'Obs' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cObsv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cObsvCheck,   'enable', 'on');
             end
 
-            if exist([dirname filesep 'Mod' ext])
+            if exist([dirname filesep 'Mod' ext],'file')
                 cMod = ReadStation([dirname filesep 'Mod' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cModv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cModvCheck, 'enable', 'on');
             end
 
-            if exist([dirname filesep 'Res' ext])
+            if exist([dirname filesep 'Res' ext],'file')
                 cRes = ReadStation([dirname filesep 'Res' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cResv'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cResm'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cResvCheck,   'enable', 'on');
+                set(Rst.cResmCheck,   'enable', 'on');
                 if ~isempty(strmatch(get(Rst.ResvCheck, 'enable'), 'on', 'exact'))
-                    set(findobj(gcf, '-regexp', 'tag', 'Rst.ResidImpCheck'), 'enable', 'on');
+                    set(Rst.ResidImpCheck, 'enable', 'on');
                     % make a bubble legend
                     scatter(0, 0, vecScale*10001, 'k', 'tag', 'diffressca', 'userdata', 1, 'visible', 'off');
                     text(0, 0, '1 mm/yr', 'tag', 'tdiffressca', 'visible', 'off');
@@ -430,32 +447,36 @@ function ResultManagerFunctions(option)
                 end
             end
 
-            if exist([dirname filesep 'Rot' ext])
+            if exist([dirname filesep 'Rot' ext],'file')
                 cRot = ReadStation([dirname filesep 'Rot' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cRotv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cRotvCheck,   'enable', 'on');
             end
 
-            if exist([dirname filesep 'Def' ext])
+            if exist([dirname filesep 'Def' ext],'file')
                 cDef = ReadStation([dirname filesep 'Def' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cDefv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cDefvCheck,   'enable', 'on');
             end
 
-            if exist([dirname filesep 'Strain' ext])
+            if exist([dirname filesep 'Strain' ext],'file')
                 cStr = ReadStation([dirname filesep 'Strain' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cStrv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cStrvCheck,   'enable', 'on');
             end
 
-            if exist([dirname filesep 'Tri' ext])
+            if exist([dirname filesep 'Tri' ext],'file')
                 cTri = ReadStation([dirname filesep 'Tri' ext]);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cSta'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cTriv'), 'enable', 'on');
+                set(Rst.cStanCheck,   'enable', 'on');
+                set(Rst.cStatCheck,   'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.cTrivCheck,   'enable', 'on');
             end
             %s = who('cObs', 'cMod', 'cRes', 'cRot', 'cDef', 'cStr', 'cTri'); % at least one of these exists, or else the button would be inactive
             %varName = eval(s{1});
@@ -463,52 +484,65 @@ function ResultManagerFunctions(option)
             %LabelSta(varName, 'color', 'b', 'tag', 'cStan', 'visible', 'off');
 
             % check for optional files
-            if exist([dirname filesep 'Strain.block'])
+            if exist([dirname filesep 'Strain.block'],'file')
                 cStrBlock = ReadBlock([dirname filesep 'Strain.block']);
                 setappdata(gcf, 'cStrBlock', cStrBlock);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cStrain'), 'enable', 'on');
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.velS'), 'enable', 'on');
-                set(Rst.opText, 'enable', 'on');
+                set(Rst.cStrainCheck, 'enable', 'on');
+                set(Rst.velScaleText, 'enable', 'on');
+                set(Rst.opText,       'enable', 'on');
             end
 
-            if exist([dirname filesep 'Mod.patch'])
+            if exist([dirname filesep 'Mod.patch'],'file')
                 [cC, cV, ctSlip] = PatchData([dirname filesep 'Mod.patch']);
                 setappdata(gcf, 'cC', cC); setappdata(gcf, 'cV', cV); setappdata(gcf, 'ctSlip', ctSlip);
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cTriCheck'), 'enable', 'on');
-                set(Rst.opText, 'enable', 'on');
+                set(Rst.cTriCheck, 'enable', 'on');
+                set(Rst.opText,    'enable', 'on');
             end
         case 'Rst.cclearPush'  % Clear directory
             setappdata(gcf, 'cSegment', []);
             %set(Rst.cloadEdit, 'string', '');
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipNumCh'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipColCh'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cSlipText'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cStav'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cStat'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cStan'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cObsv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cModv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cResv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cResm'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cRotv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cDefv'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cStr'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cTri'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.csrate'), 'enable', 'off', 'value', 1);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.cdrate'), 'enable', 'off', 'value', 0);
-            set(findobj(gcf, '-regexp', 'tag', 'Rst.Resid'), 'enable', 'off', 'value', 0);
-            set(Rst.ResidRadioW, 'value', 1);
-            set(Rst.cTriSRadio, 'value', 1);
+            set(Rst.cSlipNumCheck,  'enable', 'off', 'value', 0);
+            set(Rst.cSlipColCheck,  'enable', 'off', 'value', 0);
+            set(Rst.cStatCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cStanCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cObsvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cModvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cResvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cResmCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cRotvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cDefvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cStrainCheck,   'enable', 'off', 'value', 0);
+            set(Rst.cStrvCheck,     'enable', 'off', 'value', 0);
+            set(Rst.cTriCheck,      'enable', 'off', 'value', 0);
+            set(Rst.cTriDRadio,     'enable', 'off', 'value', 0);
+            set(Rst.cTriSRadio,     'enable', 'off', 'value', 1);
+            set(Rst.cTrivCheck,     'enable', 'off', 'value', 0);
+            set(Rst.csrateColRadio, 'enable', 'off', 'value', 1);
+            set(Rst.csrateNumRadio, 'enable', 'off', 'value', 1);
+            set(Rst.cdrateColRadio, 'enable', 'off', 'value', 0);
+            set(Rst.cdrateNumRadio, 'enable', 'off', 'value', 0);
+            set(Rst.ResidImpCheck,  'enable', 'off', 'value', 0);
+            set(Rst.ResidRadioNW,   'enable', 'off', 'value', 0);
+            set(Rst.ResidRadioW,    'enable', 'off', 'value', 1);
+
             delete(findobj(gcf, '-regexp', 'tag', '^cSta')); % delete compare stations and names
             delete(findobj(gcf, 'tag', 'cSegs')); % delete compare segments
             delete(findobj(gcf, '-regexp', 'tag', '^c\w{3,3}[v]')); % delete compare vectors
+            delete(findobj(gcf, 'tag', 'cResm')); % delete residual magnitudes
             delete(findobj(gcf, '-regexp', 'tag', '^cSlip\w{4,4}')); % delete compare slip rate object
             delete(findobj(gcf, '-regexp', 'tag', '^diffres')); % delete residual comparisons
             delete(findobj(gcf, '-regexp', 'tag', 'cTriSlips\d')); % delete triangular slips
             delete(findobj(gcf, '-regexp', 'tag', 'cStrainAxes')); % delete strain axes
             delete(findobj(gcf, 'tag', 'tdiffressca'));
             clear -regexp 'c[A-Z]\w+'
-            try rmappdata(gcf, 'cStrBlock'); rmappdata(gcf, 'cC'); rmappdata(gcf, 'cV'); rmappdata(gcf, 'ctSlip'); catch, end
+            try
+                rmappdata(gcf, 'cStrBlock'); 
+                rmappdata(gcf, 'cC'); 
+                rmappdata(gcf, 'cV'); 
+                rmappdata(gcf, 'ctSlip'); 
+            catch
+                % ignore
+            end
             colorbar off
         case 'Rst.cStatCheck'  % Plot stations
             %ha = findobj(gcf, 'Tag', 'cSta');
@@ -712,9 +746,9 @@ function ResultManagerFunctions(option)
             end
             CheckVecScale
         case 'Rst.cResmCheck'
-            ha = findobj(gcf, 'Tag', 'Resm');
+            ha  = findobj(gcf, 'Tag', 'Resm');
             hac = findobj(gcf, 'Tag', 'cResm');
-            hb = Rst.ResmCheck;
+            hb  = Rst.ResmCheck;
             hbc = Rst.cResmCheck;
             if get(hbc, 'Value') == 0
                 if isempty(hac)
@@ -724,7 +758,6 @@ function ResultManagerFunctions(option)
                 end
                 if ~isempty(Res)
                     set(hb, 'value', 0, 'enable', 'on');
-                    %set(Rst.ResmText, 'enable', 'on');
                 end
             else
                 if isempty(hac)
@@ -733,7 +766,6 @@ function ResultManagerFunctions(option)
                     set(hac, 'Visible', 'on');
                 end
                 set(hb, 'value', 0, 'enable', 'off');
-                %set(Rst.ResmText, 'enable', 'off');
                 if ~isempty(ha)
                     delete(ha);  %set(ha, 'Visible', 'off');
                 end
@@ -742,8 +774,9 @@ function ResultManagerFunctions(option)
         case 'Rst.ResidImpCheck'  % Show residual improvement
             ha = findobj(gcf, '-regexp', 'Tag', '^diffres');
             hb = Rst.ResidImpCheck;
+            rads = [Rst.ResidRadioNW Rst.ResidRadioW];
             if get(hb, 'Value') == 0 % unchecked
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.ResidRadio'), 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
@@ -751,8 +784,7 @@ function ResultManagerFunctions(option)
                     set(findobj(gcf, '-regexp', 'tag', 'diffressca'), 'visible', 'off');
                 end
             else
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.ResidRadio'), 'enable', 'on');
-                rads = [Rst.ResidRadioNW Rst.ResidRadioW];
+                set(rads, 'enable', 'on');
                 weighted = cell2mat(get(rads, 'value'));
                 weighted = find(weighted==max(weighted)) - 1;
                 if numel(ha) < 2 % if the bubbles have not yet been plotted...
@@ -794,16 +826,16 @@ function ResultManagerFunctions(option)
         case 'Rst.SlipNumCheck'  % Numerical slip rates
             ha = findobj(gcf, '-regexp', 'Tag', '^SlipNum');
             hb = Rst.SlipNumCheck;
+            rads = [Rst.srateNumRadio Rst.drateNumRadio];
             if get(hb, 'Value') == 0
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.srateNum') findobj(gcf, '-regexp', 'tag', 'Rst.drateNum')], 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
                     delete(ha);  %set(ha, 'Visible', 'off');
                 end
             else
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.srateNum') findobj(gcf, '-regexp', 'tag', 'Rst.drateNum')], 'enable', 'on');
-                rads = [Rst.srateNumRadio Rst.drateNumRadio];
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 if isempty(ha)
@@ -845,8 +877,9 @@ function ResultManagerFunctions(option)
         case 'Rst.SlipColCheck'  % Colored slip rates
             ha = findobj(gcf, '-regexp', 'Tag', '^SlipCol');
             hb = Rst.SlipColCheck;
+            rads = [Rst.srateColRadio Rst.drateColRadio];
             if get(hb, 'Value') == 0
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.srateCol') findobj(gcf, '-regexp', 'tag', 'Rst.drateCol')], 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
@@ -854,9 +887,8 @@ function ResultManagerFunctions(option)
                     colorbar off
                 end
             else
-                colorbar off
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.srateCol') findobj(gcf, '-regexp', 'tag', 'Rst.drateCol')], 'enable', 'on');
-                rads = [Rst.srateColRadio Rst.drateColRadio];
+                %colorbar off
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 cmaps = ['redwhiteblue(256)'; 'bluewhitered(256)'];
@@ -865,18 +897,17 @@ function ResultManagerFunctions(option)
                     tgs = ['SlipCols'; 'SlipCold'];
                     lims = SlipColored(Segment, comp, 'tag', tgs(comp, :), [tgs(comp, :) 'Scale']);
                     caxis(lims)
-                    ch = colorbar('east', 'tag', [tgs(comp, :) 'Scale']);
-                    colormap(cmaps(comp, :));
+                    ch = colorbar('east'); %, 'tag', [tgs(comp, :) 'Scale']);
                 else
                     tgs = get(rads, 'tag');
-                    on = findobj(gcf, '-regexp', 'tag', ['^SlipCol' tgs{comp}(5)]);
+                    on  = findobj(gcf, '-regexp', 'tag', ['^SlipCol' tgs{comp}(5)]);
                     off = findobj(gcf, '-regexp', 'tag', ['^SlipCol' tgs{setdiff([1 2], comp)}(5)]);
-                    set(on, 'Visible', 'on');
+                    set(on,  'Visible', 'on');
                     set(off, 'Visible', 'off');
                     caxis(get(on(end), 'userdata'))
-                    ch = colorbar('east', 'tag', ['SlipCol' tgs{comp}(5) 'Scale']);
-                    colormap(cmaps(comp, :));
+                    ch = colorbar('east'); %, 'tag', ['SlipCol' tgs{comp}(5) 'Scale']);
                 end
+                colormap(cmaps(comp, :));
             end
         case 'Rst.srateColRadio'
             has = findobj(gcf, '-regexp', 'tag', '^SlipCols');
@@ -884,38 +915,32 @@ function ResultManagerFunctions(option)
             if ~isempty(had)
                 set(had, 'visible', 'off')
             end
+            %colorbar off
             if isempty(has)
-                colorbar off
                 slims = SlipColored(Segment, 1, 'tag', 'SlipCols', 'SlipColsScale');
-                caxis(slims)
-                chs = colorbar('east', 'tag', 'SlipColsScale');
-                colormap(redwhiteblue(256));
             else
-                colorbar off
                 set(has, 'visible', 'on')
-                caxis(get(has(end), 'userdata'))
-                chs = colorbar('east', 'tag', 'SlipColsScale');
-                colormap(redwhiteblue(256));
+                slims = get(has(end), 'userdata');
             end
+            caxis(slims)
+            %chs = colorbar('east', 'tag', 'SlipColsScale');
+            colormap(redwhiteblue(256));
         case 'Rst.drateColRadio'
             has = findobj(gcf, '-regexp', 'tag', '^SlipCols');
             had = findobj(gcf, '-regexp', 'tag', '^SlipCold');
             if ~isempty(has)
                 set(has, 'visible', 'off')
             end
+            %colorbar off
             if isempty(had)
-                colorbar off
                 dlims = SlipColored(Segment, 2, 'tag', 'SlipCold', 'SlipColdScale');
-                caxis(dlims)
-                chd = colorbar('east', 'tag', 'SlipColdScale');
-                colormap(bluewhitered(256));
             else
-                colorbar off
                 set(had, 'visible', 'on')
-                caxis(get(had(end), 'userdata'))
-                chd = colorbar('east', 'tag', 'SlipColdScale');
-                colormap(bluewhitered(256));
+                dlims = get(had(end), 'userdata');
             end
+            caxis(dlims)
+            %chd = colorbar('east', 'tag', 'SlipColdScale');
+            colormap(bluewhitered(256));
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Slip rate plotting, compare results %
@@ -924,16 +949,16 @@ function ResultManagerFunctions(option)
         case 'Rst.cSlipNumCheck'  % Numerical slip rates
             ha = findobj(gcf, '-regexp', 'Tag', '^cSlipNum');
             hb = Rst.cSlipNumCheck;
+            rads = [Rst.csrateNumRadio Rst.cdrateNumRadio];
             if get(hb, 'Value') == 0
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.csrateNum') findobj(gcf, '-regexp', 'tag', 'Rst.cdrateNum')], 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
                     delete(ha);  %set(ha, 'Visible', 'off');
                 end
             else
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.csrateNum') findobj(gcf, '-regexp', 'tag', 'Rst.cdrateNum')], 'enable', 'on');
-                rads = [Rst.csrateNumRadio Rst.cdrateNumRadio];
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 if isempty(ha)
@@ -972,8 +997,9 @@ function ResultManagerFunctions(option)
         case 'Rst.cSlipColCheck'  % Colored slip rates
             ha = findobj(gcf, '-regexp', 'Tag', '^cSlipCol');
             hb = Rst.cSlipColCheck;
+            rads = [Rst.csrateColRadio Rst.cdrateColRadio];
             if get(hb, 'Value') == 0
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.csrateCol') findobj(gcf, '-regexp', 'tag', 'Rst.cdrateCol')], 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
@@ -981,9 +1007,8 @@ function ResultManagerFunctions(option)
                     colorbar off
                 end
             else
-                colorbar off
-                set([findobj(gcf, '-regexp', 'tag', 'Rst.csrateCol') findobj(gcf, '-regexp', 'tag', 'Rst.cdrateCol')], 'enable', 'on');
-                rads = [Rst.csrateColRadio Rst.cdrateColRadio];
+                %colorbar off
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 cmaps = ['redwhiteblue(256)'; 'bluewhitered(256)'];
@@ -991,18 +1016,17 @@ function ResultManagerFunctions(option)
                     tgs = ['cSlipCols'; 'cSlipCold'];
                     lims = SlipColored(cSegment, comp, 'tag', tgs(comp, :), [tgs(comp, :) 'Scale']);
                     caxis(lims)
-                    ch = colorbar('east', 'tag', [tgs(comp, :) 'Scale']);
-                    colormap(cmaps(comp, :));
+                    ch = colorbar('east'); %, 'tag', [tgs(comp, :) 'Scale']);
                 else
                     tgs = get(rads, 'tag');
-                    on = findobj(gcf, '-regexp', 'tag', ['^cSlipCol' tgs{comp}(6)]);
+                    on  = findobj(gcf, '-regexp', 'tag', ['^cSlipCol' tgs{comp}(6)]);
                     off = findobj(gcf, '-regexp', 'tag', ['^cSlipCol' tgs{setdiff([1 2], comp)}(6)]);
-                    set(on, 'Visible', 'on');
+                    set(on,  'Visible', 'on');
                     set(off, 'Visible', 'off');
                     caxis(get(on(end), 'userdata'))
-                    ch = colorbar('east', 'tag', ['SlipCol' tgs{comp}(6) 'Scale']);
-                    colormap(cmaps(comp, :));
+                    ch = colorbar('east'); %, 'tag', ['SlipCol' tgs{comp}(6) 'Scale']);
                 end
+                colormap(cmaps(comp, :));
             end
         case 'Rst.csrateColRadio'
             has = findobj(gcf, '-regexp', 'tag', '^cSlipCols');
@@ -1010,38 +1034,32 @@ function ResultManagerFunctions(option)
             if ~isempty(had)
                 set(had, 'visible', 'off')
             end
+            %colorbar off
             if isempty(has)
-                colorbar off
                 slims = SlipColored(cSegment, 1, 'tag', 'cSlipCols', 'cSlipColsScale');
-                caxis(slims)
-                chs = colorbar('east', 'tag', 'cSlipColsScale');
-                colormap(redwhiteblue(256));
             else
-                colorbar off
                 set(has, 'visible', 'on')
-                caxis(get(has(end), 'userdata'))
-                chs = colorbar('east', 'tag', 'cSlipColsScale');
-                colormap(redwhiteblue(256));
+                slims = get(has(end), 'userdata');
             end
+            caxis(slims)
+            %chs = colorbar('east', 'tag', 'cSlipColsScale');
+            colormap(redwhiteblue(256));
         case 'Rst.cdrateColRadio'
             has = findobj(gcf, '-regexp', 'tag', '^cSlipCols');
             had = findobj(gcf, '-regexp', 'tag', '^cSlipCold');
             if ~isempty(has)
                 set(has, 'visible', 'off')
             end
+            %colorbar off
             if isempty(had)
-                colorbar off
                 dlims = SlipColored(cSegment, 2, 'tag', 'cSlipCold', 'cSlipColdScale');
-                caxis(dlims)
-                chd = colorbar('east', 'tag', 'cSlipColdScale');
-                colormap(bluewhitered(256));
             else
-                colorbar off
                 set(had, 'visible', 'on')
-                caxis(get(had(end), 'userdata'))
-                chd = colorbar('east', 'tag', 'cSlipColdScale');
-                colormap(bluewhitered(256));
+                dlims = get(had(end), 'userdata');
             end
+            caxis(dlims)
+            %chd = colorbar('east', 'tag', 'cSlipColdScale');
+            colormap(bluewhitered(256));
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Optional result plotting , main results %
@@ -1068,16 +1086,16 @@ function ResultManagerFunctions(option)
         case 'Rst.TriCheck'
             ha = findobj(gcf, '-regexp', 'Tag', '^TriSlips');
             hb = Rst.TriCheck;
+            rads = [Rst.TriSRadio Rst.TriDRadio];  %=findobj(gcf,'-regexp','tag','Rst.Tri[A-Z]{2}')
             if get(hb, 'Value') == 0
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Tri[A-Z]{2}'), 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
                     delete(ha);  %set(ha, 'Visible', 'off');
                 end
             else
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.Tri[A-Z]{2}'), 'enable', 'on');
-                rads = [Rst.TriSRadio Rst.TriDRadio];
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 if isempty(ha)
@@ -1145,16 +1163,16 @@ function ResultManagerFunctions(option)
         case 'Rst.cTriCheck'
             ha = findobj(gcf, '-regexp', 'Tag', '^cTriSlips');
             hb = Rst.cTriCheck;
+            rads = [Rst.cTriSRadio Rst.cTriDRadio];  %=findobj(gcf,'-regexp','tag','Rst.cTri[A-Z]{2}')
             if get(hb, 'Value') == 0
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cTri[A-Z]{2}'), 'enable', 'off');
+                set(rads, 'enable', 'off');
                 if isempty(ha)
                     return
                 else
                     delete(ha);  %set(ha, 'Visible', 'off');
                 end
             else
-                set(findobj(gcf, '-regexp', 'tag', 'Rst.cTri[A-Z]{2}'), 'enable', 'on');
-                rads = [Rst.cTriSRadio Rst.cTriDRadio];
+                set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
                 if isempty(ha)
@@ -1551,6 +1569,7 @@ function ResultManagerFunctions(option)
             Zumax(gca);
     end
 
+    fprintf('%s    %s \t(%.2f secs)\n', datestr(now,'HH:MM:SS.FFF'), option, toc(t));
     %toc
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -1841,72 +1860,63 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SlipNumLabel(Sm, comp, xshift, yshift, varargin)
     if comp == 1
-        % plot(180, 0, varargin{:})
-        text(xshift + (Sm.lon1+Sm.lon2)/2, xshift + (Sm.lat1+Sm.lat2)/2, [strjust(num2str(Sm.ssRate, '%4.1f'), 'right') repmat('\pm', numel(Sm.lon1), 1) strjust(num2str(Sm.ssRateSig, '%4.1f'), 'left')], 'clipping', 'on', 'FontSize', 8, 'HorizontalAlignment', 'center', varargin{:})
+        shift = xshift;
+        strs = [strjust(num2str(Sm.ssRate, '%4.1f'), 'right') ...
+                repmat('\pm', numel(Sm.lon1), 1) ...
+                strjust(num2str(Sm.ssRateSig, '%4.1f'), 'left')];
     else
-        % plot(180, 0, varargin{:})
-        text(xshift + (Sm.lon1+Sm.lon2)/2, yshift + (Sm.lat1+Sm.lat2)/2, [strjust(num2str(Sm.dsRate-Sm.tsRate, '%4.1f'), 'right') repmat('\pm', numel(Sm.lon1), 1) strjust(num2str(Sm.dsRateSig+Sm.tsRateSig, '%4.1f'), 'left')], 'clipping', 'on',  'FontSize', 8, 'HorizontalAlignment', 'center', varargin{:})
+        shift = yshift;
+        strs = [strjust(num2str(Sm.dsRate-Sm.tsRate, '%4.1f'), 'right') ...
+                repmat('\pm', numel(Sm.lon1), 1) ...
+                strjust(num2str(Sm.dsRateSig+Sm.tsRateSig, '%4.1f'), 'left')];
     end
+    % plot(180, 0, varargin{:})
+    text(xshift + (Sm.lon1+Sm.lon2)/2, shift+(Sm.lat1+Sm.lat2)/2, strs, 'clipping','on', 'FontSize',8, 'HorizontalAlignment','center', varargin{:})
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot colored slip rates %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 function lims = SlipColored(Sm, comp, varargin)
-    if comp == 1
-        % plot(170, 0, varargin{:})
-        sSmaxRate = max(Sm.ssRate(:));
-        sSminRate = min(Sm.ssRate(:));
-        lw = abs(Sm.ssRate)/2 + eps;
+    % plot(170, 0, varargin{:})
+    if comp == 1  % Strike-slip
         trate = Sm.ssRate;
+        maxRate = max(trate(:));
+        minRate = min(trate(:));
         sw = abs(Sm.ssRateSig/2) + eps;
-        % Color code the slip rate
-        lims = [sSminRate sSmaxRate];
+        lims = [minRate maxRate];
         cmap = redwhiteblue(256, lims);
-        diffRate = sSmaxRate-sSminRate;
-        trate(find(trate > sSmaxRate)) = sSmaxRate;
-        trate(find(trate < sSminRate)) = sSminRate;
-        cidx = ceil(255*(trate + abs(sSminRate))./diffRate + 1);
-        cvec = cmap(cidx,:);
-        colslips = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], varargin{1:end-1});
-        set(colslips, {'color'}, mat2cell(cvec, ones(length(cvec), 1), 3), {'linewidth'}, num2cell(lw), 'userdata', -[sSmaxRate sSminRate]);
-        sigslips = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], 'color', 'k', 'tag', [varargin{end-1} 'Wid']);
-        set(sigslips, {'LineWidth'}, num2cell(sw));
-        % make sure that the colored lines lie beneath all other objects
-        allobj = get(gca, 'children');
-        first = find(allobj == colslips(end));
-        last = find(allobj == colslips(1));
-        allobj = [allobj(1:first-1); allobj(last+1:end); colslips(:)];
-        set(gca, 'children', allobj);
-
-    else
-        % plot(170, 0, varargin{:})
-        dSmaxRate = max(Sm.dsRate(:) - Sm.tsRate(:));
-        dSminRate = min(Sm.dsRate(:) - Sm.tsRate(:));
-        conrates = Sm.dsRate-Sm.tsRate;
-        consigs = Sm.dsRateSig+Sm.tsRateSig;
-        lw = abs(conrates)/2 + eps;
-        trate = conrates;
+        userData = -[maxRate minRate];
+    else  % Dip-slip/tensile
+        trate = Sm.dsRate - Sm.tsRate;
+        maxRate = max(trate(:));
+        minRate = min(trate(:));
+        consigs = Sm.dsRateSig + Sm.tsRateSig;
         sw = abs(consigs/2) + eps;
-        % Color code the slip rate
-        lims = [dSminRate dSmaxRate];
+        lims = [minRate maxRate];
         cmap = bluewhitered(256, lims);
-        diffRate = dSmaxRate-dSminRate;
-        trate(find(trate > dSmaxRate)) = dSmaxRate;
-        trate(find(trate < dSminRate)) = dSminRate;
-        cidx = ceil(255*(trate + abs(dSminRate))./diffRate + 1);
-        cvec = cmap(cidx,:);
-        colslipd = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], varargin{1:end-1});
-        set(colslipd, {'color'}, mat2cell(cvec, ones(length(cvec), 1), 3), {'linewidth'}, num2cell(lw), 'userdata', [dSminRate dSmaxRate]);
-        sigslipd = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], 'color', 'k', 'tag', [varargin{end-1} 'Wid']);
-        set(sigslipd, {'LineWidth'}, num2cell(sw));
-        % make sure that the colored lines lie beneath all other objects
-        allobj = get(gca, 'children');
-        first = find(allobj == colslipd(end));
-        last = find(allobj == colslipd(1));
-        allobj = [allobj(1:first-1); allobj(last+1:end); colslipd(:)];
-        set(gca, 'children', allobj);
+        userData = [minRate maxRate];
     end
+    lw = abs(trate)/2 + eps;
+
+    % Color code the slip rate
+    diffRate = maxRate - minRate;
+    trate(trate > maxRate) = maxRate;
+    trate(trate < minRate) = minRate;
+    cidx = ceil(255*(trate + abs(minRate))./diffRate + 1);
+    cvec = cmap(cidx,:);
+    colslips = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], varargin{1:end-1});
+    set(colslips, {'color'}, mat2cell(cvec, ones(length(cvec), 1), 3), {'linewidth'}, num2cell(lw), 'userdata', userData);
+    sigslips = line([Sm.lon1'; Sm.lon2'], [Sm.lat1'; Sm.lat2'], 'color', 'k', 'tag', [varargin{end-1} 'Wid']);
+    set(sigslips, {'LineWidth'}, num2cell(sw));
+
+    % make sure that the colored lines lie beneath all other objects
+    allobj = get(gca, 'children');
+    first = find(allobj == colslips(end));
+    last = find(allobj == colslips(1));
+    allobj = [allobj(1:first-1); allobj(last+1:end); colslips(:)];
+    set(gca, 'children', allobj);
+    drawnow;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
