@@ -213,6 +213,7 @@ function ResultManagerFunctions(option)
         case 'Rst.StanCheck'  % Label stations
             %ha = findobj(gcf, 'Tag', 'Stan');
             hb = Rst.StanCheck;
+            delete(findobj(gcf,'Tag','Stan'));
             if get(hb, 'Value') == 0
                 %set(ha, 'Visible', 'off');
                 delete(getappdata(hb,'handles'));
@@ -560,6 +561,7 @@ function ResultManagerFunctions(option)
         case 'Rst.cStanCheck'  % Label stations
             %ha = findobj(gcf, 'Tag', 'cStan');
             hb = Rst.cStanCheck;
+            delete(findobj(gcf,'Tag','cStan'));
             if get(hb, 'Value') == 0
                 %set(ha, 'Visible', 'off');
                 delete(getappdata(hb,'handles'));
@@ -838,6 +840,7 @@ function ResultManagerFunctions(option)
                 set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
+                delete(ha); ha=[];
                 if isempty(ha)
                     symb = ['cx'; 'bx'];
                     tgs = ['SlipNums'; 'SlipNumd'];
@@ -961,6 +964,7 @@ function ResultManagerFunctions(option)
                 set(rads, 'enable', 'on');
                 comp = cell2mat(get(rads, 'value'));
                 comp = find(comp==max(comp));
+                delete(ha); ha=[];
                 if isempty(ha)
                     symb = ['rx'; 'mx'];
                     tgs = ['cSlipNums'; 'cSlipNumd'];
@@ -1615,6 +1619,12 @@ function SetAxes(Range)
         set(gca, 'YTickMode', 'auto');
     end
     ResultManagerFunctions('Rst.dispMeridian');
+
+    ResultManagerFunctions('Rst.SlipNumCheck');
+    ResultManagerFunctions('Rst.cSlipNumCheck');
+
+    ResultManagerFunctions('Rst.StanCheck');
+    ResultManagerFunctions('Rst.cStanCheck');
 end
 
 %%%%%%%%%%%%%%%%%%%%%%
@@ -1634,7 +1644,28 @@ end
 % Plot the segments %
 %%%%%%%%%%%%%%%%%%%%%
 function plotsegs = DrawSegment(Segment, varargin)
-    plotsegs = line([Segment.lon1'; Segment.lon2'], [Segment.lat1'; Segment.lat2'], varargin{:});
+    % Note: limiting the display to the axes limits makes the display faster, but this
+    % would require special processing upon zoom/pan
+    % Now that we unified all plot segments into a single line, it's fast enough that
+    % this extra processing is no longer necessary.
+    %{
+    hAxes = handle(gca);
+    lonLimits = hAxes.XLim;
+    latLimits = hAxes.YLim;
+    valid = (within(Segment.lon1,lonLimits) | within(Segment.lon2,lonLimits)) & ...
+            (within(Segment.lat1,latLimits) | within(Segment.lat2,latLimits));
+    %plotsegs = line([Segment.lon1(valid)', Segment.lon2(valid)'], ...
+    %                [Segment.lat1(valid)', Segment.lat2(valid)'], ...
+    %                varargin{:});
+    lats = [Segment.lon1(valid)'; Segment.lon2(valid)'; Segment.lon2(valid)'];
+    lons = [Segment.lat1(valid)'; Segment.lat2(valid)'; nan(1,sum(valid))];
+    %}
+    lats = [Segment.lon1'; Segment.lon2'; Segment.lon2'];
+    lons = [Segment.lat1'; Segment.lat2'; nan(1,numel(Segment.lat2))];
+    plotsegs = line(lats(:), lons(:), varargin{:});
+end
+function idx = within(data,limits)
+    idx = data >= limits(1) & data <= limits(2);
 end
 
 %%%%%%%%%%%%%%%%%%%%
@@ -1695,7 +1726,16 @@ end
 %%%%%%%%%%%%%%%%%%%%%
 function h = LabelSta(Station, varargin)
     % LabelSta
-    h = text(Station.lon, Station.lat, [repmat(' ', numel(Station.lon), 1) Station.name], 'interpreter', 'none', 'clipping', 'on', 'fontname', 'fixedwidth', varargin{:});
+    names = [repmat(' ', numel(Station.lon), 1) Station.name];
+    extraProps = {'interpreter', 'none', 'clipping', 'on', 'fontname', 'fixedwidth', varargin{:}};
+    %h = text(Station.lon, Station.lat, names, extraProps{:});
+
+    % Much faster to limit the labels only to the visible axes area
+    hAxes = handle(gca);
+    lonLimits = hAxes.XLim;
+    latLimits = hAxes.YLim;
+    valid = within(Station.lon,lonLimits) & within(Station.lat,latLimits);
+    h = text(Station.lon(valid), Station.lat(valid), names(valid,:), extraProps{:});
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -1871,7 +1911,17 @@ function SlipNumLabel(Sm, comp, xshift, yshift, varargin)
                 strjust(num2str(Sm.dsRateSig+Sm.tsRateSig, '%4.1f'), 'left')];
     end
     % plot(180, 0, varargin{:})
-    text(xshift + (Sm.lon1+Sm.lon2)/2, shift+(Sm.lat1+Sm.lat2)/2, strs, 'clipping','on', 'FontSize',8, 'HorizontalAlignment','center', varargin{:})
+    lons = xshift + (Sm.lon1+Sm.lon2)/2;
+    lats = shift  + (Sm.lat1+Sm.lat2)/2;
+    extraProps = {'clipping','on', 'FontSize',8, 'HorizontalAlignment','center', varargin{:}};
+    %ht = text(lons, lats, strs, extraProps{:});
+
+    % Much faster to limit the labels only to the visible axes area
+    hAxes = handle(gca);
+    lonLimits = hAxes.XLim;
+    latLimits = hAxes.YLim;
+    valid = within(lons,lonLimits) & within(lats,latLimits);
+    ht = text(lons(valid), lats(valid), strs(valid,:), extraProps{:});
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%

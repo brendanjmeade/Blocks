@@ -1,4 +1,4 @@
-function [Station] = ReadStationStruct(varargin)
+function Station = ReadStation(varargin)
 % ReadStationStruct.m
 %
 % This function reads in and returns the station information in fileName.
@@ -11,44 +11,53 @@ function [Station] = ReadStationStruct(varargin)
 %   Station       :  a struct with everything
 
 % Process varargin
-filestream                                                           = 1;
+filestream = 1;
 if (nargin == 0)
    fprintf(filestream, 'No arguments found!  Exiting.  Please supply a file name.\n');
    return;
 end
 
-fileName                                                             = varargin{1};
-showText                                                             = 0;
+fileName = varargin{1};
+showText = 0;
 if (nargin > 1)
    showText                                                          = varargin{2};
    fprintf(filestream, '\n--> Reading %s file\n', fileName);
 end
 
-% Read in everything quickly and throw it into the struct Station
-[Station.lon, Station.lat, Station.eastVel, Station.northVel, ...
- Station.eastSig, Station.northSig, Station.corr, ...
- Station.other1, Station.tog, Station.name]                          = textread(fileName, '%f%f%f%f%f%f%f%d%d%s');
+% Read in everything quickly(?) and throw it into the struct Station
+%[Station.lon,     Station.lat,      Station.eastVel, Station.northVel, ...
+% Station.eastSig, Station.northSig, Station.corr, ...
+% Station.other1,  Station.tog,      Station.name] = textread(fileName, '%f%f%f%f%f%f%f%d%d%s');
+
+% This is much faster:
+fid = fopen(fileName,'rt');
+c = textscan(fid, '%f%f%f%f%f%f%f%d%d%s');
+fclose(fid);
+fn = {'lon','lat','eastVel','northVel','eastSig','northSig','corr','other1','tog','name'};
+Station = cell2struct(c,fn,2);
+
 % Convert station coordinates to 3 decimal places. This is consistent with how results are written
-Station.lon                                                          = str2num(num2str(Station.lon, '%3.3f'));
-Station.lat                                                          = str2num(num2str(Station.lat, '%3.3f'));
-Station.name                                                         = char(Station.name);
+Station.lon  = round(Station.lon,3); %=str2num(num2str(Station.lon, '%3.3f'));
+Station.lat  = round(Station.lat,3); %=str2num(num2str(Station.lat, '%3.3f'));
+Station.name = char(Station.name);
 
 % Add fields to Station to deal that are not included in a .sta.data file
-Station.upVel                                                        = zeros(size(Station.eastVel));
-Station.upSig                                                        = ones(size(Station.eastVel));
-Station.eastAdj                                                      = zeros(size(Station.eastVel));
-Station.northAdj                                                     = zeros(size(Station.eastVel));
-Station.upAdj                                                        = zeros(size(Station.eastVel));
+sz = size(Station.eastVel);
+Station.upVel    = zeros(sz);
+Station.upSig    = ones (sz);
+Station.eastAdj  = zeros(sz);
+Station.northAdj = zeros(sz);
+Station.upAdj    = zeros(sz);
 
 % Take a look at how many stations we have
-nStations                                                            = numel(Station.lon);
-nInvertStations                                                      = numel(Station.tog == 1);
+nStations        = numel(Station.lon);
+nInvertStations  = numel(Station.tog == 1);
 
 if (showText)
    fprintf(filestream, 'Total number of sites : %d\n', nStations);
    fprintf(filestream, 'Number of sites included in inversion : %d\n', nInvertStations);
-   includeIdx                                                        = find(Station.tog >= 1);
-   if (length(includeIdx) > 0)
+   includeIdx = find(Station.tog >= 1);
+   if ~isempty(includeIdx)
       fprintf(filestream, 'Names of sites  included in inversion :\n');
       for nInclude = 1 : numel(includeIdx)
          fprintf(filestream, '%s\n', Station.name(nInclude, :));
