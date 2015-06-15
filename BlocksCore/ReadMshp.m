@@ -17,7 +17,6 @@ function [p, pp] = ReadMshp(file, pp)
 %
 %   [P, COMMAND] = ReadMshp(FILE, COMMAND) updates an input COMMAND structure
 %   with mesh properties. 
-%
 
 % Read file contents
 fid = fopen(file, 'r');

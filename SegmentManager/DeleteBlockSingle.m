@@ -1,102 +1,60 @@
 function Block = DeleteBlockSingle(Block)
-%  Test the line drawing functions
+% Test the line drawing functions
 
-%  Loop until button is pushed and redraw lines
-set(gcf, 'WindowButtonDownFcn', 'ButtonDown');
-done                     = 0;
-setappdata(gcf, 'doneClick', done);
-minDIdxOld               = 0;
+    ud = get(gcf,'UserData');
+    Seg = ud.Seg;
 
-while ~done
-   done                  = getappdata(gcf, 'doneClick');
-   [x, y]                = GetCurrentAxesPosition;
+    %% Loop until button is pushed and redraw lines
+    set(gcf, 'WindowButtonDownFcn', @(h,e)setappdata(gcf,'doneClick',true));
+    setappdata(gcf, 'doneClick', false);
+    hMarkedBlock = findobj(Seg.axHandle, 'Tag','SelectedBlock');
+    if isempty(hMarkedBlock)
+        hMarkedBlock = plot(Seg.axHandle, 0,0,'og', 'Tag','SelectedBlock');
+    end
+    while ~getappdata(gcf, 'doneClick')
+        [x, y] = GetCurrentAxesPosition;
+        set(Seg.pszCoords, 'string', sprintf('(%7.3f)  %7.3f  ; %7.3f', npi2pi(x), x, y));
 
-   % Find the closest point
-   d                     = sqrt((Block.interiorLon - x).^2 + (Block.interiorLat - y).^2);
-   [minDVal minDIdx]     = min(d);
-   
-   % Change color if neccesary
-   if minDIdxOld == 0
-      set(findobj('Tag', strcat('Block.', num2str(minDIdx))), 'Color', 'r');
-   elseif (minDIdxOld ~= minDIdx) & (minDIdxOld ~= 0)
-      set(findobj('Tag', strcat('Block.', num2str(minDIdxOld))), 'Color', 'g');
-      set(findobj('Tag', strcat('Block.', num2str(minDIdx))), 'Color', 'r');
-   end
-   set(findobj(gcf, 'Tag', 'Seg.modSegListBlock'), 'Value', minDIdx + 2);
-   minDIdxOld            = minDIdx;
-   drawnow;
-end
-set(gcf, 'WindowButtonDownFcn', '');
-idx                      = minDIdx;
+        % Find the closest point
+        d2 = (Block.interiorLon - x).^2 + (Block.interiorLat - y).^2;
+        [minDVal, minDIdx] = min(d2); %#ok<ASGLU>
 
-%  Delete the block
-Block.name(idx, :)             = [];
-Block.eulerLon(idx)           = [];
-Block.eulerLat(idx)           = [];
-Block.eulerLonSig(idx)        = [];
-Block.eulerLatSig(idx)        = [];
-Block.interiorLon(idx)        = [];
-Block.interiorLat(idx)        = [];
-Block.rotationRate(idx)       = [];
-Block.rotationRateSig(idx)    = [];
-Block.rotationInfo(idx)       = [];
-Block.aprioriTog(idx)         = [];
-Block.other1(idx)             = [];
-Block.other2(idx)             = [];
-Block.other3(idx)             = [];
-Block.other4(idx)             = [];
-Block.other5(idx)             = [];
-Block.other6(idx)             = [];
-delete(findobj(gcf, 'Tag', sprintf('Block.%d', idx)));
+        % Change marked block
+        set(hMarkedBlock, 'xdata',Block.interiorLon(minDIdx), 'ydata',Block.interiorLat(minDIdx));
 
-% Segment                  = DeleteSegment(Segment, segIdx);
+        % Update the selected block in the blocks drop-down (combo-box)
+        set(Seg.modSegListBlock, 'Value', minDIdx + 2);
 
-%  Let RedrawSegments Handle the deletion
+        % Update the selected property's value
+        propIdx = get(Seg.modPropListBlock, 'Value');
+        if propIdx > 1
+            SegmentManagerFunctions('Seg.modPropListBlock', false)
+        end
 
+        drawnow; pause(0.02);
+    end
+    set(gcf, 'WindowButtonDownFcn', '');
+    delete(hMarkedBlock);
 
+    %% Delete the block
+    Block.name(minDIdx, :) = [];
+    Block.eulerLon(minDIdx) = [];
+    Block.eulerLat(minDIdx) = [];
+    Block.eulerLonSig(minDIdx) = [];
+    Block.eulerLatSig(minDIdx) = [];
+    Block.interiorLon(minDIdx) = [];
+    Block.interiorLat(minDIdx) = [];
+    Block.rotationRate(minDIdx) = [];
+    Block.rotationRateSig(minDIdx) = [];
+    Block.rotationInfo(minDIdx) = [];
+    Block.aprioriTog(minDIdx) = [];
+    Block.other1(minDIdx) = [];
+    Block.other2(minDIdx) = [];
+    Block.other3(minDIdx) = [];
+    Block.other4(minDIdx) = [];
+    Block.other5(minDIdx) = [];
+    Block.other6(minDIdx) = [];
 
-function [x, y] = GetCurrentAxesPosition
-%  GetCurrentAxesPosition
-%  Returns pointer position on current axes in units of pixels
-%  Authors: David Liebowitz, Seeing Machines
-%           Tom Herring, MIT
-
-%  Get dimension information
-scnsize             = get(0, 'ScreenSize');
-figsize             = get(gcf, 'Position');
-axesize             = get(gca, 'Position');  % Could get CurrentAxes from gcf
-llsize              = [get(gca, 'Xlim') get(gca, 'Ylim')];
-asprat              = get(gca, 'DataAspectRatio');
-
-%  Based on the aspect ratio, find the actual coordinates coordinates covered by the axesize.
-ratio               = (llsize(2) - llsize(1)) * asprat(2) / (llsize(4) - llsize(3));
-if ratio > 1,   % Longitude covers the full pixel range
-    xoff            = figsize(1) + axesize(1);
-    xscl            = (llsize(2) - llsize(1)) / axesize(3); 
-    %%  For Latitude, compute height of axes
-    dyht            = (axesize(4) - axesize(4) / ratio) / 2;
-    yoff            = figsize(2) + axesize(2) + dyht;
-    yscl            = (llsize(4) - llsize(3)) / (axesize(4) / ratio);
-else
-    dxwd            = (axesize(3) - axesize(3) * ratio) / 2;
-    xoff            = figsize(1) + axesize(1) + dxwd;
-    xscl            = (llsize(2) - llsize(1)) / (axesize(3) * ratio); 
-    yoff            = figsize(2) + axesize(2);
-    yscl            = (llsize(4) - llsize(3)) / axesize(4);
-end
-xin                 = llsize(1);
-yin                 = llsize(3);
-
-% Construct the mapping array
-pix2ll              = [xoff xscl xin ; yoff yscl yin];
-
-%  Get the pointer's screen position
-pix                 = get(0, 'PointerLocation');
-x                   = (pix(1) - pix2ll(1, 1)) * pix2ll(1, 2) + pix2ll(1, 3);
-y                   = (pix(2) - pix2ll(2, 1)) * pix2ll(2, 2) + pix2ll(2, 3);
-
-
-
-function ButtonDown
-%  Set an application data variable to indicate that a button has been clicked
-setappdata(gcf, 'doneClick', 1); 
+    % Let RedrawSegments Handle the deletion
+    % Segment = DeleteSegment(Segment, segIdx);
+    %delete(findobj(gcf, 'Tag', sprintf('Block.%d', minDIdx)));

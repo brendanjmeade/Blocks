@@ -1,4 +1,4 @@
-function ResultManagerFunctions(option)
+function ResultManagerFunctions(option, displayTimingInfo)
 % ResultManagerFunctions - functions called by ResultManagerGUI
 
     %tic
@@ -1573,7 +1573,9 @@ function ResultManagerFunctions(option)
             Zumax(gca);
     end
 
-    fprintf('%s    %s \t(%.2f secs)\n', datestr(now,'HH:MM:SS.FFF'), option, toc(t));
+    if nargin < 2 || displayTimingInfo
+        fprintf('%s  %-25s %6.2f secs\n', datestr(now,'HH:MM:SS.FFF'), option, toc(t));
+    end
     %toc
 
 %%%%%%%%%%%%%%%%%%%%%%%
