@@ -104,10 +104,10 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                 set(ha, 'Visible', 'on');
             end
         case 'Seg.clearPush'  % Clear segment file
-            %ha = Seg.loadEdit;
-            %set(ha, 'string', '');
+            %set(Seg.loadEdit, 'string', '');
             setappdata(gcf, 'Segment', []);
-            delete(findobj(gcf, '-regexp', 'tag', 'Segment.\d'));
+            delete(findobj(Seg.axHandle, '-regexp', 'tag', '^Segment.'));
+            delete(findobj(Seg.axHandle, 'Tag','SelectedLine'));
             % Disable the display check box
             set(Seg.dispCheck, 'enable', 'off', 'value', 0);
         case 'Seg.savePush'   % Save segment file
@@ -404,6 +404,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
         case 'Seg.modMovePush'
             Segment = getappdata(gcf, 'Segment');
             if ~isempty(Segment)
+                delete(findobj(Seg.axHandle, 'Tag','SelectedLine'));
                 Segment = MoveIntersection(Segment);
                 setappdata(gcf, 'Segment', Segment);
             end
@@ -525,12 +526,12 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                 set(ha, 'Visible', 'on');
             end
         case 'Seg.clearPushBlock'  % Clear block file
-            ha = Seg.loadEditBlock;
-            set(ha, 'string', '');
+            %set(Seg.loadEditBlock, 'string', '');
             setappdata(gcf, 'Block', []);
-            delete(findobj(gcf, '-regexp', 'tag', '^Block.'));
-            set(Seg.dispCheckBlock, 'enable', 'off', 'value', 0);
+            delete(findobj(Seg.axHandle, '-regexp', 'tag', '^Block.'));
             delete(findobj(Seg.axHandle, 'Tag','SelectedBlock'));
+            % Disable the display check box
+            set(Seg.dispCheckBlock, 'enable', 'off', 'value', 0);
         case 'Seg.savePushBlock'   % Save block file
             Block = getappdata(gcf, 'Block');
             if size(Block, 1) == 0
@@ -860,7 +861,6 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             if ~isempty(Segment)
                 SegmentCheckerForGui(Segment, h)
             end
-
         case 'Seg.modClearSegmentChecks'  % Clear segment checks
             SegmentManagerFunctions('RedrawSegments');
             legend('deletelegend')
