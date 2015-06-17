@@ -11,9 +11,10 @@ leglab = {'Horiz./Vert.', 'Same coords. (reg.)', 'Same coords. (rev.)', 'Interse
 rvec = zeros(numel(S.lat1), 1);
 avec = rvec;
 for i = 1:numel(S.lon1)
-   [rng, az] = distance(S.lat1(i), S.lon1(i), S.lat2(i), S.lon2(i), 'degrees');
+   rng = gcdist(S.lat1(i), S.lon1(i), S.lat2(i), S.lon2(i));
+   az = sphereazimuth(S.lon1(i), S.lat1(i), S.lon2(i), S.lat2(i));
    avec(i) = az;
-   rvec(i) = 6371*deg2rad(rng);
+   rvec(i) = 1e-3*rng;
 
    if (avec(i) == 180)
       sprintf('%d is horizontal, ', i, avec(i));
@@ -22,7 +23,7 @@ for i = 1:numel(S.lon1)
       sprintf('%d has %f length, ', i, rvec(i));
    end
 end
-
+keyboard
 % Show vertical segments
 hvec = union(find(avec == 0), find(avec == 180));
 set(h(hvec), 'color', 'r', 'linewidth', 6);
