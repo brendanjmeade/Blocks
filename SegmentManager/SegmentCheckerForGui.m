@@ -144,7 +144,7 @@ function SegmentCheckerForGui(S)
             j = j(realc(reali)); % identify its index
             %set(h(i), 'marker', 'x', 'color', 'm');
             %set(h(j), 'marker', 'x', 'color', 'm');
-            plot([S.lon1([i;j]);S.lon2([i;j])], [S.lat1([i;j]);S.lat2([i;j])], 'marker','x', 'color','m', 'linewidth',2, 'tag','CheckedSegment');
+            plot([S.lon1([i(:);j(:)]);S.lon2([i(:);j(:)])], [S.lat1([i(:);j(:)]);S.lat2([i(:);j(:)])], 'marker','x', 'color','m', 'linewidth',2, 'tag','CheckedSegment');
             anyFound = true;
         end
     end

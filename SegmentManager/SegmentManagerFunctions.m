@@ -282,7 +282,10 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Segment.midLat = (Segment.lat1 + Segment.lat2)/2;
             setappdata(gcf, 'Segment', Segment);
             set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
-
+            hMarkedLine = findobj(Seg.axHandle, 'Tag','SelectedLine');
+            if isempty(hMarkedLine)
+               hMarkedLine = plot(Seg.axHandle, 0,0,'-r', 'LineWidth',2, 'Tag','SelectedLine');
+            end
             % Find the segments that are inside a clickable box
             fprintf(GLOBAL.filestream, 'Starting Box Select\n');
             title(Seg.axHandle, 'Select and drag a bounding box for the requested segments', 'FontSize',12);
@@ -290,15 +293,18 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             title(Seg.axHandle, '');
             segPolyX = [min(segRange.lon) max(segRange.lon) max(segRange.lon) min(segRange.lon)];
             segPolyY = [min(segRange.lat) min(segRange.lat) max(segRange.lat) max(segRange.lat)];
-            segIdx = find(inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY) == 1);
-            for i = 1:numel(segIdx)
-                fprintf(GLOBAL.filestream, '%s\n', Segment.name(segIdx(i), :));
-                set(findobj('Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
-            end
+            segIdx = inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY);
+            lons = [Segment.lon1(segIdx)'; Segment.lon2(segIdx)'; NaN(1, sum(segIdx))];
+            lats = [Segment.lat1(segIdx)'; Segment.lat2(segIdx)'; NaN(1, sum(segIdx))];
+            set(hMarkedLine, 'xdata', lons(:), 'ydata', lats(:));
             setappdata(gcf, 'segIdx', segIdx);
         case 'Seg.modGSelectLasso'
             Segment = getappdata(gcf, 'Segment');
             Range = getappdata(gcf, 'Range');
+            hMarkedLine = findobj(Seg.axHandle, 'Tag','SelectedLine');
+            if isempty(hMarkedLine)
+               hMarkedLine = plot(Seg.axHandle, 0,0,'-r', 'LineWidth',2, 'Tag','SelectedLine');
+            end
             % Calculate segment midpoints here, assuming they'll be needed in the future
             Segment.midLon = (Segment.lon1 + Segment.lon2)/2;
             Segment.midLat = (Segment.lat1 + Segment.lat2)/2;
@@ -309,10 +315,9 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             title(Seg.axHandle, 'Select and drag a bounding area for the requested segments', 'FontSize',12);
             segIdx = myselectdata('sel', 'lasso', 'ignore', mp);
             title(Seg.axHandle, '');
-            for i = 1:numel(segIdx)
-                fprintf(GLOBAL.filestream, '%s\n', Segment.name(segIdx(i), :));
-                set(findobj(gcf, 'Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
-            end
+            lons = [Segment.lon1(segIdx)'; Segment.lon2(segIdx)'; NaN(1, length(segIdx))];
+            lats = [Segment.lat1(segIdx)'; Segment.lat2(segIdx)'; NaN(1, length(segIdx))];
+            set(hMarkedLine, 'xdata', lons(:), 'ydata', lats(:));
             delete(mp); clear mp
             SetAxes(Range);
             setappdata(gcf, 'segIdx', segIdx);
