@@ -29,7 +29,7 @@ function SegmentCheckerForGui(S)
 
     % Show vertical segments
     tolerance = 0.1; %degs
-    hvec1 = abs(avec)<tolerance | abs(avec-180)<tolerance; %(avec == 0) | (avec == 180);
+    hvec1 = abs(avec)<tolerance | abs(avec-360)<tolerance | abs(avec-180)<tolerance; %(avec == 0) | (avec == 180);
     %set(h(hvec), 'color','r', 'linewidth',6);
     plot([S.lon1(hvec1);S.lon2(hvec1)], [S.lat1(hvec1);S.lat2(hvec1)], 'color','r', 'linewidth',2, 'tag','CheckedSegment');
     if any(hvec1)
