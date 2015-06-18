@@ -857,17 +857,15 @@ function SegmentManagerFunctions(option, displayTimingInfo)
         case 'Seg.modSegmentChecker'  % Check for problematic segments
             SegmentManagerFunctions('Seg.modClearSegmentChecks');
             Segment = getappdata(gcf, 'Segment');
-            h = findobj(gcf, '-regexp', 'tag', 'Segment.\d');
+            %h = findobj(gcf, '-regexp', 'tag', 'Segment.\d');
             if ~isempty(Segment)
-                SegmentCheckerForGui(Segment, h)
+                SegmentCheckerForGui(Segment); %,h)
             end
         case 'Seg.modClearSegmentChecks'  % Clear segment checks
             SegmentManagerFunctions('RedrawSegments');
             legend('deletelegend')
-            hg = findobj(gcf, 'tag', 'hang');
-            if ~isempty(hg)
-                delete(hg)
-            end
+            delete(findobj(Seg.axHandle, 'tag','CheckedSegment')); 
+            delete(findobj(Seg.axHandle, 'tag','hang'));
             eb = getappdata(gcf, 'emptyBlocks');
             if ~isempty(eb)
                 delete(eb)
