@@ -40,6 +40,7 @@ Station = cell2struct(c,fn,2);
 Station.lon  = round(Station.lon,3); %=str2num(num2str(Station.lon, '%3.3f'));
 Station.lat  = round(Station.lat,3); %=str2num(num2str(Station.lat, '%3.3f'));
 Station.name = char(Station.name);
+Station.tog  = logical(Station.tog);
 
 % Add fields to Station to deal that are not included in a .sta.data file
 sz = size(Station.eastVel);

@@ -829,10 +829,12 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                 try
                     Segment = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
                     [Segment.midLon, Segment.midLat] = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
+                      keyboard
                     [Segment, Block, Station] = BlockLabel(Segment, Block, Station); % passing true station file or fake station file, if no real station file is loaded
                     % If BlockLabel was successful, check for any blocks lacking stations
                     ub = unique(Station.blockLabel);
                     emptyBlocks = setdiff(1:length(Block.interiorLon), ub);
+
                     if ~isempty(emptyBlocks) && sum(abs(Station.lon)) ~= 0 % Need this second condition for the case when we haven't loaded a segment file but still want to check IPs
                         for i = 1:length(emptyBlocks)
                             eb(i) = plot(Block.orderLon{emptyBlocks(i)}, Block.orderLat{emptyBlocks(i)}, 'color', 'r', 'linewidth', 3);
@@ -843,6 +845,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                     if numel(Block.orderLon) == numel(Block.interiorLon)
                         htemp = msgbox(sprintf('Interior points uniquely identify %d blocks.', numel(Block.associateLabel)));
                     else
+
                         noIntPt = setdiff(1:numel(Block.orderLon), unique(Block.associateLabel))
                         for i = 1:length(noip)
                             ni(i) = plot(Block.orderLon{noIntPt(i)}, Block.orderLat{noIntPt(i)}, 'color', 'c', 'linewidth', 3, 'linestyle', '--');
