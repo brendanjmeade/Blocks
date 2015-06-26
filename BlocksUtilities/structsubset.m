@@ -13,10 +13,10 @@ f = setdiff(f, except);
 sn = s;
 for i = 1:length(f)
    d = getfield(s, f{i});
-   if isnumeric(d) || ischar(d)
-      d = d(idx, :);
-   elseif iscell(d)
+   if iscell(d)
       d = d{idx};
+   else
+      d = d(idx, :);
    end
    sn = setfield(sn, f{i}, d);
 end

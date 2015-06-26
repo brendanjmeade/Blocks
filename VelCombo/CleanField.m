@@ -176,8 +176,8 @@ togIdx = unique([togIdx(:); outlierIdx(:)]);
 deleteIdx                      = unique([togIdx(:) ; nanIdx(:) ; eastSigIdx(:) ; northSigIdx(:) ; eastLargeIdx(:) ; northLargeIdx(:) ; edmIdx(:) ; vlbIdx(:) ; colocateIdx(:) ; rangeIdx(:) ; outlierIdx(:)]);
 keepIdx                        = setdiff(tIdx, deleteIdx);
 
-if exist('nowritesta', 'var')
-if nowritesta == 0
+if ~exist('nowritesta', 'var') || (exist('nowritesta', 'var') && nowritesta == 0)
+
 % Write station file without toggled off stations
 WriteStation([filename(1:end-9) '_Clean.sta.data'], S.lon(keepIdx), S.lat(keepIdx), S.eastVel(keepIdx), S.northVel(keepIdx), S.eastSig(keepIdx), S.northSig(keepIdx), S.corr(keepIdx), S.other1(keepIdx), S.tog(keepIdx), S.name(keepIdx, :));
 
@@ -193,12 +193,11 @@ WriteStation([filename(1:end-9) '_CleanAll.sta.data'], S.lon, S.lat, S.eastVel, 
 % newTog                         = ones(size(refIdx));
 % newTog(deleteIdx)              = 0;
 WriteStation([filename(1:end-9) '_CleanAll1Sig.sta.data'], S.lon, S.lat, S.eastVel, S.northVel, ones(size(S.eastSig)), ones(size(S.northSig)), S.corr, S.other1, newTog, S.name);
-end
+
 end
 
 % Make a plot showing the flagged stations
-if exist('nomakefig', 'var')
-   if nomakefig == 0
+if ~exist('nomakefig', 'var') || (exist('nomakefig', 'var') && nomakefig == 0)
    figure
    sta = plot(S.lon(tIdx), S.lat(tIdx), '.k'); hold on;
    es = plot(S.lon(eastSigIdx), S.lat(eastSigIdx), '.r');
@@ -209,5 +208,4 @@ if exist('nomakefig', 'var')
    nr = plot(S.lon(rangeIdx), S.lat(rangeIdx), 'xb');
    ol = plot(S.lon(outlierIdx), S.lat(outlierIdx), 'or');
    legend([sta, es, ns, el, nl, co, nr, ol], {'Stations', 'E Sig.', 'N Sig.', 'E Lg.', 'N Lg.', 'Colo.', 'Near', 'Out'});
-   end
 end
