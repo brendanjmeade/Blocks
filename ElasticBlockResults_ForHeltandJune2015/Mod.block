@@ -1,0 +1,40 @@
+Name
+interior_long interior_lat
+Euler_long Euler_long_sig
+Euler_lat  Euler_lat_sig
+rotation_rate rotation_rate_sig
+strain_calc apriori_toggle
+other    other    other
+other    other    other
+anatolia       
+30.000   38.000
+32.610   0.046
+32.503   0.070
+1.644   0.015
+0.000   0
+0.000e+00   0.000e+00   0.000e+00
+0.000e+00   0.000e+00   0.000e+00
+southernmarmara
+28.000   40.200
+37.443   1.045
+29.921   0.658
+0.571   0.081
+0.000   0
+0.000e+00   0.000e+00   0.000e+00
+0.000e+00   0.000e+00   0.000e+00
+marmara        
+26.500   40.000
+33.742   0.754
+28.443   1.968
+1.069   0.169
+0.000   0
+0.000e+00   0.000e+00   0.000e+00
+0.000e+00   0.000e+00   0.000e+00
+remainingworld 
+60.000   -20.000
+352.852   15.781
+46.743   1.750
+0.051   0.018
+0.000   0
+0.000e+00   0.000e+00   0.000e+00
+0.000e+00   0.000e+00   0.000e+00
