@@ -1,4 +1,4 @@
-function [keepIdx, deleteIdx] = CleanField(filename, sigCutoff, velCutoff, offsetVel, outlierRange, closeRange, sigMult, useTogs)
+function [keepIdx, deleteIdx] = CleanField(filename, sigCutoff, velCutoff, offsetVel, outlierRange, closeRange, sigMult, useTogs, nowritesta, nomakefig)
 % Good defaults:
 % sigCutoff                      = 2.0; % mm/yr
 % velCutoff                      = 200.0; % mm/yr
@@ -11,7 +11,15 @@ function [keepIdx, deleteIdx] = CleanField(filename, sigCutoff, velCutoff, offse
 togf = fopen([filename(1:end-9) '.tog'], 'w');
 fprintf(togf, 'Toggle file created using command: CleanField(\''%s\'', %d, %d, %d, %d, %d, %d, %d);\n', filename, sigCutoff, velCutoff, offsetVel, outlierRange, closeRange, sigMult, useTogs);
 
-S                              = ReadStadataStruct(filename);
+if ischar(filename)
+   S                              = ReadStadataStruct(filename);
+elseif isstruct(filename)
+   if isfield(filename, 'eastVel')
+      S = fieldname;
+      nowritesta = 1;
+   end
+end
+
 refIdx                         = 1:1:numel(S.lon);
 
 % Find zero toggles
@@ -168,6 +176,8 @@ togIdx = unique([togIdx(:); outlierIdx(:)]);
 deleteIdx                      = unique([togIdx(:) ; nanIdx(:) ; eastSigIdx(:) ; northSigIdx(:) ; eastLargeIdx(:) ; northLargeIdx(:) ; edmIdx(:) ; vlbIdx(:) ; colocateIdx(:) ; rangeIdx(:) ; outlierIdx(:)]);
 keepIdx                        = setdiff(tIdx, deleteIdx);
 
+if ~exist('nowritesta', 'var') || (exist('nowritesta', 'var') && nowritesta == 0)
+
 % Write station file without toggled off stations
 WriteStation([filename(1:end-9) '_Clean.sta.data'], S.lon(keepIdx), S.lat(keepIdx), S.eastVel(keepIdx), S.northVel(keepIdx), S.eastSig(keepIdx), S.northSig(keepIdx), S.corr(keepIdx), S.other1(keepIdx), S.tog(keepIdx), S.name(keepIdx, :));
 
@@ -184,14 +194,18 @@ WriteStation([filename(1:end-9) '_CleanAll.sta.data'], S.lon, S.lat, S.eastVel, 
 % newTog(deleteIdx)              = 0;
 WriteStation([filename(1:end-9) '_CleanAll1Sig.sta.data'], S.lon, S.lat, S.eastVel, S.northVel, ones(size(S.eastSig)), ones(size(S.northSig)), S.corr, S.other1, newTog, S.name);
 
+end
+
 % Make a plot showing the flagged stations
- figure
- sta = plot(S.lon(tIdx), S.lat(tIdx), '.k'); hold on;
- es = plot(S.lon(eastSigIdx), S.lat(eastSigIdx), '.r');
- ns = plot(S.lon(northSigIdx), S.lat(northSigIdx), '.m');
- el = plot(S.lon(eastLargeIdx), S.lat(eastLargeIdx), '.g');
- nl = plot(S.lon(northLargeIdx), S.lat(northLargeIdx), 'ob');
- co = plot(S.lon(colocateIdx), S.lat(colocateIdx), '.c');
- nr = plot(S.lon(rangeIdx), S.lat(rangeIdx), 'xb');
- ol = plot(S.lon(outlierIdx), S.lat(outlierIdx), 'or');
-legend([sta, es, ns, el, nl, co, nr, ol], {'Stations', 'E Sig.', 'N Sig.', 'E Lg.', 'N Lg.', 'Colo.', 'Near', 'Out'});
+if ~exist('nomakefig', 'var') || (exist('nomakefig', 'var') && nomakefig == 0)
+   figure
+   sta = plot(S.lon(tIdx), S.lat(tIdx), '.k'); hold on;
+   es = plot(S.lon(eastSigIdx), S.lat(eastSigIdx), '.r');
+   ns = plot(S.lon(northSigIdx), S.lat(northSigIdx), '.m');
+   el = plot(S.lon(eastLargeIdx), S.lat(eastLargeIdx), '.g');
+   nl = plot(S.lon(northLargeIdx), S.lat(northLargeIdx), 'ob');
+   co = plot(S.lon(colocateIdx), S.lat(colocateIdx), '.c');
+   nr = plot(S.lon(rangeIdx), S.lat(rangeIdx), 'xb');
+   ol = plot(S.lon(outlierIdx), S.lat(outlierIdx), 'or');
+   legend([sta, es, ns, el, nl, co, nr, ol], {'Stations', 'E Sig.', 'N Sig.', 'E Lg.', 'N Lg.', 'Colo.', 'Near', 'Out'});
+end

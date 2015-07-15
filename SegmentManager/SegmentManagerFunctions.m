@@ -282,7 +282,10 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Segment.midLat = (Segment.lat1 + Segment.lat2)/2;
             setappdata(gcf, 'Segment', Segment);
             set(findobj(gcf, '-regexp', 'Tag', 'Segment.\d'), 'color', 'k');
-
+            hMarkedLine = findobj(Seg.axHandle, 'Tag','SelectedLine');
+            if isempty(hMarkedLine)
+               hMarkedLine = plot(Seg.axHandle, 0,0,'-r', 'LineWidth',2, 'Tag','SelectedLine');
+            end
             % Find the segments that are inside a clickable box
             fprintf(GLOBAL.filestream, 'Starting Box Select\n');
             title(Seg.axHandle, 'Select and drag a bounding box for the requested segments', 'FontSize',12);
@@ -290,15 +293,18 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             title(Seg.axHandle, '');
             segPolyX = [min(segRange.lon) max(segRange.lon) max(segRange.lon) min(segRange.lon)];
             segPolyY = [min(segRange.lat) min(segRange.lat) max(segRange.lat) max(segRange.lat)];
-            segIdx = find(inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY) == 1);
-            for i = 1:numel(segIdx)
-                fprintf(GLOBAL.filestream, '%s\n', Segment.name(segIdx(i), :));
-                set(findobj('Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
-            end
+            segIdx = inpolygon(Segment.midLon, Segment.midLat, segPolyX, segPolyY);
+            lons = [Segment.lon1(segIdx)'; Segment.lon2(segIdx)'; NaN(1, sum(segIdx))];
+            lats = [Segment.lat1(segIdx)'; Segment.lat2(segIdx)'; NaN(1, sum(segIdx))];
+            set(hMarkedLine, 'xdata', lons(:), 'ydata', lats(:));
             setappdata(gcf, 'segIdx', segIdx);
         case 'Seg.modGSelectLasso'
             Segment = getappdata(gcf, 'Segment');
             Range = getappdata(gcf, 'Range');
+            hMarkedLine = findobj(Seg.axHandle, 'Tag','SelectedLine');
+            if isempty(hMarkedLine)
+               hMarkedLine = plot(Seg.axHandle, 0,0,'-r', 'LineWidth',2, 'Tag','SelectedLine');
+            end
             % Calculate segment midpoints here, assuming they'll be needed in the future
             Segment.midLon = (Segment.lon1 + Segment.lon2)/2;
             Segment.midLat = (Segment.lat1 + Segment.lat2)/2;
@@ -309,10 +315,9 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             title(Seg.axHandle, 'Select and drag a bounding area for the requested segments', 'FontSize',12);
             segIdx = myselectdata('sel', 'lasso', 'ignore', mp);
             title(Seg.axHandle, '');
-            for i = 1:numel(segIdx)
-                fprintf(GLOBAL.filestream, '%s\n', Segment.name(segIdx(i), :));
-                set(findobj(gcf, 'Tag', strcat('Segment.', num2str(segIdx(i)))), 'Color', 'r');
-            end
+            lons = [Segment.lon1(segIdx)'; Segment.lon2(segIdx)'; NaN(1, length(segIdx))];
+            lats = [Segment.lat1(segIdx)'; Segment.lat2(segIdx)'; NaN(1, length(segIdx))];
+            set(hMarkedLine, 'xdata', lons(:), 'ydata', lats(:));
             delete(mp); clear mp
             SetAxes(Range);
             setappdata(gcf, 'segIdx', segIdx);
@@ -824,10 +829,12 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                 try
                     Segment = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
                     [Segment.midLon, Segment.midLat] = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
+                      keyboard
                     [Segment, Block, Station] = BlockLabel(Segment, Block, Station); % passing true station file or fake station file, if no real station file is loaded
                     % If BlockLabel was successful, check for any blocks lacking stations
                     ub = unique(Station.blockLabel);
                     emptyBlocks = setdiff(1:length(Block.interiorLon), ub);
+
                     if ~isempty(emptyBlocks) && sum(abs(Station.lon)) ~= 0 % Need this second condition for the case when we haven't loaded a segment file but still want to check IPs
                         for i = 1:length(emptyBlocks)
                             eb(i) = plot(Block.orderLon{emptyBlocks(i)}, Block.orderLat{emptyBlocks(i)}, 'color', 'r', 'linewidth', 3);
@@ -838,6 +845,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                     if numel(Block.orderLon) == numel(Block.interiorLon)
                         htemp = msgbox(sprintf('Interior points uniquely identify %d blocks.', numel(Block.associateLabel)));
                     else
+
                         noIntPt = setdiff(1:numel(Block.orderLon), unique(Block.associateLabel))
                         for i = 1:length(noip)
                             ni(i) = plot(Block.orderLon{noIntPt(i)}, Block.orderLat{noIntPt(i)}, 'color', 'c', 'linewidth', 3, 'linestyle', '--');
@@ -857,17 +865,15 @@ function SegmentManagerFunctions(option, displayTimingInfo)
         case 'Seg.modSegmentChecker'  % Check for problematic segments
             SegmentManagerFunctions('Seg.modClearSegmentChecks');
             Segment = getappdata(gcf, 'Segment');
-            h = findobj(gcf, '-regexp', 'tag', 'Segment.\d');
+            %h = findobj(gcf, '-regexp', 'tag', 'Segment.\d');
             if ~isempty(Segment)
-                SegmentCheckerForGui(Segment, h)
+                SegmentCheckerForGui(Segment); %,h)
             end
         case 'Seg.modClearSegmentChecks'  % Clear segment checks
             SegmentManagerFunctions('RedrawSegments');
             legend('deletelegend')
-            hg = findobj(gcf, 'tag', 'hang');
-            if ~isempty(hg)
-                delete(hg)
-            end
+            delete(findobj(Seg.axHandle, 'tag','CheckedSegment')); 
+            delete(findobj(Seg.axHandle, 'tag','hang'));
             eb = getappdata(gcf, 'emptyBlocks');
             if ~isempty(eb)
                 delete(eb)
