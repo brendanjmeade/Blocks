@@ -20,27 +20,24 @@ function varargout = BlocksForward(x, y, outdir, notri)
 cmname                                           = dir([outdir filesep '*.command']);
 Command                                          = ReadCommand([outdir filesep cmname(1).name]);
 Segment                                          = ReadSegmentTri([outdir filesep 'Mod.segment']);
-Segment                                          = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
-[Segment.x1 Segment.y1 Segment.z1]               = sph2cart(DegToRad(Segment.lon1(:)), DegToRad(Segment.lat1(:)), 6371);
-[Segment.x2 Segment.y2 Segment.z2]               = sph2cart(DegToRad(Segment.lon2(:)), DegToRad(Segment.lat2(:)), 6371);
-[Segment.midLon Segment.midLat]                  = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
-[Segment.midX Segment.midY Segment.midZ]         = sph2cart(DegToRad(Segment.midLon), DegToRad(Segment.midLat), 6371);
-Segment.lDep                                     = PatchLDtoggle(Segment.lDep, Segment.patchFile, Segment.patchTog, Command.patchFileNames); % Set locking depth to zero on segments that are associated with patches
-Segment                                          = SegCentroid(Segment);
+Segment                                          = ProcessSegment(Segment, Command);
 Block                                            = ReadBlock([outdir filesep 'Mod.block']);
 [Patches.c, Patches.v, Patches.s]                = PatchData([outdir filesep 'Mod.patch']);
 Patches.nc                                       = size(Patches.c, 1);
 Patches.nEl                                      = size(Patches.v, 1);
-Patches                                          = PatchCoords(Patches);
+if Patches.nc ~= 0
+   Patches                                       = PatchCoords(Patches);
+end
 Command                                          = [];
 
 if exist('notri', 'var')
-   Segment.patchTog = 0;
+   Segment.patchTog = 0*Segment.patchTog;
 end
 
 % Put the stations in a structure
 [Station.lon, Station.lat]                       = deal(x(:), y(:));
 [Station.x, Station.y, Station.z]                = sph2cart(DegToRad(Station.lon), DegToRad(Station.lat), 6371);
+keyboard
 [Segment, Block, Station]                        = BlockLabel(Segment, Block, Station);
 
 % Calculate all partials
@@ -85,4 +82,3 @@ elseif nargout == 5
    varargout{4} = vs;
    varargout{5} = vb - vd - vt;
 end
-keyboard
