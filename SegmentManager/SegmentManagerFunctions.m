@@ -62,6 +62,8 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Station = PlotSta(Command.staFileName);
             PlotStaVec(Station, vecScale);
             setappdata(gcf, 'Station', Station);
+            set(Seg.dispCheckSta, 'Value', 1, 'Enable', 'on');
+            set(Seg.dispCheckStaNames, 'Enable', 'on');
             hb = Seg.dispCheckSta;
             set(hb, 'Value', 1);
 
@@ -829,7 +831,6 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                 try
                     Segment = OrderEndpoints(Segment); % Reorder segment endpoints in a consistent fashion
                     [Segment.midLon, Segment.midLat] = deal((Segment.lon1+Segment.lon2)/2, (Segment.lat1+Segment.lat2)/2);
-                      keyboard
                     [Segment, Block, Station] = BlockLabel(Segment, Block, Station); % passing true station file or fake station file, if no real station file is loaded
                     % If BlockLabel was successful, check for any blocks lacking stations
                     ub = unique(Station.blockLabel);

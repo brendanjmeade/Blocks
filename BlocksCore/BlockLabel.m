@@ -179,7 +179,6 @@ function [S, b, st] = BlockLabel(s, b, st)
         cin = inpolygonsphere(testlon, S.midLat(sib), bco, bca); % test to see which perturbed coordinates lie within the current block
         % Now test the station coordinates for block identification
         stin = inpolygonsphere(st.lon, st.lat, bco, bca);
-
         if sum(bin) > 1 % exterior block or error
             if abs(barea(i)) == max(abs(barea)) && ext == 0 % if the area is the largest and exterior hasn't yet been assigned
                 alabel(find(~bin)) = i; % ...assign this block as the exterior
@@ -200,7 +199,7 @@ function [S, b, st] = BlockLabel(s, b, st)
         b.orderLat{i} = [bca(:); bca(1)];
     end
 
-    if ext == 0 % Special case for a single block
+    if ext == 0 & length(b.interiorLon) <= 2 % Special case for a single block
         ext = 2;
         alabel = [1 2];
     end
@@ -218,6 +217,7 @@ function [S, b, st] = BlockLabel(s, b, st)
     [st.blockLabel, st.blockLabelUnused] = deal(stl);
     % Reorder block properties
     alabel(alabel == 0) = ext;
+    keyboard
     b = BlockReorder(alabel, b);
     b.associateLabel = alabel;
     b.exteriorBlockLabel = ext;
