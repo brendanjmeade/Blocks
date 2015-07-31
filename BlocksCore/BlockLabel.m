@@ -217,7 +217,6 @@ function [S, b, st] = BlockLabel(s, b, st)
     [st.blockLabel, st.blockLabelUnused] = deal(stl);
     % Reorder block properties
     alabel(alabel == 0) = ext;
-    keyboard
     b = BlockReorder(alabel, b);
     b.associateLabel = alabel;
     b.exteriorBlockLabel = ext;
