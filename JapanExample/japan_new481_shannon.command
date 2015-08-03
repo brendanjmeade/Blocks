@@ -33,3 +33,4 @@ Constrain edge element slip to equal that of adjacent segment: 0
 Set [up- down-] dip limits to zero slip: 1 1 1 1 1 0 1 1 1
 Strain calculation method: 1
 Number of Monte Carlo iterations: 1
+dumpall: yes
