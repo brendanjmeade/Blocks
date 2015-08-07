@@ -63,9 +63,9 @@ end
 fprintf('Done comparing blocks.\n');
     
 % compare patch files:
-[c1, v1, s1] = PatchData(strcat(dir1, '/Mod.patch'));
-[c2, v2, s2] = PatchData(strcat(dir2,'Mod.patch'));
-meshview(c1, v1, s1(:, 1)); % Plot strike slip
-meshview(c1, v1, s1(:, 2)); % Plot dip slip
-fprintf('Done comparing patches.\n');
+%[c1, v1, s1] = PatchData(strcat(dir1, '/Mod.patch'));
+%[c2, v2, s2] = PatchData(strcat(dir2,'Mod.patch'));
+%meshview(c1, v1, s1(:, 1)); % Plot strike slip
+%meshview(c1, v1, s1(:, 2)); % Plot dip slip
+%fprintf('Done comparing patches.\n');
     
