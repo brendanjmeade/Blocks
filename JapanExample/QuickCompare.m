@@ -9,10 +9,12 @@ Seg2 = ReadSegmentStruct(strcat(dir2, '/Mod.segment'));
 Blk1 = ReadBlocksStruct(strcat(dir1, '/Mod.block'));
 Blk2 = ReadBlocksStruct(strcat(dir2, '/Mod.block'));
 
+issuccess = true
 % Are there the same number of segments
 if numel(Seg1.lon1) == numel(Seg2.lon1)
-    fprintf(1, 'Number segments match.  Have a nice day.\n')
-else
+    fprintf(1, 'Number segments match.  Have a nice day.\n');
+ else
+   issuccess = false;
     fprintf(1, 'Number segments do not match.\n')
     fprintf(1, '%s has %d segments.\n', dir1, numel(Seg1.lon1));
     fprintf(1, '%s has %d segments.\n', dir2, numel(Seg2.lon1));
@@ -68,4 +70,6 @@ fprintf('Done comparing blocks.\n');
 %meshview(c1, v1, s1(:, 1)); % Plot strike slip
 %meshview(c1, v1, s1(:, 2)); % Plot dip slip
 %fprintf('Done comparing patches.\n');
-    
+if ~issuccess
+   exit(1);
+end
