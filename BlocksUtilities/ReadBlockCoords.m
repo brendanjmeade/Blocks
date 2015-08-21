@@ -24,4 +24,5 @@ fin = [sep-1; length(data)];
 b = cell(length(beg), 1);
 for i = 1:length(beg)
    b{i} = data(beg(i):fin(i), :);
+   b{i} = b{i}(~isnan(b{i}(:, 1)), :);
 end
