@@ -40,7 +40,11 @@ end
               
 % If no depth is defined for stations, assume they're at the surface
 if ~isfield(s, 'dep')
-   s.dep                      = 0*s.lon;
+   if isfield(s, 'z')
+      s.dep                   = -abs(s.z);
+   else
+      s.dep                   = 0*s.lon;
+   end
 end
 nsta                          = numel(s.lon);
 ntri                          = numel(p.lon1);

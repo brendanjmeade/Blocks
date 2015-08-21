@@ -7,7 +7,14 @@ function b = ReadBlockCoords(direc)
 %
 
 % Read the file
-data = textread([direc filesep 'Block.coords'],'','delimiter','>','emptyvalue', NaN);
+
+% Check to see if a directory has been specified, or a file
+[p, f, e] = fileparts(direc);
+if isempty(f)
+   data = textread([direc filesep 'Block.coords'],'','delimiter','>','emptyvalue', NaN);
+else
+   data = textread(direc, '','delimiter','>','emptyvalue', NaN);
+end
 
 % Find NaNs and split
 sep = find(isnan(data(:, 1))); sep(end) = [];
