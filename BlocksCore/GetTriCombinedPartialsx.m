@@ -43,7 +43,6 @@ if nPatches > 0
    parfor (iPatches = 1:nPatches)
       if sum(op(:, 1)) > 0
          % Calculate elastic displacement for strike slip component
-<<<<<<< HEAD
          [uxs uys uzs...
           uxd uyd uzd...
           uxt uyt uzt]                         = tri_dislz_partials([Patches.x1(iPatches), Patches.x2(iPatches), Patches.x3(iPatches)], [Patches.y1(iPatches), Patches.y2(iPatches), Patches.y3(iPatches)], abs([Patches.z1(iPatches), Patches.z2(iPatches), Patches.z3(iPatches)]), Station.x(op(:, 1)), Station.y(op(:, 1)), abs(Station.z(op(:, 1))), 0.25);
@@ -60,37 +59,6 @@ if nPatches > 0
          v2e{iPatches}                         = reshape(-[uxxd uyyd uzzd uxyd -uxzd -uyzd]', 6*sum(op(:, 2)), 1);
          v3e{iPatches}                         = reshape(-[uxxt uyyt uzzt uxyt -uxzt -uyzt]', 6*sum(op(:, 2)), 1);
 	   end
-=======
-         [ux, uy, uz]                          = tri_dislz([Patches.x1(iPatches), Patches.x2(iPatches), Patches.x3(iPatches)], [Patches.y1(iPatches), Patches.y2(iPatches), Patches.y3(iPatches)], abs([Patches.z1(iPatches), Patches.z2(iPatches), Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), -1, 0, 0, 0.25);
-	      v1u{iPatches}                         = reshape([ux uy -uz]', 3*nStations, 1);
-%	      if tz(iPatches) == 2
-		      [ux, uy, uz]                       = tri_dislz([Patches.x1(iPatches), Patches.x2(iPatches), Patches.x3(iPatches)], [Patches.y1(iPatches), Patches.y2(iPatches), Patches.y3(iPatches)], abs([Patches.z1(iPatches), Patches.z2(iPatches), Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), 0, -1, 0, 0.25);
-		      v2u{iPatches}                      = reshape([ux uy -uz]', 3*nStations, 1);
-%		      v3u{iPatches}                      = zeros(3*nStations, 1);
-%	      else
-		      [ux, uy, uz]                       = tri_dislz([Patches.x1(iPatches), Patches.x2(iPatches), Patches.x3(iPatches)], [Patches.y1(iPatches), Patches.y2(iPatches), Patches.y3(iPatches)], abs([Patches.z1(iPatches), Patches.z2(iPatches), Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), 0, 0, -1, 0.25);
-		      v3u{iPatches}                      = reshape([ux uy -uz]', 3*nStations, 1);
-%		      v2u{iPatches}                      = zeros(3*nStations, 1);
-%	      end
-	   end
-   
-      if op(2) == 1
-         [uxx, uyy, uzz,...
-          uxy, uxz, uyz, nv]                   = tri_strain_fast([Patches.x1(iPatches) Patches.x2(iPatches) Patches.x3(iPatches)], [Patches.y1(iPatches) Patches.y2(iPatches) Patches.y3(iPatches)], abs([Patches.z1(iPatches) Patches.z2(iPatches) Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), -1, 0, 0, 0.25);
-         v1e{iPatches}                         = reshape([uxx uyy uzz uxy -uxz -uyz]', 6*nStations, 1);
-%        if tz(iPatches) == 2
-            [uxx, uyy, uzz,...
-             uxy, uxz, uyz]                    = tri_strain_fast([Patches.x1(iPatches) Patches.x2(iPatches) Patches.x3(iPatches)], [Patches.y1(iPatches) Patches.y2(iPatches) Patches.y3(iPatches)], abs([Patches.z1(iPatches) Patches.z2(iPatches) Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), 0, -1, 0, 0.25);
-            v2e{iPatches}                      = reshape([uxx uyy uzz uxy -uxz -uyz]', 6*nStations, 1);
-%            v3e{iPatches}                      = zeros(6*nStations, 1);
-%        else
-            [uxx, uyy, uzz,...
-             uxy, uxz, uyz]                    = tri_strain_fast([Patches.x1(iPatches) Patches.x2(iPatches) Patches.x3(iPatches)], [Patches.y1(iPatches) Patches.y2(iPatches) Patches.y3(iPatches)], abs([Patches.z1(iPatches) Patches.z2(iPatches) Patches.z3(iPatches)]), Station.x, Station.y, abs(Station.z), 0, 0, -1, 0.25);
-            v3e{iPatches}                      = reshape([uxx uyy uzz uxy -uxz -uyz]', 6*nStations, 1);
-%            v2e{iPatches}                      = zeros(6*nStations, 1);
-%        end
-      end
->>>>>>> 814d669c00fc2d332a0378c26295a2fb5f56660e
       parfor_progress;
    end
    parfor_progress(0);
