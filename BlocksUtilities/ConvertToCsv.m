@@ -10,10 +10,14 @@ function ConvertAll(file_type)
 % Look in current director for all files of current file_type
 dir_data = dir(file_type);
 for i = 1:numel(dir_data)
-    Sta = ReadStation(dir_data(i).name);
+    if strcmp(file_type, '*.sta')
+        S = ReadStation(dir_data(i).name);
+    elseif strcmp(file_type, '*.segment');
+        S = ReadSegmentStruct(dir_data(i).name);
+    end
     fprintf(1, 'Converting %s to %s\n', ...
             dir_data(i).name, [dir_data(i).name, '.csv']);
-    struct2csv(Sta, [dir_data(i).name, '.csv']);
+    struct2csv(S, [dir_data(i).name, '.csv']);
 end
 
 
