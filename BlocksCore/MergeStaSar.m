@@ -16,6 +16,7 @@ Sigma.sar       = Sar.dataSig;
 % Coordinates
 Data.lon        = [Station.lon; Sar.lon];
 Data.lat        = [Station.lat; Sar.lat];
+Data.dep        = [Station.dep; Sar.dep];
 Data.x          = [Station.x; Sar.x];
 Data.y          = [Station.y; Sar.y];
 Data.z          = [Station.z; Sar.z];

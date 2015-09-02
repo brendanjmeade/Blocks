@@ -6,6 +6,9 @@ if strmatch(Command.unitSigmas, 'yes')
    [Station.eastSig, Station.northSig]           = ones(numel(Station.lon), 1);
 end
 
+% Add a "dep" field of all zeros, to be used with ProjectTriCoords
+Station.dep                                      = 0*Station.lon;
+
 % Find stations that are toggled on
 Station                                          = SelectStation(Station);
 

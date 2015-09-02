@@ -9,6 +9,9 @@ if ~isfield(Sar, 'dataSig')
 	Sar.dataSig                                = ones(size(Sar.lon));
 end
 
+% Add a "dep" field of all zeros, to be used with ProjectTriCoords
+Sar.dep                                       = 0*Sar.lon;
+
 % Set the uncertainties to reflect the weights specified in the command file
 % In constructing the data weight vector, the value is 1./Sar.dataSig.^2, so
 % the adjustment made here is Sar.dataSig./sqrt(Command.sarWgt)
