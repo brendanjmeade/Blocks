@@ -8,6 +8,7 @@ function Station  = SelectStation(Station)
 keep_idx                           = find(Station.tog>=1);
 Station.lon                        = Station.lon(keep_idx);
 Station.lat                        = Station.lat(keep_idx);
+Station.dep                        = Station.dep(keep_idx);
 
 Station.eastVel                    = Station.eastVel(keep_idx);
 Station.northVel                   = Station.northVel(keep_idx);

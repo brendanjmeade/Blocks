@@ -37,7 +37,7 @@ fn = {'lon','lat','eastVel','northVel','eastSig','northSig','corr','other1','tog
 Station = cell2struct(c,fn,2);
 
 % Convert station coordinates to 3 decimal places. This is consistent with how results are written
-if verLessThan('matlab', 'R2014b')
+if verLessThan('matlab', '8.4')
    Station.lon  = str2num(num2str(Station.lon, '%3.3f'));
    Station.lat  = str2num(num2str(Station.lat, '%3.3f'));
 else
