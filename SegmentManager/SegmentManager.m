@@ -1,4 +1,4 @@
-function SegmentManager
+function SegmentManager(nomaximize)
     warning off; % This seems to be neccesary for Matlab2014 to prevent massive CPU usage
                  % Warning: The EraseMode property is no longer supported and will error in a future release. Use the ANIMATEDLINE function for animating
                  % lines and points instead of EraseMode 'none'. Removing instances of EraseMode set to 'normal', 'xor', and 'background' has minimal impact. 
@@ -208,8 +208,10 @@ function SegmentManager
     drawnow;  % this is required for jFrame to be accessible
     warning off MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame
     jFrame = get(handle(hFig),'JavaFrame');
-    jFrame.setMaximized(true);
-
+    if ~exist('nomaximize', 'var')
+       jFrame.setMaximized(true);
+    end
+    
     % Making the GUI visible and give it a name
     set(hFig, 'visible','on', 'name', 'Segment Manager');
     set(hFig, 'DoubleBuffer', 'on');

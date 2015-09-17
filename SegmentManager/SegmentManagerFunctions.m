@@ -38,6 +38,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Segment = ReadSegmentTri(Command.segFileName);
             Segment.midLon = 0.5*(Segment.lon1 + Segment.lon2);
             Segment.midLat = 0.5*(Segment.lat1 + Segment.lat2);
+            Segment = AlphaSortSegment(Segment);
             setappdata(gcf, 'Segment', Segment);
             SegmentManagerFunctions('DrawSegments');
             set(Seg.modSegList, 'string', cellstr(strvcat('< none >', 'Multiple', Segment.name)));
@@ -87,6 +88,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Segment.midLon = 0.5*(Segment.lon1 + Segment.lon2);
             Segment.midLat = 0.5*(Segment.lat1 + Segment.lat2);
 
+            Segment = AlphaSortSegment(Segment);
             setappdata(gcf, 'Segment', Segment);
 
             % Plot segments file
@@ -99,11 +101,14 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             set(Seg.dispCheck, 'enable', 'on', 'value', 1);
         case 'Seg.dispCheck'  % Segment display toggle
             ha = findobj(gcf, '-regexp', 'Tag', '^Segment.');
+            hs = findobj(Seg.axHandle, 'Tag','SelectedLine');
             hb = Seg.dispCheck;
             if get(hb, 'Value') == 0;
                 set(ha, 'Visible', 'off');
+                set(hs, 'Visible', 'off');
             else
                 set(ha, 'Visible', 'on');
+                set(hs, 'Visible', 'on');
             end
         case 'Seg.clearPush'  % Clear segment file
             %set(Seg.loadEdit, 'string', '');
@@ -220,7 +225,6 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             value = get(ha, 'Value');
             segIdx = value - 2;
             propIdx = get(Seg.modPropList, 'Value');
-
             if (value > 1)
                 % Show selected property in edit box
                 switch propIdx
@@ -272,7 +276,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
 
                 % Set the listbox and save the segment index segment
                 set(Seg.modSegList, 'Value', segIdx + 2);
-                setappdata(gcf, 'segIdx', segIdx+2);
+                setappdata(gcf, 'segIdx', segIdx);
                 %set(Seg.modPropList, 'Value', 1);
                 %set(Seg.modPropEdit, 'String', ' ');
             end
@@ -519,6 +523,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
 
             % Read in the block file
             Block = ReadBlocksStruct(filenameFull);
+            Block = AlphaSortBlock(Block);
             setappdata(gcf, 'Block', Block);
 
             % Plot blocks file
