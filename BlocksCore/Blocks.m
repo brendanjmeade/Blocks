@@ -12,13 +12,14 @@ Sar                                              = ReadSar(Command.sarFileName);
 Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ReadSegmentTri(Command.segFileName); % Read segment file
 if isfield(Command, 'mshpFileName')
-	[Patches, Command]                            = ReadMshp(Command.mshpFileName, Command);
+	[Patches, Command]                           = ReadMshp(Command.mshpFileName, Command);
 else
    Patches                                       = ReadPatches(Command.patchFileNames);
 end   
 Segment                                          = ProcessSegment(Segment, Command);
 [Patches, Command]                               = ProcessPatches(Patches, Command, Segment);
 Block                                            = ReadBlock(Command.blockFileName); % Read block file
+Mogi                                             = ReadMogi(Command.mogiFileName); % Read Mogi source file
 fprintf('done.\n')
 
 % Assign block labels and put sites on the correct blocks
@@ -105,6 +106,10 @@ fprintf('done.\n')
 % Calculate SAR ramp partials based on the order specified in the command file
 [Partials.sramp, Index]                          = GetSarRampPartials(Sar, Command, Index);
 
+% Calculate Mogi source partials
+Partials.mogi                                    = GetMogiPartials(Mogi, Data);
+[Partials.mogi, Partials.smogi]                  = SarPartials(Partials.mogi, Sar);
+
 % Assemble Jacobian
 fprintf('\n  Assembling design matrix, data vector, and weighting matrix...')
 [R, d, W, Partials, Index]                       = AssembleMatrices(Partials, Data, Sigma, Index);
@@ -136,6 +141,9 @@ Model                                            = TriResults(Partials, Model, I
 % Assign strain rates and uncertianties
 Model                                            = StrainResults(Model, Index, Command);
 
+% Assign Mogi source volume change rates and uncertainties
+Model                                            = MogiResults(Model);
+
 % Calculate forward components of velocity field
 Model                                            = ModelVels(Partials.rotation - Partials.elastic * Partials.slip, Model.omegaEstRot, 'Vel', Model);
 
@@ -151,6 +159,9 @@ Model                                            = ModelVels(Partials.tri(:, Ind
 % Velocities due to internal block strains
 Model                                            = ModelVels(Partials.strain, Model.omegaEstStrain, 'StrainVel', Model, 'Vel');
 
+% Velocities due to Mogi source volume change rates
+Model                                            = ModelVels(Partials.mogi, Model.omegaEstMogi, 'MogiVel', Model, 'Vel');
+
 % Calculate SAR velocities
 Model                                            = ModelSarVels(Partials, Model, Index);
 
@@ -164,7 +175,7 @@ fprintf('done.\n')
 
 fprintf('Writing output...')
 % Write output
-runName = WriteOutput(Segment, Patches, Station, Sar, Block, Command, Model);
+runName = WriteOutput(Segment, Patches, Station, Sar, Block, Command, Model, Mogi);
 fprintf('done.  All files saved to .%s%s.\n', filesep, runName)
 %save 'new.mat'
 

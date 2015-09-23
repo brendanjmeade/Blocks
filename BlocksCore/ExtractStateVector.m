@@ -9,4 +9,5 @@ function Model = ExtractStateVector(Model, Index)
 Model.omegaEstRot                                = Model.omegaEst(1:Index.szslip(2)); % rotation parameters
 Model.omegaEstTriSlip                            = Model.omegaEst(Index.szslip(2) + (1:Index.sztri(2))); % triangular slips
 Model.omegaEstStrain                             = Model.omegaEst(Index.szslip(2) + Index.sztri(2) + (1:Index.szstrain(2))); % strain parameters
-Model.omegaEstSarRamp                            = Model.omegaEst(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + 1:end); % SAR ramp parameters
+Model.omegaEstMogi                               = Model.omegaEst(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + (1:Index.szmogi(2))); % Mogi source volume changes
+Model.omegaEstSarRamp                            = Model.omegaEst(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + Index.szmogi(2) + 1:end); % SAR ramp parameters

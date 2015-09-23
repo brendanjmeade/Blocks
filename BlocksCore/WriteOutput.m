@@ -1,4 +1,4 @@
-function runName = WriteOutput(Segment, Patches, Station, Sar, Block, Command, Model)
+function runName = WriteOutput(Segment, Patches, Station, Sar, Block, Command, Model, Mogi)
 % Write all sorts of output files
 runName = GetRunName;
 mkdir(runName);
@@ -15,6 +15,7 @@ WriteStation(sprintf('.%s%s%sRot.sta', filesep, runName, filesep), Station.lon, 
 WriteStation(sprintf('.%s%s%sDef.sta', filesep, runName, filesep), Station.lon, Station.lat, Model.eastDefVel, Model.northDefVel, zeros(size(Station.eastSig)), zeros(size(Station.northSig)), Station.corr, Station.blockLabel, Station.tog, Station.name);
 WriteStation(sprintf('.%s%s%sTri.sta', filesep, runName, filesep), Station.lon, Station.lat, Model.eastTriVel, Model.northTriVel, zeros(size(Station.eastSig)), zeros(size(Station.northSig)), Station.corr, Station.blockLabel, Station.tog, Station.name);
 WriteStation(sprintf('.%s%s%sStrain.sta', filesep, runName, filesep), Station.lon, Station.lat, Model.eastStrainVel, Model.northStrainVel, zeros(size(Station.eastSig)), zeros(size(Station.northSig)), Station.corr, Station.blockLabel, Station.tog, Station.name);
+WriteStation(sprintf('.%s%s%sMogi.sta', filesep, runName, filesep), Station.lon, Station.lat, Model.eastMogiVel, Model.northMogiVel, zeros(size(Station.eastSig)), zeros(size(Station.northSig)), Station.corr, Station.blockLabel, Station.tog, Station.name);
 
 % Write out slip rates
 WriteSegment(sprintf('.%s%s%sMod.segment', filesep, runName, filesep), Segment.name, Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2, Segment.lDep, Segment.lDepSig, Segment.lDepTog, Segment.dip, Segment.dipSig, Segment.dipTog, Model.ssRate, Model.ssRateSig, ones(size(Segment.ssRate)), Model.dsRate, Model.dsRateSig, ones(size(Segment.dsRate)), Model.tsRate, Model.tsRateSig, ones(size(Segment.tsRate)), Segment.bDep, Segment.bDepSig, Segment.bDepTog, Segment.res, Segment.resOver, Segment.resOther, Segment.patchFile, Segment.patchTog, Segment.other3, Segment.patchSlipFile, Segment.patchSlipTog, Segment.other6, Segment.other7, Segment.other8, Segment.other9, Segment.other10, Segment.other11, Segment.other12);
@@ -39,6 +40,9 @@ WritePatches(sprintf('.%s%s%sMod.patch', filesep, runName, filesep), Patches.c, 
 
 % Write SAR results
 WriteSarResults(Sar, Model, runName);
+
+% Write Mogi results
+WriteMogi(sprintf('.%s%s%sMod.mogi', filesep, runName, filesep), Mogi, Model)
 
 % Copy command file to results directory
 [p, f, e] = fileparts(Command.fileName);

@@ -9,4 +9,5 @@ function Model = ExtractCovariance(Model, Index)
 Model.covarianceRot                              = Model.covariance(1:Index.szslip(2), 1:Index.szslip(2));
 Model.covarianceTriSlip                          = Model.covariance(Index.szslip(2) + (1:Index.sztri(2)), Index.szslip(2) + (1:Index.sztri(2)));
 Model.covarianceStrain                           = Model.covariance(Index.szslip(2) + Index.sztri(2) + (1:Index.szstrain(2)), Index.szslip(2) + Index.sztri(2) + (1:Index.szstrain(2)));
-Model.covarianceSarRamp                          = Model.covariance(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + 1:end, Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + 1:end);
+Model.covarianceMogi                             = Model.covariance(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + (1:Index.szmogi(2)), Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + (1:Index.szmogi(2))); 
+Model.covarianceSarRamp                          = Model.covariance(Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + Index.szmogi(2) + 1:end, Index.szslip(2) + Index.sztri(2) + Index.szstrain(2) + Index.szmogi(2) + 1:end);
