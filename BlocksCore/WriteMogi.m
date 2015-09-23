@@ -1,12 +1,12 @@
 function WriteMogi(mogifile, Mogi, Model)
 % WRITEMOGI  Writes Mogi sources
-%    WRITEMOGI(file) writes a 5-column array to the 
+%    WRITEMOGI(file) writes a 6-column array to the 
 %    specified file, of the format:
 %
-%    longitude | latitude | depth (km) | \DeltaV (km^3) | \DeltaVSigma (km^3)
+%    longitude, latitude, depth (km), toggle, \DeltaV (m^3), \DeltaVSigma (m^3)
 %
 %    The file is given a one-line header, and 
-%    the columns are space-separated.
+%    the columns are comma-separated.
 %
 
 
