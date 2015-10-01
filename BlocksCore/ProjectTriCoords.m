@@ -40,7 +40,7 @@ end
               
 % If no depth is defined for stations, assume they're at the surface
 if ~isfield(s, 'dep')
-   if isfield(s, 'z')
+   if isfield(s, 'z') && ~isfield(s, 'x')
       s.dep                   = -abs(s.z);
    else
       s.dep                   = 0*s.lon;

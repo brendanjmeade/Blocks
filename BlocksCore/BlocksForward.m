@@ -1,4 +1,4 @@
-function varargout = BlocksForward(x, y, outdir, notri)
+function v = BlocksForward(x, y, outdir, notri)
 %
 % BLOCKSFORWARD calculates the predicted velocities at stations for 
 % a given BLOCKS model run.
@@ -6,14 +6,9 @@ function varargout = BlocksForward(x, y, outdir, notri)
 %    components at station coordinates (X, Y) given the results of
 %    a BLOCKS run contained in OUTDIR.
 %
-%    V = BLOCKSFORWARD(...) outputs the predicted velocities to a single
-%    vector V with structure [E1; N1; U1; ... ; EN; NN; UN].
-%
-%    [VB, VD, VT, VS] = BLOCKSFORWARD(...) returns individual vectors 
-%    containing the constituent parts of the velocity field due to 
-%    block motion (VB), elastic deformation (VD), triangular deformation
-%    (VT), and intrablock strain (VS).  The total velocity field is given
-%    by VB - (VD + VT) + VS.
+%    V = BLOCKSFORWARD(...) outputs the predicted velocities to structure
+%    V with fields Mod, Rot, Def, and Tri. Each field is a 3*nStations-by-1
+%    array arranged as [E1, N1, U1, ... En, Nn, Un]'
 %
 
 % Read in the necessary files
@@ -39,6 +34,7 @@ end
 [Station.x, Station.y, Station.z]                = sph2cart(DegToRad(Station.lon), DegToRad(Station.lat), 6371);
 [Segment, Block, Station]                        = BlockLabel(Segment, Block, Station);
 
+
 % Calculate all partials
 Partials.elastic                                 = GetElasticPartials(Segment, Station);
 Partials.slip                                    = GetSlipPartials(Segment, Block);
@@ -62,22 +58,7 @@ omega(2:3:end) = y(:);
 omega(3:3:end) = z(:);
 
 % Do the forward problems
-vb = Partials.rotation*omega;
-vd = Partials.elastic*Partials.slip*omega;
-vt = Partials.tri*ts;
-vs = zeros(size(vt));
-
-if nargout == 1
-   varargout{1} = vb - vd - vt;
-elseif nargout == 4
-   varargout{1} = vb;
-   varargout{2} = vd;
-   varargout{3} = vt;
-   varargout{4} = vs;
-elseif nargout == 5
-   varargout{1} = vb;
-   varargout{2} = vd;
-   varargout{3} = vt;
-   varargout{4} = vs;
-   varargout{5} = vb - vd - vt;
-end
+v.Rot = Partials.rotation*omega;
+v.Def = Partials.elastic*Partials.slip*omega;
+v.Tri = Partials.tri*ts;
+v.Mod = v.Rot - v.Def - v.Tri; % Total modeled velocities
