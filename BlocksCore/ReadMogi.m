@@ -19,6 +19,7 @@ if ~isempty(mogifile)
    Mogi.dvtog = m{5};
    Mogi.dv    = m{6};
    Mogi.dvSig = m{7};
+   fclose(fid);
 else
    Mogi.name  = [];
    Mogi.lon   = [];
@@ -28,4 +29,3 @@ else
    Mogi.dv    = [];
    Mogi.dvSig = [];
 end
-fclose(fid);
