@@ -32,9 +32,9 @@ for i = 1:size(Mogi.lon)
    un = ur.*cosd(az(:, i));
    
    % Insert components into partials matrix
-   pm(1:3:end, i) = ue;
-   pm(2:3:end, i) = un;
-   pm(3:3:end, i) = uz;
+   pm(1:3:end, i) = 1e9*ue;
+   pm(2:3:end, i) = 1e9*un;
+   pm(3:3:end, i) = 1e9*uz;
 end
 
 % Make some figures for testing

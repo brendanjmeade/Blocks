@@ -11,8 +11,8 @@ function WriteMogi(mogifile, Mogi, Model)
 
 
 fid        = fopen(mogifile, 'w');
-fprintf(fid, 'Name, Longitude, Latitude, Depth, DV_Flag, DV, DVS\r');
+fprintf(fid, 'Name, Longitude, Latitude, Depth, DV_Flag, DV, DVS\n');
 for i = 1:numel(Mogi.lon)
-   fprintf(fid, '%s, %g, %g, %g, %g, %g, %g\r', strtrim(Mogi.name(i, :)), Mogi.lon(i), Mogi.lat(i), Mogi.dep(i), 1, Model.mogiDeltaV(i), Model.mogiDeltaVSig(i));
+   fprintf(fid, '%s, %g, %g, %g, %g, %g, %g\n', strtrim(Mogi.name(i, :)), Mogi.lon(i), Mogi.lat(i), Mogi.dep(i), 1, Model.mogiDeltaV(i), Model.mogiDeltaVSig(i));
 end
 fclose(fid);
