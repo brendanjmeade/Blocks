@@ -21,7 +21,10 @@ function [p, pp] = ReadMshp(file, pp)
 % Read file contents
 fid = fopen(file, 'r');
 c = textscan(fid, '%s\n%f\n%f%f%f\n%s\n');
-pp.patchFileNames = char(c{1});
+pp.patchFileNames = char(c{1}(1, :));
+for i = 2:size(c{1}, 1)
+   pp.patchFileNames = [pp.patchFileNames, ' ', char(c{1}(i, :))];
+end
 
 % Read patches
 p = ReadPatches(pp.patchFileNames);
