@@ -121,6 +121,14 @@ Model.covariance                                 = (R'*W*R)\eye(size(R, 2));
 Model.omegaEst                                   = Model.covariance*R'*W*d;
 fprintf('done.\n')
 
+% TODO OCT 16, 2015: BJM - Add alternative estimation methods
+% All of these should be specified from the .command file
+% Inside switch case statement for flow control???
+% 1) Direct inversion for model covariance with inv
+% 2) Ridge regression
+% 3) Full SVD (just for fun)
+% 4) Truncated SVD
+
 % Extract different parts of the state vector
 fprintf('Calculating model results...')
 Model                                            = ExtractStateVector(Model, Index);
