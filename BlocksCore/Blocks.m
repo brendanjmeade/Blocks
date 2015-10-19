@@ -116,10 +116,6 @@ fprintf('\n  Assembling design matrix, data vector, and weighting matrix...')
 fprintf('done.\n')
 
 % Estimate rotation vectors, triangular slip rates, and strain tensors
-fprintf('Doing the inversion...')
-Model.covariance                                 = (R'*W*R)\eye(size(R, 2));
-Model.omegaEst                                   = Model.covariance*R'*W*d;
-fprintf('done.\n')
 
 % TODO OCT 16, 2015: BJM - Add alternative estimation methods
 % All of these should be specified from the .command file
@@ -128,6 +124,27 @@ fprintf('done.\n')
 % 2) Ridge regression
 % 3) Full SVD (just for fun)
 % 4) Truncated SVD
+
+switch Command.solutionMethod
+    case 'backslash'
+        fprintf(1, '%s\n', Command.solutionMethod);
+        fprintf(1, 'Doing the inversion via backslash...');
+        Model.covariance = (R'*W*R)\eye(size(R, 2));
+        Model.omegaEst = Model.covariance*R'*W*d;
+        fprintf(1, 'Done.\n');
+
+    case 'fullinverse'
+        fprintf(1, '%s\n', Command.solutionMethod);
+        fprintf(1, 'Doing the inversion via full inverse...');
+        Model.covariance = inv(R'*W*R);
+        Model.omegaEst = Model.covariance*R'*W*d;
+        fprintf(1, 'Done.\n');
+
+    otherwise
+        fprintf(1, 'No solution method of type: %s\n', Command.solutionMethod);
+end
+
+
 
 % Extract different parts of the state vector
 fprintf('Calculating model results...')
