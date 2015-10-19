@@ -42,6 +42,7 @@ Command.inversionParam04                              = 0;
 Command.inversionParam05                              = 0;
 Command.dumpall                                       = 'no';
 Command.mogiFileName                                  = '';
+Command.solutionMethod                                = 'backslash';
 
 % Read in commands one line at a time
 while 1
@@ -213,6 +214,10 @@ while 1
          
       case('mogi source file')
          Command.mogiFileName                         = strtrim(value);
+
+      case('solution method')
+         Command.solutionMethod                       = strtrim(value);
+
 
    end   
 end
