@@ -119,8 +119,6 @@ fprintf('done.\n')
 
 % TODO OCT 16, 2015: BJM - Add alternative estimation methods
 % All of these should be specified from the .command file
-% Inside switch case statement for flow control???
-% 1) Direct inversion for model covariance with inv
 % 2) Ridge regression
 % 3) Full SVD (just for fun)
 % 4) Truncated SVD
@@ -137,6 +135,14 @@ switch Command.solutionMethod
         fprintf(1, '%s\n', Command.solutionMethod);
         fprintf(1, 'Doing the inversion via full inverse...');
         Model.covariance = inv(R'*W*R);
+        Model.omegaEst = Model.covariance*R'*W*d;
+        fprintf(1, 'Done.\n');
+
+    case 'ridge'
+        fprintf(1, '%s\n', Command.solutionMethod);
+        fprintf(1, 'Doing the inversion via ridge regression...\n');
+        fprintf(1, 'ridge regression weighting parameter = %5.3f\n', Command.ridgeParam);
+        Model.covariance = inv(R'*W*R + Command.ridgeParam * eye(size(R,2)));
         Model.omegaEst = Model.covariance*R'*W*d;
         fprintf(1, 'Done.\n');
 
