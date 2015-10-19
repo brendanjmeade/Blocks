@@ -146,6 +146,16 @@ switch Command.solutionMethod
         Model.omegaEst = Model.covariance*R'*W*d;
         fprintf(1, 'Done.\n');
 
+    % case 'svd'
+    %     Command.svdKeep = 400;
+    %     fprintf(1, '%s\n', Command.solutionMethod);
+    %     fprintf(1, 'Doing the inversion via svd...\n');
+    %     fprintf(1, 'Keep %d largest eigenvalues\n', Command.svdKeep);
+    %     [U, S, V] = svd(R'*W*R);
+    %     Model.covariance = V * inv(S) * U'; % Not yet truncated....
+    %     Model.omegaEst = Model.covariance*R'*W*d;
+    %     fprintf(1, 'Done.\n');
+
     otherwise
         fprintf(1, 'No solution method of type: %s\n', Command.solutionMethod);
 end
