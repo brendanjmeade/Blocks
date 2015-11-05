@@ -4,9 +4,10 @@ nStations                                   = numel(Station.lon);
 nSegments                                   = numel(Segment.lon1);
 G                                           = zeros(6*nStations, 3*nSegments);
 [v1 v2 v3]                                  = deal(cell(1, nSegments));
-parfor (iSegment = 1:nSegments)
-   [nee, nnn, nuu, nen, neu, nnu]          = local_okada_strain_calc(Segment.lon1(iSegment), Segment.lat1(iSegment), Segment.lon2(iSegment), Segment.lat2(iSegment), Station.lon, Station.lat, (Station.z), Segment.dip(iSegment), Segment.lDep(iSegment), 1, 0, 0, 0.25, Segment.bDep(iSegment));
-   v1{iSegment}                            = reshape([nee, nnn, nuu, nen, neu, nnu]', 6*nStations, 1);
+projstrikes                                 = sphereazimuth(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2);
+for (iSegment = 1:nSegments)
+   [nee, nnn, nuu, nen, neu, nnu]           = local_okada_strain_calc(Segment.lon1(iSegment), Segment.lat1(iSegment), Segment.lon2(iSegment), Segment.lat2(iSegment), Station.lon, Station.lat, (Station.z), Segment.dip(iSegment), Segment.lDep(iSegment), 1, 0, 0, 0.25, Segment.bDep(iSegment));
+   v1{iSegment}                             = reshape([nee, nnn, nuu, nen, neu, nnu]', 6*nStations, 1);
     
    if(Segment.dip(iSegment) ~= 90)
       [nee, nnn, nuu, nen, neu, nnu]        = local_okada_strain_calc(Segment.lon1(iSegment), Segment.lat1(iSegment), Segment.lon2(iSegment), Segment.lat2(iSegment), Station.lon, Station.lat, (Station.z), Segment.dip(iSegment), Segment.lDep(iSegment), 0, 1, 0, 0.25, Segment.bDep(iSegment));
@@ -18,6 +19,7 @@ parfor (iSegment = 1:nSegments)
       v3{iSegment}                          = reshape([nee, nnn, nuu, nen, neu, nnu]', 6*nStations, 1);
    end
 end
-G(:, 1:3:end) = cell2mat(v1);
-G(:, 2:3:end) = cell2mat(v2);
-G(:, 3:3:end) = cell2mat(v3);
+G(:, 1:3:end)                               = cell2mat(v1);
+G(:, 2:3:end)                               = cell2mat(v2);
+G(:, 3:3:end)                               = cell2mat(v3);
+G                                           = xyz2enumat_strain(G, projstrikes + 90);

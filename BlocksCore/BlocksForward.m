@@ -1,4 +1,4 @@
-function v = BlocksForward(x, y, outdir, notri)
+function [v, s] = BlocksForward(x, y, outdir, notri)
 %
 % BLOCKSFORWARD calculates the predicted velocities at stations for 
 % a given BLOCKS model run.
@@ -9,6 +9,12 @@ function v = BlocksForward(x, y, outdir, notri)
 %    V = BLOCKSFORWARD(...) outputs the predicted velocities to structure
 %    V with fields Mod, Rot, Def, and Tri. Each field is a 3*nStations-by-1
 %    array arranged as [E1, N1, U1, ... En, Nn, Un]'
+%
+%    [V, S] = BLOCKSFORWARD(...) also calculates stressing rates associated 
+%    with the slip rates, returned to the 6*nStations-by-1 vector fields
+%    named Mod, Def, and Tri within structure S, with stress components 
+%    [EE1, NN1, UU1, EN1, EU1, NU1, ... EEn, NNn, UUn, ENn, EUn, NUn]'. 
+%    Lame parameters of 3e10 Pa are assumed and returned units are Pa/yr. 
 %
 
 % Read in the necessary files
@@ -39,12 +45,22 @@ end
 Partials.elastic                                 = GetElasticPartials(Segment, Station);
 Partials.slip                                    = GetSlipPartials(Segment, Block);
 Partials.rotation                                = GetRotationPartials(Segment, Station, Command, Block);
+% Stress partials, if needed
+if nargout == 2
+   Partials.stress                               = GetElasticStrainPartials(Segment, Station);
+   Partials.stress                               = StrainToStressComp(Partials.stress', 3e10, 3e10)';
+end
+
 if sum(Segment.patchTog) > 0 % if patches are involved at all
-   [Partials.tri, tz, ts]                        = GetTriCombinedPartials(Patches, Station, [1 0]);
-   ts = zeros(3*size(Patches.s, 1), 1);
-   ts(1:3:end) = Patches.s(:, 1);
-   ts(2:3:end) = Patches.s(:, 2);
-   ts(3:3:end) = Patches.s(:, 3);
+   % Calculate combined partials, if needed
+   if nargout == 2
+      [Partials.tri, Partials.tristress]         = GetTriCombinedPartials(Patches, Station, [1 1]);
+      Partials.tristress                         = StrainToStressComp(Partials.tristress', 3e10, 3e10)';
+   else
+   % Or just displacement partials
+      Partials.tri                               = GetTriCombinedPartials(Patches, Station, [1 0]);
+   end
+   ts = stack3(Patches.s(:, 1:3));
 else
    Partials.tri                                  = zeros(3*numel(x), 1);
    ts                                            = 0;
@@ -62,3 +78,11 @@ v.Rot = Partials.rotation*omega;
 v.Def = Partials.elastic*Partials.slip*omega;
 v.Tri = Partials.tri*ts;
 v.Mod = v.Rot - v.Def - v.Tri; % Total modeled velocities
+
+% Stresses
+if varargout == 2
+   s.Def = Partials.stress*Partials.slip*omega*1e-3;
+   s.Tri = Partials.tristress*ts*1e-3;
+   s.Mod = s.Def + s.Mod;
+end
+   

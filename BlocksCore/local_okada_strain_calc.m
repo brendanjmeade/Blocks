@@ -80,65 +80,19 @@ fdip                          = deg_to_rad(fdip);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Do deformation calculation  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[xx, yy, zz, xy, xz, yz]             = okada_strain(ofx, ofy, strike, fld, fdip, L, W, fss, fds, fts, bx, by, z, nu);
-%if fss == 1
-%   [~, ~, ~, ~, e] = Okada1992(bx, by, z, [bx1 by1; bx2 by2], fdip, [fbd -fld], -1, 'S', 3e10, 0.25);
-%end
-%if fds == 1
-%   [~, ~, ~, ~, e] = Okada1992(bx, by, z, [bx1 by1; bx2 by2], fdip, [fbd -fld], -1, 'D', 3e10, 0.25);
-%end
-%if fts == 1
-%   [~, ~, ~, ~, e] = Okada1992(bx, by, z, [bx1 by1; bx2 by2], fdip, [fbd -fld], -1, 'T', 3e10, 0.25);
-%end
-%xx = e(:, 1, 1);
-%yy = e(:, 2, 2);
-%zz = e(:, 3, 3);
-%xy = e(:, 1, 2);
-%xz = e(:, 1, 3);
-%yz = e(:, 2, 3);
-%[nee, nnn, nuu, nen, neu, nnu]             = okada_strain(ofx, ofy, strike, fld, fdip, L, W, fss, fds, fts, bx, by, z, nu);
-% [ux, uy, uz]                         = okada_disloc(ofx, ofy, strike, fld, fdip, L, W, fss, fds, fts, bx, by, nu);
-
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%  Try a call to the function version of the angle correction routine  %%
-%%%  This is not neccesary with a Mercator projection as it is           %%
-%%%  conformal                                                           %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%  [tux, tuy]                           =  unproject_vectors(flong1, flat1, flong2, flat2, long, lat, ux, uy);
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Convert fault azimuth to a more useful rotation system  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%baz                                  = rad_to_deg(baz);
-%baz                                  = -baz + 90;
-%baz                                  = deg_to_rad(baz);
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%  Rotate vectors to correct for fault strike  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%[nee, nnn, nzz, nen, neu, nnu]       = deal(zeros(size(xx)));
-%for cnt = 1 : length(xx)
-%   [te, tn]                          = rotate_xy_vec(xx(cnt), xy(cnt), baz);
-%   nee(cnt) = te;
-%   nen(cnt) = tn;
-%   [te, tn]                          = rotate_xy_vec(xy(cnt), yy(cnt), baz);
-%   nnn(cnt) = tn;
-%   [te, tn]                          = rotate_xy_vec(xz(cnt), yz(cnt), baz);
-%   neu(cnt) = te;
-%   nnu(cnt) = tn;
-%end
-%nuu                                  = zz;
-[nee, nnn, nuu, nen, neu, nnu]       = deal(zeros(size(xx)));
-baz = baz + pi/2;
-rot = [cos(baz) sin(baz) 0; -sin(baz) cos(baz) 0; 0 0 1];
-for i = 1:length(xx)
-   smat = [xx(i) xy(i) xz(i); xy(i) yy(i) yz(i); xz(i) yz(i) zz(i)];
-   rmat = rot*smat*rot';
-   nee(i) = rmat(1); nnn(i) = rmat(5); nuu(i) = rmat(9);
-   nen(i) = rmat(2);
-   neu(i) = rmat(3);
-   nnu(i) = rmat(6);
+%[xx, yy, zz, xy, xz, yz]             = okada_strain(ofx, ofy, strike, fld, fdip, L, W, fss, fds, fts, bx, by, z, nu);
+if abs(fss) == 1
+ [~, ~, ~, ~, e] = Okada1992(bx, by, z, [tfx tfy; tfxe tfye], fdip, [fbd fld], fss, 'S', 3e10, 0.25);
 end
+if abs(fds) == 1
+ [~, ~, ~, ~, e] = Okada1992(bx, by, z, [tfx tfy; tfxe tfye], fdip, [fbd fld], fds, 'D', 3e10, 0.25);
+end
+if abs(fts) == 1
+ [~, ~, ~, ~, e] = Okada1992(bx, by, z, [tfx tfy; tfxe tfye], fdip, [fbd fld], fts, 'T', 3e10, 0.25);
+end
+nee = e(:, 1, 1);
+nnn = e(:, 2, 2);
+nuu = e(:, 3, 3);
+nen = e(:, 1, 2);
+neu = e(:, 1, 3);
+nnu = e(:, 2, 3);
