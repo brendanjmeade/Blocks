@@ -83,6 +83,6 @@ v.Mod = v.Rot - v.Def - v.Tri; % Total modeled velocities
 if nargout == 2
    s.Def = Partials.stress*Partials.slip*omega*1e-3;
    s.Tri = Partials.tristress*ts*1e-3;
-   s.Mod = s.Def + s.Mod;
+   s.Mod = s.Def + s.Tri;
 end
    
