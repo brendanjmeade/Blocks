@@ -92,48 +92,49 @@ for i    = 1:numel(p.nEl);
    
    if c.triEdge(3*i-2) > 0
       % Find the zero depth coordinates
-     zeroTest                                 = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= c.triDepthTol(1);
-     zeroZ                                    = coOrd(i) + find(zeroTest);
+%     zeroTest                                 = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= c.triDepthTol(1);
+%     zeroZ                                    = coOrd(i) + find(zeroTest);
       % find those elements having two zero-depth coordinates
-%      updip                                    = edgeelements(p.c, p.v(elRange, :));
-%      updip                                    = elOrd(i) + find(updip);
-      updip                                    = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
+     edgeels                                  = edgeelements(p.c, p.v(elRange, :));
+     updip                                    = elOrd(i) + find(edgeels.top);
+%      updip                                    = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
       updips                                   = [updips; updip];
       updipsc                                  = [updipsc; c.triEdge(3*i-2)*ones(size(updip))];
    end
   
    if c.triEdge(3*i-1) > 0
       % Find the deepest coordinates
-     maxTest                                  = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= c.triDepthTol(2);
-     maxZ                                     = coOrd(i) + find(maxTest);
+%     maxTest                                  = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= c.triDepthTol(2);
+%     maxZ                                     = coOrd(i) + find(maxTest);
       % Find those elements having two max. depth coordinates
-%      [~, downdip]                             = edgeelements(p.c, p.v(elRange, :));  
-%      downdip                                  = elOrd(i) + find(downdip);  
-      downdip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
+     edgeels                                  = edgeelements(p.c, p.v(elRange, :));  
+     downdip                                  = elOrd(i) + find(edgeels.bot);  
+%      downdip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
       downdips                                 = [downdips; downdip];
       downdipsc                                = [downdipsc; c.triEdge(3*i-1)*ones(size(downdip))];
    end
   
    if c.triEdge(3*i-0) > 0
-      % Find all edge coordinates
-      edge                                     = OrderedEdges(p.c, p.v(elRange, :));
-      % find all edge elements
-      edgeEls                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), edge), 2) == 2);
-      % separate out those that aren't on the up- or downdip extent
-      zeroTest                                 = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= c.triDepthTol(1);
-      zeroZ                                    = coOrd(i) + find(zeroTest);
-      % find those elements having two zero-depth coordinates
-      updip                                    = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
-     
-      % find the deepest coordinates
-      maxTest                                  = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= c.triDepthTol(2);
-      maxZ                                     = coOrd(i) + find(maxTest);
-      % find those elements having two max. depth coordinates
-      downdip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
+%
+%      % Find all edge coordinates
+%      edge                                     = OrderedEdges(p.c, p.v(elRange, :));
+%      % find all edge elements
+%      edgeEls                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), edge), 2) == 2);
+%      % separate out those that aren't on the up- or downdip extent
+%      zeroTest                                 = abs(p.c(coRange, 3) - max(p.c(coRange, 3))) <= c.triDepthTol(1);
+%      zeroZ                                    = coOrd(i) + find(zeroTest);
+%      % find those elements having two zero-depth coordinates
+%      updip                                    = elOrd(i) + find(sum(ismember(p.v(elRange, :), zeroZ), 2) == 2);
+%     
+%      % find the deepest coordinates
+%      maxTest                                  = abs(p.c(coRange, 3) - min(p.c(coRange, 3))) <= c.triDepthTol(2);
+%      maxZ                                     = coOrd(i) + find(maxTest);
+%      % find those elements having two max. depth coordinates
+%      downdip                                  = elOrd(i) + find(sum(ismember(p.v(elRange, :), maxZ), 2) == 2);
 
-%      [~, ~, s1, s2]                           = edgeelements(p.c, p.v(elRange, :));
-%      latedge                                  = elOrd(i) + find(s1+s2);
-      latedge                                  = setdiff(edgeEls, [updip(:); downdip(:)]);
+     edgeels                                  = edgeelements(p.c, p.v(elRange, :));
+     latedge                                  = elOrd(i) + find(edgeels.s1+edgeels.s2);
+%      latedge                                  = setdiff(edgeEls, [updip(:); downdip(:)]);
       latedges                                 = [latedges; latedge];
       latedgesc                                = [latedgesc; c.triEdge(3*i-0)*ones(size(latedge))];
    end

@@ -1,6 +1,6 @@
-function [top, bot, s1, s2] = edgeelements(c, v, strthresh)
+function [els, nodes] = edgeelements(c, v, strthresh)
 % EDGEELEMENTS  Finds elements lining the edge of a mesh.
-%   [top, bot, s1, s2] = EDGEELEMENTS(c, v, thresh) finds the 
+%   [elements, nodes] = EDGEELEMENTS(c, v, thresh) finds the 
 %   indices of elements lining the edges of the mesh defined by 
 %   coordinate array c and vertex ordering array v, returning the 
 %   indices to top, bot, s1, and s2. This algorithm does not rely on 
@@ -19,7 +19,8 @@ if ~exist('strthresh', 'var')
 end
 
 % Allocate space for edge matrices
-[top, bot, s1, s2] = deal([]);
+[els.top, els.bot, els.s1, els.s2] = deal([]);
+[nodes.top, nodes.bot, nodes.s1, nodes.s2] = deal([]);
 
 % Get ordered edge coordinates
 elo = OrderedEdges(c, v);
@@ -49,24 +50,28 @@ for j = 1:length(dcorn)
    % Indices of all coordinates along this edge
    eidx = 1+(corn(j):corn(j+1));
    if isempty(eidx) % This happens when the second index is less than the first index
-      eidx = 1+[(corn(j)):(length(elo)-1), 0:corn(j+1)];
+      eidx = 1+[(corn(j)):(length(elo)-2), 0:corn(j+1)];
    end
    % Find elements that contain at least 2 of these coordinates
    eedge = sum(ismember(v, elo(eidx)), 2) >= 2;
  
    % Assign to distinct edges
    if ismember(j, sidx(1:2)) % Working on a side 
-      if isempty(s1)
-         s1 = eedge;
+      if isempty(els.s1)
+         els.s1 = eedge;
+         nodes.s1 = elo(eidx);
       else
-         s2 = eedge;
+         els.s2 = eedge;
+         nodes.s2 = elo(eidx);
       end
    else
       % Working on a top or bottom, so let's test the depth of the corner
       if c(elo(corn(j+1)), 3) < mean(c(:, 3))
-         bot = eedge;
+         els.bot = eedge;
+         nodes.bot = elo(eidx);
       else
-         top = eedge;
+         els.top = eedge;
+         nodes.top = elo(eidx);
       end
    end
 end

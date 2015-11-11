@@ -68,9 +68,11 @@ elo                            = OrderedEdges(p.c, p.v(vbegs(midx):vends(midx), 
 elo                            = elo(1, [2:end, 1]); % Ordered edge nodes
 % Check for a depth tolerance
 if ~exist('dtol', 'var')
-   dtol                        = 0;
+  dtol                        = 0;
 end
-updip                          = elo(find(abs(p.c(elo, 3)) <= dtol)); % Updip nodes
+updip1                          = elo(find(abs(p.c(elo, 3)) <= dtol)); % Updip nodes
+[~, nodes]                     = edgeelements(p.c, p.v(vbegs(midx):vends(midx), :)); % Updip nodes
+updip                          = nodes.top;
 
 % Find the corners
 d1                             = gcdist(lats(endsegs(1), endcol(1)), lons(endsegs(1), endcol(1)), p.c(updip, 2), p.c(updip, 1));

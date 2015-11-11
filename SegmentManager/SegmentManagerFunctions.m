@@ -797,7 +797,7 @@ function SegmentManagerFunctions(option, displayTimingInfo)
             Segment = getappdata(gcf, 'Segment');
             segIdx  = getappdata(gcf, 'segIdx');
             Patch   = getappdata(gcf, 'Patch');
-            S = snapsegments(Segment, Patch, segIdx, 0);
+            S = snapsegments(Segment, Patch, segIdx);
             setappdata(gcf, 'Segment', S);
             SegmentManagerFunctions('RedrawSegments');
 
