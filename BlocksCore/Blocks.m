@@ -7,15 +7,15 @@ if nargin > 1
    Command                                       = ParseOptCommands(Command, varargin{:}); % Parse optional input arguments
 end
 Station                                          = ReadStation(Command.staFileName); % Read station file
-Station                                          = ProcessStation(Station, Command);
 Sar                                              = ReadSar(Command.sarFileName); % Read SAR file
-Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ReadSegmentTri(Command.segFileName); % Read segment file
 if isfield(Command, 'mshpFileName')
-	[Patches, Command]                           = ReadMshp(Command.mshpFileName, Command);
+   [Patches, Command]                            = ReadMshp(Command.mshpFileName, Command);
 else
    Patches                                       = ReadPatches(Command.patchFileNames);
 end   
+Station                                          = ProcessStation(Station, Command);
+Sar                                              = ProcessSar(Sar, Command);
 Segment                                          = ProcessSegment(Segment, Command);
 [Patches, Command]                               = ProcessPatches(Patches, Command, Segment);
 Block                                            = ReadBlock(Command.blockFileName); % Read block file

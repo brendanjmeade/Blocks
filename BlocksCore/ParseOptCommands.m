@@ -74,11 +74,13 @@ fn = {varargin{1:2:end}};
 va = {varargin{2:2:end}};
 
 Fn = fieldnames(Command);
+Command.changed = ''; % Keep a record of the changed fields
 % Insert the fields into the command structure
 for i = 1:numel(fn)
    if ~ismember(fn{i}, Fn)
       warning('Unrecognized field name specified in optional Blocks input arguments.')
    end
    Command = setfield(Command, fn{i}, va{i});
+   Command.changed = strcat(Command.changed, fn{i});
 end
                 
