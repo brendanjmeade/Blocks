@@ -7,7 +7,7 @@ function [els, nodes] = edgeelements(c, v, strthresh)
 %   finding the tops and bottoms based on nodes lying at a particular 
 %   depth, instead relying on finding abrupt changes in the trends of 
 %   the mesh edges, set by optional third argument thresh (the default
-%   is 55 degrees). This makes it more suitable for meshes that have 
+%   is 50 degrees). This makes it more suitable for meshes that have 
 %   irregular depth top traces (such as subduction trenches) and/or are
 %   not generated based on a set of depth contours.
 %
@@ -15,7 +15,7 @@ function [els, nodes] = edgeelements(c, v, strthresh)
 
 % Define default strike change threshold
 if ~exist('strthresh', 'var')
-   strthresh = 55;
+   strthresh = 50;
 end
 
 % Allocate space for edge matrices
@@ -24,14 +24,17 @@ end
 
 % Get ordered edge coordinates
 elo = OrderedEdges(c, v);
-% Use ordered coordinates to calculate edge strikes
-str = sphereazimuth(c(elo(1, :), 1), c(elo(1, :), 2), c(elo(2, :), 1), c(elo(2, :), 2));
-elo = [elo(1, :) elo(1, 1)]; 
-% Calculate difference in strikes of adjacent edges
-dstr = diff([str; str(1)]);
+% Use ordered coordinates to calculate angles between adjacent edges
+elo = [elo(1, :) elo(1, 1)];
+[x, y, z] = sph2cart(deg_to_rad(c(elo, 1)), deg_to_rad(c(elo, 2)), 6371+(c(elo, 3)));
+edgevecs = [x(2:end)-x(1:end-1), y(2:end)-y(1:end-1), z(2:end)-z(1:end-1)];
+
+% Calculate difference in angles of adjacent edges
+dstr = acosd(dot(edgevecs(1:end, :), edgevecs([end, 1:end-1], :), 2)./(mag(edgevecs(1:end, :), 2).*mag(edgevecs([end, 1:end-1], :), 2)));
+
 % Find sharp angles; these are mesh corners. These are indices into elo.
 corn = find(abs(dstr) > strthresh & abs(dstr) < (360-strthresh));
-corn = [corn; corn(1)];
+corn = [corn; corn(1)]-1;
 
 % Use corner indices to separate edges. Make inherent assumption that the top and bottom are longer than the sides
 dcorn = diff(corn);
@@ -54,7 +57,7 @@ for j = 1:length(dcorn)
    end
    % Find elements that contain at least 2 of these coordinates
    eedge = sum(ismember(v, elo(eidx)), 2) >= 2;
- 
+
    % Assign to distinct edges
    if ismember(j, sidx(1:2)) % Working on a side 
       if isempty(els.s1)
@@ -66,7 +69,7 @@ for j = 1:length(dcorn)
       end
    else
       % Working on a top or bottom, so let's test the depth of the corner
-      if c(elo(corn(j+1)), 3) < mean(c(:, 3))
+      if c(elo(corn(j)), 3) < mean(c(:, 3))
          els.bot = eedge;
          nodes.bot = elo(eidx);
       else
