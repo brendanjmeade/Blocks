@@ -5,7 +5,7 @@ function [strain, Index, Model]            = GetStrainPartials(Block, Station, S
 [strain, Index.strainBlock]                = deal(zeros(3*numel(Station.lon), 0), []);
 [Model.lonStrain, Model.latStrain]         = deal(zeros(size(Block.interiorLon)));
 
-if sum(Block.rotationInfo) > 1 % If any blocks have strain turned on
+if sum(Block.rotationInfo) > 0 % If any blocks have strain turned on
    switch Command.strainMethod
       case 1 % use the block centroid
          [strain, Index.strainBlock,...
