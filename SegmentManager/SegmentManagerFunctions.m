@@ -651,20 +651,24 @@ function SegmentManagerFunctions(option, displayTimingInfo)
                     case 8
                         ShowPropertyLabelsBlock(num2str(Block.rotationRateSig)); BigTitle('Rotation rate sigma');
                     case 9
-                        ShowPropertyLabelsBlock(num2str(Block.interiorLon)); BigTitle('Interior longitude');
+                        ShowPropertyLabelsBlock(num2str(Block.rotationInfo)); BigTitle('Internal strain flag');
                     case 10
-                        ShowPropertyLabelsBlock(num2str(Block.interiorLat)); BigTitle('Interior latitude');
+                        ShowPropertyLabelsBlock(num2str(Block.interiorLon)); BigTitle('Interior longitude');
                     case 11
-                        ShowPropertyLabelsBlock(num2str(Block.other1)); BigTitle('Other 1');
+                        ShowPropertyLabelsBlock(num2str(Block.interiorLat)); BigTitle('Interior latitude');
                     case 12
-                        ShowPropertyLabelsBlock(num2str(Block.other2)); BigTitle('Other 2');
+                        ShowPropertyLabelsBlock(num2str(Block.aprioriTog)); BigTitle('a priori pole flag');
                     case 13
-                        ShowPropertyLabelsBlock(num2str(Block.other3)); BigTitle('Other 3');
+                        ShowPropertyLabelsBlock(num2str(Block.other1)); BigTitle('Other 1');
                     case 14
-                        ShowPropertyLabelsBlock(num2str(Block.other4)); BigTitle('Other 4');
+                        ShowPropertyLabelsBlock(num2str(Block.other2)); BigTitle('Other 2');
                     case 15
-                        ShowPropertyLabelsBlock(num2str(Block.other5)); BigTitle('Other 5');
+                        ShowPropertyLabelsBlock(num2str(Block.other3)); BigTitle('Other 3');
                     case 16
+                        ShowPropertyLabelsBlock(num2str(Block.other4)); BigTitle('Other 4');
+                    case 17
+                        ShowPropertyLabelsBlock(num2str(Block.other5)); BigTitle('Other 5');
+                    case 18
                         ShowPropertyLabelsBlock(num2str(Block.other6)); BigTitle('Other 6');
                 end
             end
