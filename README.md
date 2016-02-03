@@ -11,32 +11,40 @@ To get started:
 ---------------
 Run the following commands on the Matlab command prompt:
 
-    cd('~/MATLAB/Blocks') % Edit path to Blocks directory
-    cd BlocksUtilities
-    blockspath % This function adds the Blocks subdirectories to your Matlab path
+```matlab
+cd('~/MATLAB/Blocks') % Edit path to where you placed the Blocks directory
+cd BlocksUtilities
+blockspath % This function adds the Blocks subdirectories to your Matlab path
+```
 
 You can create a new template model directory structure using:
-
-    blocksdirs('~/MATLAB/Blocks/California') 
-    % Edit path to your project name; a new directory will be created if it doesn't exist
+```matlab
+blocksdirs('~/MATLAB/Blocks/California') 
+% Edit path to specify your project name; a new directory will be created if it doesn't exist
+```
 
 Then, edit the Blocks geometry files (.segment and .block) using SegmentManager:
+```matlab
+cd ~/MATLAB/Blocks/California/command
+SegmentManager
+% Within SegmentManager, click "Load" under "Command file" and load 'model.command'. 
+% Use SegmentManager tools to add and modify segment and block properties, saving 
+% the geometry files to the ../segment and ../block directories
+```
 
-    cd ~/MATLAB/Blocks/California/command
-    SegmentManager
-    % Within SegmentManager, click "Load" under "Command file" and load 'model.command'. 
-    % Use SegmentManager tools to add and modify segment and block properties, saving 
-    % the geometry files to the ../segment and ../block directories
 To run the analysis,
+```matlab
+cd ../result
+Blocks('../command/model.command')
+% The results will be saved in a newly generated directory in the result directory
+```
 
-    cd ../result
-    Blocks('../command/model.command')
-    % The results will be saved in a newly generated directory in the result directory
 To view the results,
-
-    ResultManager
-    % Load a result directory. If you have more than one set of results, you can compare
-    % them by loading both a "Result directory" and "Compare directory"
+```matlab
+ResultManager
+% Load a result directory. If you have more than one set of results, you can compare
+% them by loading both a "Result directory" and "Compare directory"
+```
 
 SegmentManager interface:
 -------------------------
