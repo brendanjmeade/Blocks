@@ -31,7 +31,14 @@ end
 
 % This is much faster:
 fid = fopen(fileName,'rt');
-c = textscan(fid, '%f%f%f%f%f%f%f%d%d%s');
+% Check for a header line
+c1 = fread(fid, 1, 'uint8=>char'); % Read first character
+if ~isempty(str2num(c1)) % Try to change to digit; if it's not empty, there's data on the first line
+   hlines = 0;
+else
+   hlines = 1;
+end
+c = textscan(fid, '%f%f%f%f%f%f%f%d%d%s', 'headerlines', hlines);
 fclose(fid);
 fn = {'lon','lat','eastVel','northVel','eastSig','northSig','corr','other1','tog','name'};
 Station = cell2struct(c,fn,2);
