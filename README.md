@@ -7,7 +7,9 @@ Blocks is designed for use with Matlab R2014b and later.
 
 Documentation (evolving): https://docs.google.com/document/d/1AJheJrVqPX4yj2hbgysC-H2RkdkfkxvNJQIza1b3u34/edit?usp=sharing
 
-To get started, run the following commands on the Matlab command prompt:
+To get started: 
+---------------
+Run the following commands on the Matlab command prompt:
 
     cd('~/MATLAB/Blocks') % Edit path to Blocks directory
     cd BlocksUtilities
