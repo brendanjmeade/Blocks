@@ -69,7 +69,7 @@ for j = 1:length(dcorn)
       end
    else
       % Working on a top or bottom, so let's test the depth of the corner
-      if c(elo(corn(j)), 3) < mean(c(:, 3))
+      if c(elo(corn(j)+1), 3) < mean(c(:, 3))
          els.bot = eedge;
          nodes.bot = elo(eidx);
       else
