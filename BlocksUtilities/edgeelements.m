@@ -7,7 +7,7 @@ function [els, nodes] = edgeelements(c, v, strthresh)
 %   finding the tops and bottoms based on nodes lying at a particular 
 %   depth, instead relying on finding abrupt changes in the trends of 
 %   the mesh edges, set by optional third argument thresh (the default
-%   is 50 degrees). This makes it more suitable for meshes that have 
+%   is 55 degrees). This makes it more suitable for meshes that have 
 %   irregular depth top traces (such as subduction trenches) and/or are
 %   not generated based on a set of depth contours.
 %
@@ -15,7 +15,7 @@ function [els, nodes] = edgeelements(c, v, strthresh)
 
 % Define default strike change threshold
 if ~exist('strthresh', 'var')
-   strthresh = 50;
+   strthresh = 55;
 end
 
 % Allocate space for edge matrices
