@@ -38,6 +38,7 @@ if ~isempty(str2num(c1)) % Try to change to digit; if it's not empty, there's da
 else
    hlines = 1;
 end
+frewind(fid);
 c = textscan(fid, '%f%f%f%f%f%f%f%d%d%s', 'headerlines', hlines);
 fclose(fid);
 fn = {'lon','lat','eastVel','northVel','eastSig','northSig','corr','other1','tog','name'};
