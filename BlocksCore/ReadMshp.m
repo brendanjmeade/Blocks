@@ -33,16 +33,22 @@ p = ReadPatches(pp.patchFileNames);
 if exist('command', 'var')
    pp = command;
 end
-if isfield(pp, 'changed')
-   if isempty(findstr('triSmooth', pp.changed))
-      pp.triSmooth = c{2}(:)';
-   end
 
-   if isempty(findstr('triEdge', pp.changed))
-      pp.triEdge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
-   end
+pp.triSmooth = c{2}(:)';
+pp.triEdge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
+pp.slipFileNames = char(c{6});
 
-   if isempty(findstr('slipFileNames', pp.changed))
-      pp.slipFileNames = char(c{6});
-   end
-end
+
+%if isfield(pp, 'changed')
+%   if isempty(findstr('triSmooth', pp.changed))
+%      pp.triSmooth = c{2}(:)';
+%   end
+%
+%   if isempty(findstr('triEdge', pp.changed))
+%      pp.triEdge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
+%   end
+%
+%   if isempty(findstr('slipFileNames', pp.changed))
+%      pp.slipFileNames = char(c{6});
+%   end
+%end
