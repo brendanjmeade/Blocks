@@ -49,6 +49,9 @@ WriteMogi(sprintf('.%s%s%sMod.mogi', filesep, runName, filesep), Mogi, Model)
 WriteCommand(Command, sprintf('%s%s%s%s', runName, filesep, f, e));
 % system(sprintf('cp %s .%s%s%s.', Command.fileName, filesep, runName, filesep));
 
+% Copy original input files to a directory, in case the files are subsequently changed but the names are the same
+WriteInputCopies(Command, sprintf('%s%sinputs%s', runName, filesep, filesep));
+
 % Write kernels to results directory if requested
 if exist('./tempkernels.mat', 'file')
    movefile('./tempkernels.mat', sprintf('.%s%skernels.mat', filesep, runName));
