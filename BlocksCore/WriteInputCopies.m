@@ -18,7 +18,8 @@ npatch = numel(spaces) + 1;
 ends = [spaces - 1, length(strtrim(c.patchFileNames))];
 begs = [1 ends(1:end-1)+2];
 % Write patch files
-for i = 1:length(begs)
-   system(sprintf('cp %s %s%s.', c.patchFileNames(begs(i):ends(i)), direc, filesep));
+if ends ~= 0
+   for i = 1:length(begs)
+      system(sprintf('cp %s %s%s.', c.patchFileNames(begs(i):ends(i)), direc, filesep));
+   end
 end
-

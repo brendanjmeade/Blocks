@@ -286,30 +286,30 @@ end
 
 % Make a plot
 % Get geographic extents
-mnla                                = nfix(min(s.lat), 5);
-mnlo                                = nfix(min(s.lon), 5);
-mxla                                = nceil(max(s.lat), 5);
-mxlo                                = nceil(max(s.lon), 5);
-
-% set up the map
-figure;
-m_proj('Miller Cylindrical', 'lat', [mnla mxla], 'lon', [mnlo mxlo]);
-m_coast('patch', [.9 .9 .9], 'edgecolor', 'k'); hold on;
-m_grid('tickdir', 'out', 'yaxislocation', 'right', 'xaxislocation','bottom','xlabeldir','end','ticklen',.02, 'linestyle', 'none');
-% make colormap
-colb                                = jet(nfiles);
-% plot the vectors in unique colors to identify parent field
-for i = 1:nfiles;
-   ht(i)                            = m_vec(400, s.lon(sumnStations(i)+1:sumnStations(i+1)), s.lat(sumnStations(i)+1:sumnStations(i+1)), s.eastVel(sumnStations(i)+1:sumnStations(i+1)), s.northVel(sumnStations(i)+1:sumnStations(i+1)), colb(i,:), 'headlength', 3, 'shaftwidth', 0.5);
-end
-legend(ht, names)
+%mnla                                = nfix(min(s.lat), 5);
+%mnlo                                = nfix(min(s.lon), 5);
+%mxla                                = nceil(max(s.lat), 5);
+%mxlo                                = nceil(max(s.lon), 5);
+%
+%% set up the map
+%figure;
+%m_proj('Miller Cylindrical', 'lat', [mnla mxla], 'lon', [mnlo mxlo]);
+%m_coast('patch', [.9 .9 .9], 'edgecolor', 'k'); hold on;
+%m_grid('tickdir', 'out', 'yaxislocation', 'right', 'xaxislocation','bottom','xlabeldir','end','ticklen',.02, 'linestyle', 'none');
+%% make colormap
+%colb                                = jet(nfiles);
+%% plot the vectors in unique colors to identify parent field
+%for i = 1:nfiles;
+%   ht(i)                            = m_vec(400, s.lon(sumnStations(i)+1:sumnStations(i+1)), s.lat(sumnStations(i)+1:sumnStations(i+1)), s.eastVel(sumnStations(i)+1:sumnStations(i+1)), s.northVel(sumnStations(i)+1:sumnStations(i+1)), colb(i,:), 'headlength', 3, 'shaftwidth', 0.5);
+%end
+%legend(ht, names)
 
 % Write final file
-filename                            = sprintf('%s%s/All_in_%s_RF.sta.data', direc, runName, dirdata(target).name(1:end-9));
+filename                            = sprintf('%s%s%sAll_in_%s_RF.sta.data', direc, runName, filesep, dirdata(target).name(1:end-9));
 WriteStation(filename, s.lon, s.lat, s.eastVel, s.northVel, s.eastSig, s.northSig, s.corr, zeros(size(s.lon)), s.tog, s.name);
 
 % Save a few variables to a .mat file
 matname                       = sprintf('%s.mat', filename(1:end-9));
 save(matname, 'names', 'sumnStations', 'paths', '-mat');
-keyboard
-save('%s_allvariables.mat', filename(1:end-9));
+
+save(sprintf('%s_allvariables.mat', filename(1:end-9)));

@@ -40,7 +40,7 @@ projstrikes                                    = zeros(sum(Patches.nEl), 1);
 
 % Calculate the requested partials
 if nPatches > 0
-   parfor_progress(nPatches);
+%   parfor_progress(nPatches);
    parfor (iPatches = 1:nPatches)
       % Do local oblique Mercator projection
       [p, s]                                   = ProjectTriCoords([Patches.lon1(iPatches) Patches.lat1(iPatches) Patches.z1(iPatches) Patches.lon2(iPatches) Patches.lat2(iPatches) Patches.z2(iPatches) Patches.lon3(iPatches) Patches.lat3(iPatches) Patches.z3(iPatches)], Station);
@@ -65,9 +65,9 @@ if nPatches > 0
          v2e{iPatches}                         = reshape(-[uxxd uyyd uzzd uxyd -uxzd -uyzd]', 6*sum(op(:, 2)), 1);
          v3e{iPatches}                         = reshape(-[uxxt uyyt uzzt uxyt -uxzt -uyzt]', 6*sum(op(:, 2)), 1);
 	  end
-      parfor_progress;
+%      parfor_progress;
    end
-   parfor_progress(0);
+%   parfor_progress(0);
    % Place cells for each slip component into matrices
    if ~isempty(Gu)
       Gu(:, 1:3:end)                           = cell2mat(v1u);
