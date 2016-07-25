@@ -53,16 +53,25 @@ end
 
 % make the plot
 if numel(fign) == 0;
-	figure
-	ax = gca;
+   figure
+   ax = gca;
 else
-	if round(fign) == fign; % if it's actually a figure number
-		figure(fign);
-		ax = gca;
-		hold on
-	else % otherwise it's an axis handle
-		ax = fign;
-		hold on
+   if strcmp(class(fign), 'matlab.ui.Figure') % if it's actually a figure number
+	   figure(fign);
+	   ax = gca;
+	   hold on
+	elseif strcmp(class(fign), 'matlab.graphics.axis.Axes')
+       ax = fign;
+       hold on
+	elseif strcmp(class(fign), 'double') 
+	   if rem(fign, 1) == 0
+	   	   figure(fign);
+     	   ax = gca;
+	       hold on 
+       else % otherwise it's an axis handle
+		   ax = fign;
+		   hold on
+	   end
 	end
 end
 h = patch('Vertices', c, 'faces', v, 'facevertexcdata', color, 'facecolor', 'flat', 'edgecolor', 'black', 'parent', ax);

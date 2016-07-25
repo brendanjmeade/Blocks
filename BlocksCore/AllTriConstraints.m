@@ -142,11 +142,11 @@ end
 
 % Read in any files containing arrays of a priori coupling fractions
 if c.triSlipConstraintType == 1 % Slip values are specified
-   triapcons                                   = load(c.slipFileNames);
+   triapcons                                   = ReadTriSlipFiles(c.slipFileNames);
    triapidx                                    = triapcons(:, 1);
    triapmag                                    = triapcons(:, 2:end);
 elseif c.triSlipConstraintType == 2 % Coupling fraction is specified
-   triapcons                                   = load(c.slipFileNames);
+   triapcons                                   = ReadTriSlipFiles(c.slipFileNames);
    triapidx                                    = triapcons(:, 1);
    triapmag                                    = triapcons(:, 2);
 else

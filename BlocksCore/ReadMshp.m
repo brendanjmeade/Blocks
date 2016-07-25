@@ -36,8 +36,12 @@ end
 
 pp.triSmooth = c{2}(:)';
 pp.triEdge = reshape([c{3} c{4} c{5}]', 1, 3*size(c{3}, 1));
-pp.slipFileNames = char(c{6});
-
+% If any a priori slip files are specified
+if size(char(c{6}), 2) ~= 0
+   % Overwrite whatever was specified in the .command file
+   pp.slipFileNames = char(c{6});
+   % Else keep what was specified in the .command file (including blank)
+end
 
 %if isfield(pp, 'changed')
 %   if isempty(findstr('triSmooth', pp.changed))
