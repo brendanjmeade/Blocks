@@ -12,7 +12,7 @@ function [idx, c] = ordersegs(s)
 nseg = length(s.lon1);
 
 % Make sure endpoints are ordered
-s = OrderEndpoints(s);
+s = OrderEndpointsSphere(s);
 % Find common endpoints; conn gives each west endpoint's east counterpart
 [junk, conn] = ismember([s.lon1(:) s.lat1(:)], [s.lon2(:) s.lat2(:)], 'rows');
 west = find(conn == 0); % the segment whose west endpoint doesn't have an east match is the westernmost point

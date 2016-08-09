@@ -13,7 +13,7 @@ function idx = orderblocksegs(s, bc1)
 nseg = length(s.lon1);
 
 % Make sure endpoints are ordered
-s = OrderEndpoints(s);
+s = OrderEndpointsSphere(s);
 
 % Find the first endpoint, arbitrary or specified
 if ~exist('bc1', 'var')
