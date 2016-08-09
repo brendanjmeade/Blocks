@@ -29,7 +29,7 @@ Patches.nEl                                      = size(Patches.v, 1);
 if Patches.nc ~= 0
    Patches                                       = PatchCoords(Patches);
 end
-Command                                          = [];
+% Command                                          = [];
 
 if exist('notri', 'var')
    Segment.patchTog = 0*Segment.patchTog;
@@ -45,6 +45,8 @@ end
 Partials.elastic                                 = GetElasticPartials(Segment, Station);
 Partials.slip                                    = GetSlipPartials(Segment, Block);
 Partials.rotation                                = GetRotationPartials(Segment, Station, Command, Block);
+Partials.strain                                  = GetStrainPartials(Block, Station, Segment, Command);
+
 % Stress partials, if needed
 if nargout == 2
    Partials.stress                               = GetElasticStrainPartials(Segment, Station);
@@ -73,11 +75,16 @@ omega(1:3:end) = x(:);
 omega(2:3:end) = y(:);
 omega(3:3:end) = z(:);
 
+strain = ReadBlockStrain([outdir filesep 'Strain.block']);
+nzstrain = strain.eLonLon ~= 0;
+strainvec = stack3([strain.eLonLon(nzstrain), strain.eLonLat(nzstrain), strain.eLatLat(nzstrain)]);
+
 % Do the forward problems
 v.Rot = Partials.rotation*omega;
 v.Def = Partials.elastic*Partials.slip*omega;
 v.Tri = Partials.tri*ts;
-v.Mod = v.Rot - v.Def - v.Tri; % Total modeled velocities
+v.Str = Partials.strain*strainvec;
+v.Mod = v.Rot - v.Def - v.Tri + v.Str; % Total modeled velocities
 
 % Stresses
 if nargout == 2
