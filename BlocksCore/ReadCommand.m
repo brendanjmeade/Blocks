@@ -192,6 +192,9 @@ while 1
       case('number of monte carlo iterations')
          Command.nIter                                = str2double(value); 
 
+      case('inversion type')
+         Command.inversionType                        = lower(value);
+         
       case('inversiontype')
          Command.inversionType                        = lower(value);
 
@@ -210,8 +213,11 @@ while 1
       case('inversionparam05')
          Command.inversionParam05                     = str2double(value); 
 
-      case('dumpall')
+      case('save all outputs to .mat file')
          Command.dumpall                              = strtrim(value);
+         
+      case('dumpall')
+         Command.dumpall                              = strtrim(value);   
          
       case('mogi source file')
          Command.mogiFileName                         = strtrim(value);
@@ -219,6 +225,9 @@ while 1
       case('solution method')
          Command.solutionMethod                       = strtrim(value);
 
+      case('ridge regression parameter')
+        Command.ridgeParam                            = str2double(value);
+        
       case('ridge param')
         Command.ridgeParam                            = str2double(value);
 
