@@ -53,10 +53,10 @@ p.z3                      = p.c(p.v(:, 3), 3);
 z1r                       = 1+p.z1./6371;
 z2r                       = 1+p.z2./6371;
 z3r                       = 1+p.z3./6371;
-nv                        = cross([deg2rad(p.lon2-p.lon1), deg2rad(p.lat2-p.lat1), z2r-z1r], [deg2rad(p.lon3-p.lon1), deg2rad(p.lat3-p.lat1), z3r-z1r], 2);
+p.nv                        = cross([deg2rad(p.lon2-p.lon1), deg2rad(p.lat2-p.lat1), z2r-z1r], [deg2rad(p.lon3-p.lon1), deg2rad(p.lat3-p.lat1), z3r-z1r], 2);
 % Enforce clockwise circulation
-nv(nv(:, 3) < 0, :)       = -nv(nv(:, 3) < 0, :);
-[s, d]                    = cart2sph(nv(:, 1), nv(:, 2), nv(:, 3));
+p.nv(p.nv(:, 3) < 0, :)   = -p.nv(p.nv(:, 3) < 0, :);
+[s, d]                    = cart2sph(p.nv(:, 1), p.nv(:, 2), p.nv(:, 3));
 p.strike                  = wrapTo360(-rad2deg(s));
 p.dip                     = 90 - rad2deg(d);
 p.tz                      = zeros(size(p.dip));

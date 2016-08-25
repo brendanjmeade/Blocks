@@ -30,19 +30,24 @@ Locking depth override toggle: no
 Locking depth override value: 15
 Apriori block motions relative to: 
 Triangulated patch files: 
+Mesh parameter file: 
 Type of a priori slip constraint (1 = slip values, 2 = coupling fraction): 0
 Patch slip distribution files: 
 Mesh smoothing weight:  
 Spatially variable smoothing weighted by resolution: 0
 Smooth slip components individually (1) or simultaneously (2): 1
 Constrain slip on [updip downdip lateral] limits: 0 0 0 
-Depth tolerance for finding updip and downdip limits (km): 0 Constrained triangular slip weight: 1
+Depth tolerance for finding updip and downdip limits (km): 0 
+Constrained triangular slip weight: 1
+Mogi source file:
 Strain calculation method: 1
 Number of monte carlo iterations: 1
-Inversiontype: standard
+Inversion type: standard
 Inversionparam01: 0
 Inversionparam02: 0
 Inversionparam03: 0
 Inversionparam04: 0
 Inversionparam05: 0
-Dumpall: no
+Solution method: backslash
+Ridge regression parameter: 
+Save all outputs to .mat file: no
