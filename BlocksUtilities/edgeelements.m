@@ -36,6 +36,10 @@ dstr = acosd(dot(edgevecs(1:end, :), edgevecs([end, 1:end-1], :), 2)./(mag(edgev
 corn = find(abs(dstr) > strthresh & abs(dstr) < (360-strthresh));
 corn = [corn; corn(1)]-1;
 
+
+% Need to do this after distinguishing lateral edges from top and bottom
+% Check adjacent edges: should exceed threshold for true corners 
+
 % Use corner indices to separate edges. Make inherent assumption that the top and bottom are longer than the sides
 dcorn = diff(corn);
 % Address negative index differences by adding size of elo
@@ -58,6 +62,9 @@ for j = 1:length(dcorn)
    % Find elements that contain at least 2 of these coordinates
    eedge = sum(ismember(v, elo(eidx)), 2) >= 2;
 
+% Check edge indices, and check whether any entries of corn lie between 2 others
+% But then need to rerun with a revised corn
+
    % Assign to distinct edges
    if ismember(j, sidx(1:2)) % Working on a side 
       if isempty(els.s1)
@@ -70,11 +77,11 @@ for j = 1:length(dcorn)
    else
       % Working on a top or bottom, so let's test the depth of the corner
       if c(elo(corn(j)+1), 3) < mean(c(:, 3))
-         els.bot = eedge;
-         nodes.bot = elo(eidx);
+         els.bot = logical(sum([els.bot, eedge], 2));
+         nodes.bot = [nodes.bot, elo(eidx)];
       else
-         els.top = eedge;
-         nodes.top = elo(eidx);
+         els.top = logical(sum([els.top, eedge], 2));
+         nodes.top = [nodes.bot, elo(eidx)];
       end
    end
 end
