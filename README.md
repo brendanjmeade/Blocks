@@ -12,9 +12,10 @@ To get started:
 Run the following commands on the Matlab command prompt:
 
 ```matlab
-cd('~/MATLAB/Blocks') % Edit path to where you placed the Blocks directory
+blockshome = '~/MATLAB/Blocks'; % Edit path to where you placed the Blocks directory
+cd(blockshome) 
 cd BlocksUtilities
-blockspath % This function adds the Blocks subdirectories to your Matlab path
+blockspath(blockshome) % This function adds the Blocks subdirectories to your Matlab path
 ```
 
 You can create a new template model directory structure using:
