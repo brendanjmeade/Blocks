@@ -180,12 +180,11 @@ for i = 1:length(lidx)
    partials.triBlockCon(3*lidx(i)-1, :)        = -coupmagall(i).*partials.trislip(3*idx(lidx(i))-1, :);
    partials.triBlockCon(3*lidx(i)-0, :)        = -coupmagall(i).*partials.trislip(3*idx(lidx(i))-0, :);
 end
-
 % Set up data vector as all zeros
 data.triSlipCon                                = zeros(3*length(idx), 1);
 % If a priori slip rates are specified, place those rates in the data vector
 if c.triSlipConstraintType == 1
-   data.triSlipCon(end-length(triapidx)+1:end) = reshape(triapmag', numel(triapmag), 1);
+   data.triSlipCon(end-3*length(triapidx)+1:end) = stack3([triapmag zeros(size(triapmag, 1), 1)]);
 end
 % Set up weighting for slip rate constraints
 sig.triSlipCon                                 = c.triConWgt*ones(size(data.triSlipCon));

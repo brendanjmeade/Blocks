@@ -37,6 +37,6 @@ end
 % Compact the output by returning only non-zero rows...
 triap = triap(triap(:, 1) ~= 0, :);
 % And by cutting off the third column, if coupling has been specified
-srows = sum(triap, 1) ~= 0;
-triap = triap(:, srows);
+%srows = sum(triap, 1) ~= 0;
+%triap = triap(:, srows);
    
