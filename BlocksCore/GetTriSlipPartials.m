@@ -12,7 +12,10 @@ G                                                = zeros(3*nPatches, 3*nBlocks);
 
 % Find segments that are replaced by patches 
 psi                                              = intersect(find(Segment.patchFile), find(Segment.patchTog));
+% Calculate segment strikes, for comparison to element strikes
+Segment.strike                                   = azim(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2);
 Seg                                              = structsubset(Segment, psi);
+
 
 % Switch the zeroing array
 tz                                               = Patches.tz;
@@ -20,8 +23,8 @@ tz(Patches.tz == 2)                              = 3;
 tz(Patches.tz == 3)                              = 2;
 
 % Strike correction: Elements that dip > 90 
-corr                                             = ones(nPatches, 1);
-corr(Patches.strike > 270 | Patches.strike < 90) = 0;
+corr                                             = false(nPatches, 1);
+corr(Patches.strike < 270 & Patches.strike > 90) = true;
 
 for iPatch = 1:nPatches
    % Find which mesh this TDE belongs to
@@ -48,14 +51,24 @@ for iPatch = 1:nPatches
 
    % Use strike and dip to resolve slip onto plane
    R                                             = [ve_wx vn_wx vu_wx; ve_wy vn_wy vu_wy; ve_wz vn_wz vu_wz]';
-   R                                             = ProjectDispPartialsMats(R, Patches.strike(iPatch), Patches.dip(iPatch));
-%    strike                                        = Patches.strike(iPatch) - 180.*corr(iPatch);
-%    rot                                           = [sind(strike), cosd(strike), 0; cosd(strike), -sind(strike), 0; cosd(strike), -sind(strike), 0];
-%    R                                             = rot*R;
-   R(2, :)                                       = R(2, :)./cosd(Patches.dip(iPatch)); 
+%   R                                             = ProjectDispPartialsMats(R, Patches.strike(iPatch), 0);%Patches.dip(iPatch));
+    strike                                        = Patches.strike(iPatch) - 180.*corr(iPatch);
+    rot                                           = [sind(strike), cosd(strike), 0; cosd(strike), -sind(strike), 0; cosd(strike), -sind(strike), 0];
+    rot                                           = [sind(strike), cosd(strike), 0; cosd(strike), -sind(strike), 0; 0, 0, 1];
+    R                                             = rot*R;
+   R(1, :)                                       = -R(1, :);
+   R(2, :)                                       = R(2, :)./abs(cosd(Patches.dip(iPatch))); 
    R(tz(iPatch), :)                              = [0 0 0];
 
+   % Compare element azimuth to segment azimuth. If they are on different sides of E-W, we need to flip labels
+   % If the following is a true, the segment has a southerly strike, and if false, it has a northerly strike
+   segtest                                       = Seg.strike(Patches.nearSeg(iPatch)) < 270 & Seg.strike(Patches.nearSeg(iPatch)) > 90;
+   if segtest == corr(iPatch) % If the strikes are on the same side of E-W
+      Rcorr = 1; % No correction is needed
+   else
+      Rcorr = -1; % If not, need to swap east and west labels for the element
+   end
    % Place into appropriate columns
-   G(rowIdx:rowIdx+2,colIdxE:colIdxE+2)          = R;
-   G(rowIdx:rowIdx+2,colIdxW:colIdxW+2)          = -R;
+   G(rowIdx:rowIdx+2,colIdxE:colIdxE+2)          = Rcorr*R;
+   G(rowIdx:rowIdx+2,colIdxW:colIdxW+2)          = Rcorr*-R;
 end
