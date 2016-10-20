@@ -13,7 +13,7 @@ G                                                = zeros(3*nPatches, 3*nBlocks);
 % Find segments that are replaced by patches 
 psi                                              = intersect(find(Segment.patchFile), find(Segment.patchTog));
 % Calculate segment strikes, for comparison to element strikes
-Segment.strike                                   = azim(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2);
+Segment.strike                                   = sphereazimuth(Segment.lon1, Segment.lat1, Segment.lon2, Segment.lat2);
 Seg                                              = structsubset(Segment, psi);
 
 
