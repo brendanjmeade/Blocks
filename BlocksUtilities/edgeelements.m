@@ -76,10 +76,10 @@ for j = 1:length(dcorn)
       end
    else
       % Working on a top or bottom, so let's test the depth of the corner
-      if c(elo(corn(j)+1), 3) < mean(c(:, 3))
-         els.bot = logical(sum([els.bot, eedge], 2));
+      if c(elo(corn(j)+1), 3) < mean(c(elo, 3)) % If it's deeper than the mean edge depth,
+         els.bot = logical(sum([els.bot, eedge], 2)); % it's the bottom edge
          nodes.bot = [nodes.bot, elo(eidx)];
-      else
+      else % Else it's the top edge
          els.top = logical(sum([els.top, eedge], 2));
          nodes.top = [nodes.bot, elo(eidx)];
       end
