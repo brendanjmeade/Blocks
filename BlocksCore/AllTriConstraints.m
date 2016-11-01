@@ -145,6 +145,7 @@ if c.triSlipConstraintType == 1 % Slip values are specified
    triapcons                                   = ReadTriSlipFiles(c.slipFileNames, p);
    triapidx                                    = triapcons(:, 1);
    triapmag                                    = triapcons(:, 2:end);
+   napt                                        = size(triapidx, 1);
 elseif c.triSlipConstraintType == 2 % Coupling fraction is specified
    triapcons                                   = ReadTriSlipFiles(c.slipFileNames, p);
    triapidx                                    = triapcons(:, 1);
@@ -184,10 +185,24 @@ end
 data.triSlipCon                                = zeros(3*length(idx), 1);
 % If a priori slip rates are specified, place those rates in the data vector
 if c.triSlipConstraintType == 1
-   data.triSlipCon(end-3*length(triapidx)+1:end) = stack3([triapmag zeros(size(triapmag, 1), 1)]);
+   % Place dip vs. tensile constraints in the correct column
+   apnan                                       = true(napt, 3);
+   apnan(1:napt, 1)                            = ~isnan(triapmag(:, 1));
+   apnan((p.tz(triapidx)-1).*napt+(1:napt)')   = ~isnan(triapmag(:, 2));
+   apnan                                       = stack3(apnan);
+   apmag                                       = [triapmag(:, 1) zeros(size(triapmag, 1), 2)];
+   apmag((p.tz(triapidx)-1).*napt+(1:napt)')   = triapmag(:, 2); 
+   data.triSlipCon(end-3*napt+1:end)           = stack3(apmag);
 end
 % Set up weighting for slip rate constraints
 sig.triSlipCon                                 = c.triConWgt*ones(size(data.triSlipCon));
 index.triConkeep                               = sort([3*idx-2; 3*idx-1; 3*idx]);
+%idxnan                                         = true(3*size(idx, 1), 1); % True to keep all constraints
+%idxnan(end-3*napt+1:end)                       = apnan; % Substitute the nan test array for a priori slip rates
+%index.triConkeep                               = index.triConkeep(idxnan);
 [~, keep]                                      = ismember(index.triColkeep, index.triConkeep);
 index.triConkeep                               = keep(keep > 0);
+% Eliminate any NaN a priori constraints
+[~, apnan]                                     = ismember(index.triConkeep, find(isnan(data.triSlipCon)));
+index.triConkeep                               = index.triConkeep(~apnan);
+
