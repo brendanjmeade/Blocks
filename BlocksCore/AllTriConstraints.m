@@ -197,12 +197,11 @@ end
 % Set up weighting for slip rate constraints
 sig.triSlipCon                                 = c.triConWgt*ones(size(data.triSlipCon));
 index.triConkeep                               = sort([3*idx-2; 3*idx-1; 3*idx]);
-%idxnan                                         = true(3*size(idx, 1), 1); % True to keep all constraints
-%idxnan(end-3*napt+1:end)                       = apnan; % Substitute the nan test array for a priori slip rates
-%index.triConkeep                               = index.triConkeep(idxnan);
 [~, keep]                                      = ismember(index.triColkeep, index.triConkeep);
 index.triConkeep                               = keep(keep > 0);
-% Eliminate any NaN a priori constraints
-[~, apnan]                                     = ismember(index.triConkeep, find(isnan(data.triSlipCon)));
-index.triConkeep                               = index.triConkeep(~apnan);
+% Eliminate any NaN a priori slip constraints
+if c.triSlipConstraintType == 1
+   [~, apnan]                                  = ismember(index.triConkeep, find(isnan(data.triSlipCon)));
+   index.triConkeep                            = index.triConkeep(~apnan);
+end
 
