@@ -1,11 +1,13 @@
 Blocks
 ======
 
-Present-day deformation at plate boundary zones, recorded as GPS velocities, reflect the combination of plate motion and elastic strain accumulation. This suite of codes implements the block modeling methodology described by Meade and Loveless (2009), Block modeling with connected fault-network geometries and a linear elastic coupling estimator in spherical coordinates, Bulletin of the Seismological Society of America.
+Present-day deformation at plate boundary zones, recorded as GPS velocities, reflects the combination of plate motion and elastic strain accumulation. This suite of codes implements the block modeling methodology described by:
+
+Meade, B.J. and J.P. Loveless (2009), Block modeling with multiple fault network geometries and a linear elastic coupling estimator in spherical coordinates, *Bulletin of the Seismological Society of America*, 99(6), 3124–3139, [doi:10.1785/0120090088](https://dx.doi.org/10.1785/0120090088).
 
 Blocks is designed for use with Matlab R2014b and later. 
 
-Documentation (evolving): https://docs.google.com/document/d/1AJheJrVqPX4yj2hbgysC-H2RkdkfkxvNJQIza1b3u34/edit?usp=sharing
+Documentation (evolving) can be found on the [**Blocks** wiki](https://github.com/brendanjmeade/Blocks/wiki) and in a [Google Doc] (https://docs.google.com/document/d/1AJheJrVqPX4yj2hbgysC-H2RkdkfkxvNJQIza1b3u34/edit?usp=sharing).
 
 To get started: 
 ---------------
