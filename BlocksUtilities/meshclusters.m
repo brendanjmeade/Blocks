@@ -63,6 +63,8 @@ for i = 1:length(lidx)
    clu = intersect(sel, find(inpolygon(p.lonc, p.latc, p.c(idx(first(i):last(i), :), 1), p.c(idx(first(i):last(i), :), 2))));
    if ~isempty(clu)
       clus{j} = clu;
+      First(j) = first(i);
+      Last(j) = last(i); 
       j = j+1;
    end
 end
@@ -70,27 +72,37 @@ end
 % Update the cluster element counter to account for necks that weren't caught
 % Combine necked clusters into one
 if length(clus) > 1
-	keepclus = zeros(size(clus));
-	Clus = clus;
+    Clus = zeros(length(clus), sum(p.nEl));
+    for i = 1:length(clus)
+       Clus(i, clus{i}) = 1;
+    end
 	[~, necki] = ismember(idx, necks(:, 1));
 	for i = 1:size(necks, 1) % For each neck point,
+	    clear neckclus
 		% Find which clusters the neck point belongs to
 		neckr = find(necki(:, 1) == i); % Row index
 		for j = 1:2 % Necks by default cannot be common among more than 2 clusters
-			neckclus(j) = find(sum([neckr(j) >= first, neckr(j) <= last], 2) == 2);
+		    neckfind = find(sum([neckr(j) >= First(:), neckr(j) <= Last(:)], 2) == 2);
+		    if ~isempty(neckfind) % When a neck actually forms a hole, it's not separating two clusters
+    			neckclus(j) = neckfind;
+    		end
 		end
 		% Update the later cluster, since it will be checked by subsequent neck points
-		if diff(neckclus) ~= 0 && max(neckclus) <= numel(clus) % Second clause is so that empty clusters aren't used
-			Clus{neckclus(2)} = [Clus{neckclus(2)}; Clus{neckclus(1)}];
-			Clus{neckclus(1)} = Clus{neckclus(2)}; % Make a copy; we'll get rid of it later if need be
-         keepclus(neckclus) = keepclus(neckclus) + 1;
+		if exist('neckclus', 'var')
+    	   if length(neckclus) > 1
+		      if diff(neckclus) ~= 0 && max(neckclus) <= numel(clus) % Second clause is so that empty clusters aren't used
+			     Clus(neckclus(2), :) = Clus(neckclus(2), :) + Clus(neckclus(1), :);
+		         Clus(neckclus(1), :) = Clus(neckclus(2), :); % Make a copy; we'll get rid of it later if need be
+    	      end
+    	   end   
 		end
 	end
-	clus = Clus;
+	[~, keepclus] = unique(Clus, 'rows');
 	if sum(keepclus) > 1
-		clus = clus(rem(keepclus, 2) == 0);
+		Clus = Clus(keepclus, :); % Take a subset of clusters
+		for i = 1:size(Clus, 1)
+		   cluscell{i} = find(Clus(i, :));
+		end
 	end
-end   
-   
-
-
+end
+clus = cluscell;
