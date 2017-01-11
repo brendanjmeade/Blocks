@@ -16,71 +16,40 @@ idx = zeros(0, 2); lidx = [];
 % Find the bounding edges of the selected elements
 el = boundedges(p.c, p.v(sel, :));
 
+% Each cluster should be identified by circulating around edge nodes.
+% A cluster is closed when the starting node is reached.
+% If, along the way, a node is encountered more than once, it marks a "neck"
+
 % Check to see if there are any "necked" clusters (meeting at a single vertex)
 uel = unique(el(:));
 nn = hist(el(:), uel)';
 necks = [uel(find(nn > 2)), nn(find(nn > 2))];
+necksegs = el(sum(ismember(el, necks(:, 1)), 2) > 0, :);
 El = el;
 elvec = 1:size(El, 1);
-% Start with necks
-if ~isempty(necks)
-   for i = 1:size(necks, 1)
-      start = find(el(:, 1) == necks(i, 1));
-      for j = 1:length(start)
-         elo = el(start(j), :);
-         if ismember(elo, El, 'rows')
-				for k = 2:elvec(end)
-					[next, col] = find(El == elo(k-1, 2)); % find all of the boundary lines containing the second entry of the current ordered boundary line
-					n = find(sum(El(next, :), 2) ~= sum(elo(k-1, :), 2)); % choose that which is not the current boundary line
-					next = next(n(1)); col = col(n(1));
-					if col == 1
-						elo(k, :) = El(next, :);
-					else
-						elo(k, :) = El(next, [2 1]);
-					end
-				end
-				% Find the unique edge indices. All this should do is to eliminate duplicate edge entries, i.e., circling around the cluster again
-				[uelo, ix] = unique(elo, 'rows', 'stable');
-				nnn(i, :) = [i sum(ismember(uelo, idx, 'rows')) size(uelo, 1)];
-				% If not all of those unique edges are already included in the cluster array, then add them
-				if sum(ismember(uelo, idx, 'rows')) ~= size(uelo, 1) 
-					idx = [idx; uelo];
-					lidx = [lidx; size(uelo, 1)];
-				end
-				% After each loop, setdiff to remove the used edges.
-				El = setdiff(El, idx, 'rows');
-				elvec = 1:size(El, 1);
-         end
-      end   
-   end          
-end
 
-% Now handle all other edges, using a while loop until we use up all available edges
-i = 1;
-while size(El, 1) > 3 % The 4 ignores single-element holes
-   elo = El(1, :);
-   for j = 2:elvec(end)
-      [next, col] = find(El == elo(j-1, 2)); % find all of the boundary lines containing the second entry of the current ordered boundary line
-      n = find(sum(El(next, :), 2) ~= sum(elo(j-1, :), 2)); % choose that which is not the current boundary line
-      next = next(n(1)); col = col(n(1));
-      if col == 1
-         elo(j, :) = El(next, :);
-      else
-         elo(j, :) = El(next, [2 1]);
-      end
+% Initial loop control: while any edges remain
+while size(El, 1) > 2 % This 2 should never be encountered; it keeps the loop going even for single-element clusters
+   % Make sure the first segment doesn't have a neck as its end point
+   El = [setdiff(El, necksegs, 'rows'); necksegs];
+   clusstart = El(1, :); % El gets updated with each advancement through the cluster; we take the first node
+   elo = El(1, :); % This cluster's edges start with the first row of remaining edges
+   k = 2; % Cluster row counter
+   while elo(end, 2) ~= clusstart(1) % Keep advancing until we get back to the starting point 
+     	[next, col] = find(El == elo(k-1, 2)); % find all of the boundary lines containing the second entry of the current ordered boundary line
+		n = find(sum(El(next, :), 2) ~= sum(elo(k-1, :), 2)); % choose that which is not the current boundary line
+ 		next = next(n(1)); col = col(n(1));
+   	if col == 1
+	   	elo(k, :) = El(next, :);
+	   else
+		   elo(k, :) = El(next, [2 1]);
+	   end 
+  		k = k+1; % Increment cluster row counter
+      El = setdiff(El, elo, 'rows'); % Update edges remaining
    end
-   % Find the unique edge indices. All this should do is to eliminate duplicate edge entries, i.e., circling around the cluster again
-   [uelo, ix] = unique(elo, 'rows', 'stable');
-   nnn(i, :) = [i sum(ismember(uelo, idx, 'rows')) size(uelo, 1)];
-   % If not all of those unique edges are already included in the cluster array, then add them
-   if sum(ismember(uelo, idx, 'rows')) ~= size(uelo, 1) 
-      idx = [idx; uelo];
-      lidx = [lidx; size(uelo, 1)];
-   end
-   % After each loop, setdiff to remove the used edges.
-   El = setdiff(El, idx, 'rows');
-   elvec = 1:size(El, 1);
-   i = i+1;
+   idx = [idx; elo]; % Update master cluster edge list
+	lidx = [lidx; size(elo, 1)]; % Update number of edges in each cluster
+   necksegs = setdiff(necksegs, idx, 'rows'); % Updated neck edges remaining
 end
 
 % Now loop through all cluster edges and find elements lying within
@@ -97,4 +66,31 @@ for i = 1:length(lidx)
       j = j+1;
    end
 end
+
+% Update the cluster element counter to account for necks that weren't caught
+% Combine necked clusters into one
+if length(clus) > 1
+	keepclus = zeros(size(clus));
+	Clus = clus;
+	[~, necki] = ismember(idx, necks(:, 1));
+	for i = 1:size(necks, 1) % For each neck point,
+		% Find which clusters the neck point belongs to
+		neckr = find(necki(:, 1) == i); % Row index
+		for j = 1:2 % Necks by default cannot be common among more than 2 clusters
+			neckclus(j) = find(sum([neckr(j) >= first, neckr(j) <= last], 2) == 2);
+		end
+		% Update the later cluster, since it will be checked by subsequent neck points
+		if diff(neckclus) ~= 0 && max(neckclus) <= numel(clus) % Second clause is so that empty clusters aren't used
+			Clus{neckclus(2)} = [Clus{neckclus(2)}; Clus{neckclus(1)}];
+			Clus{neckclus(1)} = Clus{neckclus(2)}; % Make a copy; we'll get rid of it later if need be
+         keepclus(neckclus) = keepclus(neckclus) + 1;
+		end
+	end
+	clus = Clus;
+	if sum(keepclus) > 1
+		clus = clus(rem(keepclus, 2) == 0);
+	end
+end   
+   
+
 
