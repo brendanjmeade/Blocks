@@ -1,4 +1,4 @@
-function clus = meshclusters(p, sel)
+function [clus, Clus] = meshclusters(p, sel)
 % meshclusters   Finds isolated clusters of selected elements.
 %   meshclusters(P, SEL) finds clusters of elements within the 
 %   patch structure P that are selected, as identified in vector
@@ -69,13 +69,17 @@ for i = 1:length(lidx)
    end
 end
 
+% Make a cluster matrix
+Clus = zeros(length(clus), sum(p.nEl));
+for i = 1:length(clus)
+   Clus(i, clus{i}) = 1;
+end
+
+
 % Update the cluster element counter to account for necks that weren't caught
 % Combine necked clusters into one
 if length(clus) > 1
-    Clus = zeros(length(clus), sum(p.nEl));
-    for i = 1:length(clus)
-       Clus(i, clus{i}) = 1;
-    end
+
 	[~, necki] = ismember(idx, necks(:, 1));
 	for i = 1:size(necks, 1) % For each neck point,
 	    clear neckclus
@@ -104,5 +108,6 @@ if length(clus) > 1
 		   cluscell{i} = find(Clus(i, :));
 		end
 	end
-end
 clus = cluscell;
+end
+
