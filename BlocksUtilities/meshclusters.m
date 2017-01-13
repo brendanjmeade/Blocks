@@ -102,7 +102,7 @@ if length(clus) > 1
 		end
 	end
 	[~, keepclus] = unique(Clus, 'rows');
-	if sum(keepclus) > 1
+	if sum(keepclus) >= 1
 		Clus = Clus(keepclus, :); % Take a subset of clusters
 		for i = 1:size(Clus, 1)
 		   cluscell{i} = find(Clus(i, :));
