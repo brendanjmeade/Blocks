@@ -10,6 +10,9 @@ function [clus, Clus] = meshclusters(p, sel)
 %   are those of all elements. 
 %
 
+% Master control statement to detect whether or not any elements are even selected
+if sum(sel) > 0
+
 % Blank cluster index array
 idx = zeros(0, 2); lidx = [];
 
@@ -111,3 +114,9 @@ if length(clus) > 1
 clus = cluscell;
 end
 
+else
+% Blank arrays if no elements are even selected
+clus = {};
+Clus = zeros(0, sum(p.nEl));
+
+end
