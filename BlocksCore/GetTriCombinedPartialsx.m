@@ -1,4 +1,4 @@
-function [Gu, Ge, tz] = GetTriUntrimmedCombinedPartialsx_consolidated(Patches, Station, op)
+function [Gu, Ge, tz] = GetTriCombinedPartialsx(Patches, Station, op)
 % Calculate elastic displacement and/or strain partial derivatives for triangular elements
 % 
 %   [Gu, Ge, tz] = GetTriCombinedPartials(Patches, Station, option)

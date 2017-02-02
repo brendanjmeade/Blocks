@@ -38,8 +38,10 @@ uyz            = G(6:6:end, :);
 % Do rotation
 caz            = cosd(az);
 saz            = sind(az);
-Gp(1:6:end, :) = caz.*(uxx.*caz + uxy.*saz) + saz.*(uxy.*caz + uyy.*saz);
-Gp(4:6:end, :) = caz.*(uxy.*caz + uyy.*saz) - saz.*(uxx.*caz + uxy.*saz);
-Gp(5:6:end, :) = uxz.*caz + uyz.*saz;
-Gp(2:6:end, :) = caz.*(uyy.*caz - uxy.*saz) - saz.*(uxy.*caz - uxx.*saz); 
-Gp(6:6:end, :) = uyz.*caz - uxz.*saz;
+Gp(1:6:end, :) = caz.*(uxx.*caz - uxy.*saz) - saz.*(uxy.*caz - uyy.*saz);
+Gp(4:6:end, :) = caz.*(uxy.*caz - uyy.*saz) + saz.*(uxx.*caz - uxy.*saz);
+Gp(5:6:end, :) = uxz.*caz - uyz.*saz;
+Gp(2:6:end, :) = caz.*(uyy.*caz + uxy.*saz) + saz.*(uxy.*caz + uxx.*saz);
+Gp(6:6:end, :) = uyz.*caz + uxz.*saz;
+
+ 
