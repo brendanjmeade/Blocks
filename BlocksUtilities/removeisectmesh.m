@@ -6,8 +6,20 @@ function pn = removeisectmesh(p)
 %    structure is returned to pn. 
 %
 
-% Find element intersections
-crossidx = meshcrossing(p.c, p.v);
+% Check whether we are working with Cartesian or spherical mesh
+if isfield(p, 'lon1') % PatchCoords has already been run
+   crossidx = meshcrossingg(p);
+else
+   if max(abs(minmax(p.c(:, 2)))) < 90
+      p = PatchCoords(p);
+      % Find element intersections
+      crossidx = meshcrossingg(p);
+   else
+      p = PatchCoordsx(p);
+      % Find element intersections
+      crossidx = meshcrossing(p.c, p.v);
+   end
+end
 
 % Find which mesh each crossed element belongs to
 meshidx = reshape(idmeshes(p, crossidx(:)), size(p.v));
