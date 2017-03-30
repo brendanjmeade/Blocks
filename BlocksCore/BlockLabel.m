@@ -199,9 +199,13 @@ function [S, b, st] = BlockLabel(s, b, st)
         b.orderLat{i} = [bca(:); bca(1)];
     end
 
-    if ext == 0 & length(b.interiorLon) <= 2 % Special case for a single block
-        ext = 2;
-        alabel = [1 2];
+    if ext == 0 % If exterior block is unassigned, 
+       if length(b.interiorLon) <= 2 % Special case for a single block
+          ext = 2;
+          alabel = [1 2];
+       else
+          ext = setdiff(1:nblock, alabel); % Special case for a north pole block
+       end 
     end
 
     % treat exterior block segment labels - set exterior block for yet undefined segment labels
