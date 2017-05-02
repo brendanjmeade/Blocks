@@ -1,4 +1,4 @@
-function [x, y] = faultobliquemerc(lambda, phi, lambda1, phi1, lambda2, phi2)
+function [x, y, lambda0] = faultobliquemerc(lambda, phi, lambda1, phi1, lambda2, phi2)
 % obliquemerc   Oblique mercator projection.
 %   [X, Y] = OBLIQUEMERC(LON, LAT, LON1, LAT1, LON2, LAT2) carries out 
 %   oblique Mercator projection of the data contained in arrays LON and 
@@ -47,6 +47,20 @@ elseif sproj(2) > 1 && sdata(2) == 1
    lambda2       = repmat(lambda2, sdata(1), 1);
    phi2          = repmat(phi2, sdata(1), 1);
 end
+%
+%% Sort lambda1 and lambda2 so lambda1 is western point
+%lambdaw = lambda1;
+%lambdae = lambda2;
+%phiw = phi1;
+%phie = phi2;
+%lambdaw(lambda2 < lambda1) = lambda2(lambda2 < lambda1);
+%lambdae(lambda2 < lambda1) = lambda1(lambda2 < lambda1);
+%phiw(lambda2 < lambda1) = phi2(lambda2 < lambda1);
+%phie(lambda2 < lambda1) = phi1(lambda2 < lambda1);
+%lambda1 = lambdaw;
+%lambda2 = lambdae;
+%phi1 = phiw;
+%phi2 = phie;
 
 % Trig. functions
 cphi = cosd(phi);
@@ -84,6 +98,12 @@ A = sphip.*sphi - cphip.*cphi.*sind(dlamb);
 x = atan((tand(phi).*cphip + sphip.*sind(dlamb))./cosd(dlamb));
 x = x - (cosd(dlamb) > 0)*pi + pi/2; % This is different from the reference but agrees with Mapping Toolbox
 y = atanh(A);
+
+% If regular Mercator is needed (for fault traces that strike east-west):
+x(:, abs(phip(1, :)) > 80) = sind(phip(:, abs(phip(1, :)) > 80)).*deg_to_rad(dlamb(:, abs(phip(1, :)) > 80));
+x(x > 2*pi) = x(x > 2*pi) - 2*pi;
+x(x > pi) = x(x > pi) - 2*pi;   
+y(:, abs(phip(1, :)) > 80) = sind(phip(:, abs(phip(1, :)) > 80)).*log(tand(45 + phi(:, abs(phip(1, :)) > 80)./2));
+
 x = -sp.*x;
 y = -sp.*y;
-

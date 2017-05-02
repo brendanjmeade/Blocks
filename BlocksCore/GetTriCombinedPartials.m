@@ -66,8 +66,10 @@ if nPatches > 0
          v3e{iPatches}                         = reshape(-[uxxt uyyt uzzt uxyt -uxzt -uyzt]', 6*sum(op(:, 2)), 1);
 	  end
 %      parfor_progress;
+
    end
 %   parfor_progress(0);
+
    % Place cells for each slip component into matrices
    if ~isempty(Gu)
       Gu(:, 1:3:end)                           = cell2mat(v1u);
