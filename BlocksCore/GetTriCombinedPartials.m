@@ -40,7 +40,6 @@ projstrikes                                    = zeros(sum(Patches.nEl), 1);
 
 % Calculate the requested partials
 if nPatches > 0
-%   parfor_progress(nPatches);
    parfor (iPatches = 1:nPatches)
       % Do local oblique Mercator projection
       [p, s]                                   = ProjectTriCoords([Patches.lon1(iPatches) Patches.lat1(iPatches) Patches.z1(iPatches) Patches.lon2(iPatches) Patches.lat2(iPatches) Patches.z2(iPatches) Patches.lon3(iPatches) Patches.lat3(iPatches) Patches.z3(iPatches)], Station);
